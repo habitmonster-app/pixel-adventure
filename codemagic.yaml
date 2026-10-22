@@ -1,0 +1,24 @@
+# 픽셀 모험단 앱 빌드 (Codemagic)
+# android-test: 서명 없이 휴대폰에 바로 설치해 볼 수 있는 테스트용 APK를 만듭니다.
+workflows:
+  android-test:
+    name: 픽셀 모험단 Android 테스트 APK
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    environment:
+      node: 22
+      java: 21
+    scripts:
+      - name: 의존성 설치
+        script: npm ci
+      - name: 게임 파일 복사
+        script: npm run build
+      - name: Capacitor 동기화
+        script: npx cap sync android
+      - name: APK 빌드
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+    artifacts:
+      - android/app/build/outputs/apk/debug/*.apk

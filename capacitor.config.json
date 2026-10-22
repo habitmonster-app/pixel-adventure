@@ -1,0 +1,9 @@
+{
+  "appId": "com.habitmonster.pixeladventure",
+  "appName": "픽셀 모험단",
+  "webDir": "www",
+  "backgroundColor": "#0b1222",
+  "android": {
+    "backgroundColor": "#0b1222"
+  }
+}

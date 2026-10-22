@@ -1680,5 +1680,5 @@ $('cb-start').onclick=()=>{if(!selectedAdventure)selectedAdventure=1;startAdvent
   document.getElementById('intro-save').onclick=()=>{openInventory();const d=document.getElementById('inventory-dialog');d.scrollTop=d.scrollHeight;};
 })();
 </script>
-<script>if('serviceWorker' in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script></body>
+<script>if('serviceWorker' in navigator&&location.protocol.startsWith('http')&&!window.Capacitor)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script></body>
 </html>
