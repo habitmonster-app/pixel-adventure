@@ -445,6 +445,26 @@ img,svg{-webkit-user-drag:none}
 #intro{max-width:430px;margin:0 auto;padding-top:calc(env(safe-area-inset-top) + 24px)!important;padding-bottom:calc(env(safe-area-inset-bottom) + 24px)!important}
 dialog{width:min(410px,94vw)!important;max-height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px)!important;overscroll-behavior:contain}
 button:active:not(:disabled){filter:brightness(.88)}
+
+/* Compact party panel so the hero list stays visible */
+.party-title{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.party-title #clear-party{width:auto;margin:0;padding:6px 12px;font-size:12px}
+.party-slot{height:96px!important}.party-slot .hero-portrait{width:60px!important;height:60px!important}
+#party-synergies{padding:8px 12px!important;margin-top:8px!important}
+#party-synergies summary{display:flex;justify-content:space-between;align-items:center;cursor:pointer;list-style:none;padding:2px 0}
+#party-synergies summary::-webkit-details-marker{display:none}
+#party-synergies summary span{font-size:11px;color:#c8b48a}
+#party-synergies details[open]{margin-bottom:2px}
+
+.box-hero{margin:8px 0}.box-hero select{margin-left:6px;padding:6px 8px;background:#243148;color:#e8e4dc;border:1px solid #465674;border-radius:4px;font-size:13px}
+.box-odds{font-size:12px;line-height:1.7;color:#d4dcea}.box-odds small{color:#90a2bd;font-size:11px}
+.shop-icon.box .gear-icon{width:46px;height:46px}
+.box-result{margin:10px 0;padding:10px;border:1px solid #8b7d65;border-radius:6px;background:#2b2e39;font-size:13px;color:#ffe0a0}
+
+.box-current{display:flex;gap:10px;align-items:center;padding:8px;margin:6px 0 10px;border:1px solid #34445c;border-radius:6px;background:#111c30}
+.box-hero-art{flex-shrink:0;width:64px;height:64px}.box-hero-art svg{width:64px;height:64px;display:block}
+.box-current>div{flex:1;min-width:0}.box-slot{display:flex;align-items:center;gap:6px;font-size:12px;padding:2px 0}.box-slot small{display:block;color:#ffd998;font-size:10px}
+.box-slot-ico{flex-shrink:0;width:28px;height:28px}.box-slot-ico svg{width:28px;height:28px;display:block}
 </style>
 <script>
 // Layered pixel backdrops for the battle scene (640x250, drawn on a 4px grid).
@@ -515,6 +535,54 @@ button:active:not(:disabled){filter:brightness(.88)}
          for(let i=0;i<6;i++){const x=100+i*7,h=14-Math.abs(i-2.5)*2|0;for(let k=0;k<h;k++)R(x+(k<3?k:k>h-3?h-k:2),GY-h+k,2,1,k<1?'#fff4dc':'#d8ccb0');}R(96,GY-3,46,2,'#d8ccb0');R(92,GY-6,6,4,'#e8dcc0');R(93,GY-5,1,1,'#2e2638');R(95,GY-5,1,1,'#2e2638');
          for(let i=0;i<26;i++){const x=40+Math.floor(rnd()*36),y=GY-2-Math.floor(rnd()*(i%3+1));R(x,y,2,1,i%2?'#ffd24a':'#e8a83a');}R(56,GY-6,3,2,'#ffd24a');R(57,GY-7,1,1,'#fff4a0');glow(58,GY-3,16,'#ffd24a',.35);return '';},
        ground:['#2e2638','#463a52','#221c2a','#3a3046'],fg:(R,rnd)=>{for(let i=0;i<5;i++)stone(R,Math.floor(rnd()*W),GY+2+Math.floor(rnd()*9),4,3,['#3e3450','#5a4c6e','#2a2238']);return '';},fx:['rise','#ff7a5a',14],tint:['#5a1a3a',.08]}
+    ,
+    11:{seed:41,sky:['#121019','#191622','#201c2b','#272233'],
+       mid:(R,rnd,glow)=>{for(let y=2;y<GY;y+=4)for(let x=(y/4)%2?0:3;x<W;x+=6){R(x,y,5,3,y%8?'#2a2536':'#2e2a3c');R(x,y,5,1,'#383248');}
+         for(const ax of [20,70,120]){R(ax,14,22,GY-14,'#0c0a12');for(let k=0;k<6;k++)R(ax+6-k,14-k,10+k*2,1,'#0c0a12');R(ax-2,8,2,GY-8,'#4a4458');R(ax+22,8,2,GY-8,'#4a4458');}
+         const coffin=(x,c)=>{R(x,GY-6,16,6,c);R(x+1,GY-7,14,1,c);R(x,GY-6,16,1,'#6a6078');R(x+6,GY-5,4,1,'#c8b878');R(x+7,GY-6,2,4,'#c8b878');};coffin(26,'#3e3650');coffin(76,'#463c58');coffin(126,'#3e3650');
+         for(const x of [12,60,108,150]){R(x,GY-4,2,4,'#e8e0c8');R(x,GY-6,2,2,'#ffcf6a');glow(x+1,GY-6,10,'#ffcf6a',.4);}
+         for(let k=0;k<6;k++){R(k,k,1,1,'#8a8aa0',.5);R(W-1-k,k,1,1,'#8a8aa0',.5);}R(0,3,4,1,'#8a8aa0',.4);R(3,0,1,4,'#8a8aa0',.4);return '';},
+       ground:['#2a2634','#3e3850','#1c1826','#34304a'],fg:(R)=>{for(let x=0;x<W;x+=8)R(x,GY+1,1,H-GY,'#1c1826');return '';},fx:['float','#7affb0',14],tint:['#1a3a2a',.1]},
+    12:{seed:43,sky:['#140a1a','#22102a','#341634','#4a1c38','#6a2438'],stars:1,orb:[120,14,7,'#e84a4a','#ff8a7a'],
+       mid:(R,rnd,glow)=>{const dk='#120a16';R(30,20,70,GY-20,dk);for(const [x,w,h] of [[22,12,40],[52,16,46],[92,12,38]]){R(x,GY-h,w,h,dk);for(let k=0;k<w;k+=3)R(x+k,GY-h-2,2,2,dk);for(let k=0;k<5;k++)R(x+Math.floor(w/2)-k,GY-h-3-(5-k),k*2+1,1,dk);}
+         for(let x=30;x<100;x+=3)R(x,18,2,2,dk);for(const [x,y] of [[26,16],[57,10],[62,10],[96,20],[40,28],[72,26],[84,32]]){R(x,y,2,3,'#9affc8');glow(x+1,y+1,6,'#7affb0',.35);}R(60,GY-10,8,10,'#1e1420');R(60,GY-11,8,1,'#2e2030');
+         for(const [x,y] of [[120,26],[132,20],[110,30],[140,32]]){R(x,y,1,1,dk);R(x-2,y-1,2,1,dk);R(x+1,y-1,2,1,dk);}
+         for(const x of [6,148]){R(x,GY-24,2,24,'#1a1220');R(x-3,GY-20,3,1,'#1a1220');R(x+2,GY-16,4,1,'#1a1220');}return '';},
+       ground:['#241c2a','#3a2c40','#180f1c','#30243a'],fg:(R,rnd)=>{for(let i=0;i<10;i++)R(Math.floor(rnd()*W),GY-1-Math.floor(rnd()*2),12,2,'#b8c8e8',.12);return '';},fx:['float','#9affc8',14],tint:['#3a0a2a',.1]},
+    13:{seed:47,sky:['#4a5468','#5e6a80','#76829a','#8e9ab0','#a8b2c4'],clouds:['#c8d0dc','#9aa4b4'],ridges:[[20,16,.11,'#6a7890','#8e9cb4',3,'#e8eef6'],[34,10,.17,'#4e5c74','#6a7a94',7,'#dce6f0']],
+       mid:(R,rnd)=>{const pineS=(x,y,h)=>{R(x,y+h,2,3,'#3b2a22');for(let k=0;k<h;k++){const w=Math.floor(k/2)+1;R(x+1-w,y+k,w*2,1,k%4<2?'#2a4a4a':'#1e3a3a');if(k%4===0)R(x+1-w,y+k,w*2,1,'#eef4fa');}};pineS(12,GY-18,16);pineS(24,GY-13,11);pineS(136,GY-20,18);pineS(150,GY-12,10);
+         R(70,GY-14,2,14,'#5a3e2c');R(64,GY-14,14,4,'#7a5434');R(64,GY-14,14,1,'#eef4fa');R(72,GY-9,10,3,'#7a5434');R(80,GY-9,2,3,'#7a5434');
+         for(let x=92;x<124;x+=4){R(x,GY-4,1,4,'#5a3e2c');R(x,GY-5,2,1,'#eef4fa');}R(92,GY-3,32,1,'#3b2a22');return '';},
+       ground:['#c8d2de','#eef4fa','#a8b4c4','#dce4ee'],fg:(R,rnd)=>{for(let i=0;i<14;i++)R(Math.floor(rnd()*W),2+Math.floor(rnd()*(H-4)),6+Math.floor(rnd()*8),1,'#ffffff',.35);return '';},fx:['fall','#ffffff',70],tint:['#c8d4e4',.12]},
+    14:{seed:53,sky:['#06101e','#0a1a30','#0e2442','#123056'],
+       mid:(R,rnd,glow)=>{for(let x=0;x<W;x+=3+Math.floor(rnd()*4)){const h=3+Math.floor(rnd()*12);for(let k=0;k<h;k++){const w=Math.max(1,3-Math.floor(k*3/h));R(x+Math.floor((3-w)/2),k,w,1,k<2?'#2a5a7a':k%3?'#5ab8e0':'#9ae4ff');}}
+         R(0,0,W,2,'#1a3a56');
+         const crystal=(x,h,c,l)=>{for(let k=0;k<h;k++){const w=Math.min(4,1+Math.floor(k/2));R(x-Math.floor(w/2),GY-h+k,w,1,k%5?c:l);}glow(x,GY-h/2,h,c,.35);};crystal(20,16,'#4ad0ff','#cff6ff');crystal(28,10,'#3ab0e8','#bff0ff');crystal(118,20,'#5ae0ff','#e0faff');crystal(128,12,'#3ab0e8','#bff0ff');crystal(70,8,'#4ad0ff','#cff6ff');
+         for(const [x,h] of [[46,8],[92,10],[148,7]])for(let k=0;k<h;k++)R(x-Math.floor(k/3),GY-h+k,1+Math.floor(k/3)*2,1,'#1e4a6a');return '';},
+       ground:['#5a9ac0','#bfe8fa','#3a7aa0','#8acbe8'],fg:(R,rnd)=>{for(let i=0;i<8;i++){const x=Math.floor(rnd()*W);R(x,GY+3+Math.floor(rnd()*8),8,1,'#e0f8ff',.45);}return '';},fx:['twinkle','#bff4ff',20],tint:['#0a3a6a',.1]},
+    15:{seed:59,sky:['#2e2624','#4a3630','#6a4636','#8e5a3a','#b07444'],orb:[34,18,6,'#ff9a4a','#ffd08a'],ridges:[[30,6,.06,'#3a2a26','#5a3a2e',5]],
+       mid:(R,rnd,glow)=>{R(118,GY-22,24,2,'#2a1e1c');for(let k=0;k<14;k++)R(122-k,GY-20+k,24+k*2,1,'#2a1e1c');R(128,GY-23,4,2,'#ff7a2a');glow(130,GY-22,10,'#ff5a1a',.4);
+         const dead=(x,h)=>{R(x,GY-h,2,h,'#1a1210');R(x-4,GY-h+4,4,1,'#1a1210');R(x+2,GY-h+6,5,1,'#1a1210');R(x-4,GY-h+2,1,2,'#1a1210');R(x+6,GY-h+4,1,2,'#1a1210');};dead(18,22);dead(52,16);dead(96,19);
+         for(let x=60;x<92;x+=6){R(x,GY-6,1,6,'#2a1e1c');}R(60,GY-5,26,1,'#2a1e1c');R(66,GY-3,14,1,'#2a1e1c');
+         for(const x of [38,84,148]){R(x,GY-3,4,3,'#2a1e1c');R(x+1,GY-4,2,1,'#ff7a2a');glow(x+2,GY-3,6,'#ff7a2a',.4);}return '';},
+       ground:['#4a423e','#6a605a','#36302c','#5a524c'],fg:(R,rnd,glow)=>{for(let i=0;i<4;i++){const x=Math.floor(rnd()*(W-12)),y=GY+4+Math.floor(rnd()*7);R(x,y,8,1,'#ff7a2a',.8);glow(x+4,y,5,'#ff5a1a',.3);}return '';},fx:['fall','#a8988e',40],tint:['#6a3a1a',.12]},
+    16:{seed:61,sky:['#0e0606','#1a0a08','#2a0e0a','#3a140c'],
+       mid:(R,rnd,glow)=>{for(let x=0;x<W;x+=3+Math.floor(rnd()*5)){const h=2+Math.floor(rnd()*10);for(let k=0;k<h;k++){const w=Math.max(1,3-Math.floor(k*3/h));R(x+Math.floor((3-w)/2),k,w,1,k%3?'#2a1410':'#3e1e16');}}
+         for(const x of [34,112]){glow(x+2,26,22,'#ff5a1a',.4);for(let y=0;y<GY;y++){R(x+(y%7<3?0:1),y,4,1,y%3?'#ff7a2a':'#ffb84a');R(x+1,y,1,1,'#ffe27a');}R(x-3,GY-3,10,3,'#ff7a2a');}
+         for(const [x,h] of [[12,14],[70,18],[90,12],[148,16]]){for(let k=0;k<h;k++)R(x-Math.floor(k/3),GY-h+k,1+Math.floor(k/3)*2,1,k%4?'#2a1612':'#4a2418');}return '';},
+       ground:['#1e0e0c','#3a1a14','#140806','#2e1410'],fg:(R,rnd,glow)=>{R(0,GY+6,W,3,'#ff5a1a');R(0,GY+6,W,1,'#ffb84a');for(let x=0;x<W;x+=9)R(x,GY+7,4,1,'#ffe27a');glow(80,GY+7,40,'#ff5a1a',.35);for(let i=0;i<6;i++){const x=Math.floor(rnd()*(W-10));R(x,GY+2,1,3,'#ff7a2a');R(x+1,GY+3,3,1,'#ff7a2a');}return '';},fx:['rise','#ffb84a',26],tint:['#4a0a00',.1]},
+    17:{seed:67,sky:['#1e1424','#3a1c2e','#5e2434','#8a3436','#b84e3a'],ridges:[[18,6,.05,'#4a2030',null,2]],
+       mid:(R,rnd,glow)=>{const dk='#160c14';R(0,4,22,GY,dk);for(let y=4;y<GY;y+=3)R(22,y,1+Math.floor(rnd()*3),3,dk);R(138,0,22,GY,dk);for(let y=0;y<GY;y+=3)R(137-Math.floor(rnd()*3),y,1+Math.floor(rnd()*3),3,dk);R(20,4,2,GY,'#2e1822');R(138,0,2,GY,'#2e1822');
+         R(70,10,14,2,dk);R(80,8,6,2,dk);R(84,7,3,2,dk);for(let k=0;k<8;k++){R(70-k*2,10-Math.floor(k/2),3,1,dk);R(78+k*2,10-Math.floor(k/1.5),3,1,dk);}R(64,11,6,1,dk);
+         for(let i=0;i<7;i++){const x=46+i*9,h=18-Math.abs(i-3)*3;for(let k=0;k<h;k++)R(x+(k<4?Math.floor(k/2):k>h-4?Math.floor((h-k)/2):2),GY-h+k,2,1,'#d8ccb0');}R(42,GY-4,70,2,'#c8bca0');R(110,GY-9,12,8,'#e0d4b8');R(112,GY-7,2,2,'#160c14');R(117,GY-7,2,2,'#160c14');R(114,GY-3,8,1,'#a89c84');glow(80,GY-10,30,'#ff7a4a',.2);return '';},
+       ground:['#3a2026','#5a3038','#2a161c','#4a2830'],fg:(R,rnd)=>{for(let i=0;i<6;i++)stone(R,24+Math.floor(rnd()*110),GY+2+Math.floor(rnd()*9),4,3,['#4a2a30','#6a3e46','#2e1a20']);return '';},fx:['float','#ff9a6a',14]},
+    18:{seed:71,sky:['#120e1e','#1e1630','#2c1e3e','#3e2848'],stars:1,
+       mid:(R,rnd,glow)=>{R(10,6,140,4,'#4a3a2a');R(10,6,140,1,'#8a6a3a');for(let x=14;x<150;x+=4)R(x,10,2,2,'#3a2c20');
+         for(const x of [14,42,106,134]){R(x,10,12,GY-10,'#5a4a38');R(x,10,2,GY-10,'#8a7450');R(x+10,10,2,GY-10,'#3a2c20');for(let y=16;y<GY;y+=8)R(x,y,12,1,'#3a2c20');R(x-2,GY-4,16,4,'#6a5640');}
+         R(66,GY-30,28,30,'#2a2030');for(let k=0;k<6;k++)R(64+k*0,GY-30+k*5,32,1,'#3a2e40');R(72,GY-28,16,10,'#c89a3a');R(70,GY-30,6,4,'#c89a3a');R(84,GY-30,6,4,'#c89a3a');R(75,GY-25,2,2,'#ff3a2a');R(83,GY-25,2,2,'#ff3a2a');R(76,GY-20,8,2,'#8a6a2a');glow(80,GY-24,20,'#ffd24a',.35);
+         for(const x of [34,124]){R(x,GY-10,6,10,'#6a5640');R(x-1,GY-12,8,2,'#8a7450');R(x+1,GY-15,4,3,'#ffb84a');R(x+2,GY-17,2,2,'#ffe27a');glow(x+3,GY-14,12,'#ffb84a',.5);}
+         for(let k=0;k<4;k++)R(60-k*3,GY-4+k,40+k*6,1,'#4a3c30');return '';},
+       ground:['#3a2e28','#5a4a3a','#2a201c','#4a3c30'],fg:(R,rnd)=>{for(let i=0;i<20;i++){const x=Math.floor(rnd()*W);R(x,GY+2+Math.floor(rnd()*9),2,1,i%2?'#ffd24a':'#c89a3a');}return '';},fx:['twinkle','#ffd24a',18],tint:['#4a2a0a',.08]}
   };
   window.biomeScene=function(art){return scene(THEMES[art]||THEMES[1]);};
 })();
@@ -542,14 +610,14 @@ button:active:not(:disabled){filter:brightness(.88)}
 
     <!-- Party Section -->
     <div class="section" data-tab-panel="heroes">
-      <div class="section-title">파티 구성 (최대 4명)</div>
+      <div class="section-title party-title"><span>파티 구성 (최대 4명)</span><button class="btn btn-secondary" id="clear-party">비우기</button></div>
       <div class="party-slots" id="party-slots">
         <div class="party-slot" data-slot="0">빈 슬롯</div>
         <div class="party-slot" data-slot="1">빈 슬롯</div>
         <div class="party-slot" data-slot="2">빈 슬롯</div>
         <div class="party-slot" data-slot="3">빈 슬롯</div>
       </div>
-      <div id="party-synergies"></div><button class="btn btn-secondary" id="clear-party">파티 비우기</button>
+      <div id="party-synergies"></div>
     </div>
 
     <!-- Heroes Section -->
@@ -869,8 +937,27 @@ button:active:not(:disabled){filter:brightness(.88)}
     SHOP_ITEMS.weaponScroll={name:'무기 강화 주문서',price:400,description:'무기 강화에 사용하는 원정대 공용 주문서 1장'};
     SHOP_ITEMS.armorScroll={name:'방어구 강화 주문서',price:350,description:'방어구 강화에 사용하는 원정대 공용 주문서 1장'};
     function ownedSupply(key){return key.endsWith('Scroll')?sharedInventory[key]:supplies[key];}
-    function openShop(){renderShop();document.getElementById('shop-dialog').showModal();}
-    function renderShop(){document.getElementById('shop-content').innerHTML='<p class="inventory-help">보유 골드: '+gold+' G · 구매한 물품은 공통 인벤토리에 보관됩니다.</p>'+Object.entries(SHOP_ITEMS).map(([key,i])=>'<div class="shop-row"><span class="shop-icon '+key+'">'+potionImage(key)+'</span><div><b>'+i.name+'</b><p>'+i.description+'</p><small>보유 '+ownedSupply(key)+'개</small></div><button onclick="buySupply(&quot;'+key+'&quot;)" '+(gold<i.price?'disabled':'')+'>'+i.price+' G · 구매</button></div>').join('');}
+    let shopMode='general';
+    const SHOP_TITLES={general:['ADVENTURER SHOP','모험가 상점'],weapon:['WEAPON SHOP','무기 상점'],armor:['ARMOR SHOP','방어구 상점']};
+    function openShop(){openShopMode('general');}
+    function openGearShop(kind){boxMessage='';openShopMode(kind);}
+    function openShopMode(mode){shopMode=mode;const [en,ko]=SHOP_TITLES[mode];document.getElementById('shop-title').textContent=ko;document.getElementById('shop-title').previousElementSibling.textContent=en;renderShop();const d=document.getElementById('shop-dialog');if(!d.open)d.showModal();}
+    function renderShop(){if(shopMode!=='general'){document.getElementById('shop-content').innerHTML='<p class="inventory-help">보유 골드: '+gold+' G · 장비는 영웅마다 따로 맞춥니다. 상자에서 나온 장비는 고른 영웅이 바로 착용합니다.</p>'+gearBoxPanel(shopMode);return;}document.getElementById('shop-content').innerHTML='<p class="inventory-help">보유 골드: '+gold+' G · 물약과 주문서는 원정대 공용 인벤토리에 보관됩니다.</p>'+Object.entries(SHOP_ITEMS).map(([key,i])=>'<div class="shop-row"><span class="shop-icon '+key+'">'+potionImage(key)+'</span><div><b>'+i.name+'</b><p>'+i.description+'</p><small>보유 '+ownedSupply(key)+'개</small></div><button onclick="buySupply(&quot;'+key+'&quot;)" '+(gold<i.price?'disabled':'')+'>'+i.price+' G · 구매</button></div>').join('');}
+    // Weapon/armor boxes: random grade up to 희귀. A grade the hero already has turns into enhancement scrolls.
+    const GEAR_BOXES={weapon:{name:'무기 상자',price:1500,slots:['weapon']},armor:{name:'방어구 상자',price:1000,slots:['helmet','armor','boots','cloak']}};
+    const BOX_ODDS=[60,32,8],BOX_SCROLLS=[1,2,4];
+    let shopHeroId=null,boxMessage='';
+    function gearBoxPanel(only){if(!heroes.some(h=>h.id===shopHeroId))shopHeroId=heroes[0].id;const hero=heroes.find(h=>h.id===shopHeroId),busy=ongoing.some(o=>o.partyIds.includes(hero.id));
+      return '<div class="box-hero"><label>받을 영웅 <select onchange="shopHeroId=+this.value;boxMessage=\'\';renderShop()">'+heroes.map(h=>'<option value="'+h.id+'"'+(h.id===hero.id?' selected':'')+'>'+h.name+' Lv.'+h.level+'</option>').join('')+'</select></label></div>'+(only?'<div class="box-current"><span class="box-hero-art">'+heroSprite(hero.classId,hero.id)+'</span><div>'+GEAR_BOXES[only].slots.map(sl=>{const it=getEquipmentItem(hero.id,sl);return '<div class="box-slot"><span class="box-slot-ico">'+itemIcon(it)+'</span><span><b style="color:'+it.color+'">'+it.grade+'</b> '+it.name+' +'+enhanceLevel(hero.id,sl,it.id)+'<small>'+gearStatLabel(sl)+' +'+enhanceBonus(hero.id,sl)+'</small></span></div>';}).join('')+'</div></div>':'')+
+      '<p class="box-odds">'+BOX_ODDS.map((p,t)=>'<span style="color:'+GEAR_GRADES[t].color+'">'+GEAR_GRADES[t].name+' '+p+'%</span>').join(' · ')+'<br><small>이미 가진 등급 이하가 나오면 강화 주문서(일반 1 · 고급 2 · 희귀 4장)로 바뀝니다.</small></p>'+
+      Object.entries(GEAR_BOXES).filter(([key])=>key===only).map(([key,b])=>{const shown=getEquipmentOptions(hero.id,b.slots[0])[2];return '<div class="shop-row"><span class="shop-icon box">'+itemIcon(shown)+'</span><div><b>'+b.name+'</b><p>'+(key==='weapon'?'무기':'투구·갑옷·신발·망토 중 하나')+' · 최대 희귀 등급</p></div><button onclick="buyGearBox(&quot;'+key+'&quot;)" '+(gold<b.price||busy?'disabled':'')+'>'+(busy?'모험 중':b.price+' G')+'</button></div>';}).join('')+
+      (boxMessage?'<p class="box-result" role="status">'+boxMessage+'</p>':'');}
+    function buyGearBox(key){const b=GEAR_BOXES[key],id=shopHeroId,hero=heroes.find(h=>h.id===id);if(!b||!hero||gold<b.price||ongoing.some(o=>o.partyIds.includes(id)))return;gold-=b.price;document.getElementById('gold').textContent=gold;
+      const slot=b.slots[Math.floor(Math.random()*b.slots.length)];let roll=Math.random()*100,tier=0;while(tier<2&&roll>=BOX_ODDS[tier]){roll-=BOX_ODDS[tier];tier++;}
+      const item=getEquipmentOptions(id,slot)[tier];
+      if(tier>unlockTier(id,slot)){if(slot==='weapon')weaponUnlocks[id]=tier;else{armorUnlocks[id]??={};armorUnlocks[id][slot]=tier;}gearEnhancements[id]??={};gearEnhancements[id][slot]??={};gearEnhancements[id][slot][item.id]=0;heroEquipment[id][slot]=item.id;boxMessage='<b style="color:'+item.color+'">'+item.grade+' '+item.name+'</b> 획득! '+hero.name+'에게 장착했습니다.';addLog(hero.name+' · '+b.name+'에서 '+item.grade+' '+item.name+' 획득!');renderHeroes();renderParty();window.dispatchEvent(new Event('adventurechange'));}
+      else{const n=BOX_SCROLLS[tier],k=scrollKey(slot);sharedInventory[k]+=n;boxMessage='<b style="color:'+item.color+'">'+item.grade+' '+item.name+'</b> · 이미 가진 등급이라 '+(slot==='weapon'?'무기':'방어구')+' 강화 주문서 '+n+'장으로 바뀌었습니다.';addLog(b.name+' · '+item.grade+' 중복 → 주문서 '+n+'장');}
+      save();renderShop();}
     function buySupply(key){const i=SHOP_ITEMS[key];if(!i||gold<i.price)return;gold-=i.price;if(key.endsWith('Scroll'))sharedInventory[key]++;else supplies[key]++;document.getElementById('gold').textContent=gold;save();renderShop();addLog(i.name+' 1개 구매');}
     function supplyPanel(){return '<h3 class="inventory-sub">공통 소모품</h3>'+Object.entries(SHOP_ITEMS).filter(([key])=>!key.endsWith('Scroll')).map(([key,i])=>'<div class="shop-row"><span class="shop-icon '+key+'">'+potionImage(key)+'</span><div><b>'+i.name+'</b><p>'+i.description+'</p><small>보유 '+supplies[key]+'개</small></div><button onclick="useSupply(&quot;'+key+'&quot;)" '+(supplies[key]<=0?'disabled':'')+'>사용</button></div>').join('');}
     function useSupply(key){if(!SHOP_ITEMS[key]||!supplies[key])return;const detail={key,used:false};window.dispatchEvent(new CustomEvent('usesupply',{detail}));if(detail.used){supplies[key]--;addLog(SHOP_ITEMS[key].name+' 사용');save();renderInventory();}else{document.getElementById('supply-message').textContent=detail.message||'사용할 수 있는 전투 대상이 없습니다.';}}
@@ -889,7 +976,8 @@ button:active:not(:disabled){filter:brightness(.88)}
     const CLASS_FEATURES={warrior:['방패 수호자','체력·방어 최고 / 70% 확률로 아군 대신 피격 / 피해 45% 감소'],knight:['대검 강타','공격 1.65배 / 치명타 35% / 보스 피해 +25%'],archer:['속사','2연사 / 각 화살 치명타 25%'],mage:['광역 폭발','적 3마리 모두 타격 / 마법 지역(숲·설원) 피해 +30%'],priest:['축복과 회복','파티 체력 12 회복 / 가장 약한 아군 추가 12 회복 / 공격 축복 +10%'],rogue:['행운의 약탈자','회피 35% / 의뢰 성공률 +10%p / 골드 +20% / 주문서 발견 확률 1.2배'],summoner:['치유 정령','정령 추가 공격 / 파티 체력 5 회복 / 받은 피해 15% 감소'],warlock:['악마의 계약','공격 2배 / 저주 지속 피해 / 악마 추가 공격 / 받는 피해 +35%']};
     function hasClass(ids,cls){return ids.some(id=>heroes.find(h=>h.id===id)?.classId===cls);}
     function partySynergies(ids){return [{classes:['warrior','priest'],name:'철벽의 축복',text:'받는 피해 추가 10% 감소',key:'guard'},{classes:['knight','archer'],name:'집중 포화',text:'치명타 확률 +10%p',key:'crit'},{classes:['mage','warlock'],name:'금단의 마법',text:'마법사·흑마법사 피해 +15%',key:'magic'},{classes:['summoner','warlock'],name:'소환수 군단',text:'정령·악마의 추가 공격 2배',key:'pets'},{classes:['rogue','archer'],name:'신속한 탐색',text:'시간제 공략 진행속도 +15%',key:'scout'}].map(x=>({...x,active:x.classes.every(c=>hasClass(ids,c))}));}
-    function renderSynergies(){const el=document.getElementById('party-synergies');if(!el)return;const ids=party.filter(Boolean);el.innerHTML='<b>직업 조합 효과</b>'+partySynergies(ids).map(x=>'<div class="synergy '+(x.active?'active':'')+'">'+(x.active?'● ':'○ ')+x.name+' · '+x.classes.map(c=>CLASSES[c].name).join(' + ')+'<small>'+x.text+'</small></div>').join('');}
+    function renderSynergies(){const el=document.getElementById('party-synergies');if(!el)return;const ids=party.filter(Boolean);const list=partySynergies(ids),on=list.filter(x=>x.active).length;el.innerHTML='<details'+(synergyOpen?' open':'')+' ontoggle="synergyOpen=this.open"><summary><b>직업 조합 효과</b><span>'+on+' / '+list.length+' 발동 ▾</span></summary>'+list.map(x=>'<div class="synergy '+(x.active?'active':'')+'">'+(x.active?'● ':'○ ')+x.name+' · '+x.classes.map(c=>CLASSES[c].name).join(' + ')+'<small>'+x.text+'</small></div>').join('')+'</details>'+(synergyOpen?'':list.filter(x=>x.active).map(x=>'<div class="synergy active">● '+x.name+'<small>'+x.text+'</small></div>').join(''));}
+    let synergyOpen=false;
     function combatInit(o,a){const ids=o.ids||o.partyIds;o.health??=Object.fromEntries(ids.map(id=>[id,100]));o.turn??=0;if(!Array.isArray(o.enemies)||!o.enemies.length){const count=a.boss?1:3;o.enemies=Array(count).fill(Math.ceil(a.hp/count));}o.hp=o.enemies.reduce((n,v)=>n+v,0);}
     function classAttack(id){const hero=heroes.find(h=>h.id===id);return heroStats(id).attack;}
     function classCombat(o,a){combatInit(o,a);const ids=o.ids||o.partyIds,alive=ids.filter(id=>o.health[id]>0);if(!alive.length)return {dead:true};const active=c=>hasClass(alive,c),syn=key=>partySynergies(alive).some(s=>s.key===key&&s.active);const id=alive[o.turn%alive.length],cls=heroes.find(h=>h.id===id).classId,hero=heroes.find(h=>h.id===id),base=classAttack(id)*(hero.level>=5?1.2:1)*(hero.level>=40?1.3:1);let total=0,label=CLASS_FEATURES[cls][0];const heal=(hid,n)=>{if(o.health[hid]>0)o.health[hid]=Math.min(100,o.health[hid]+n*(hero.classId==='priest'&&hasTalent(id,0)?1.3:1)*(hero.level>=5?1.2:1)*(hero.level>=40?1.3:1))};const hit=(n,index)=>{let target=index??o.enemies.findIndex(v=>v>0);if(target<0||o.enemies[target]<=0)return;const d=Math.max(1,Math.floor(n));o.enemies[target]=Math.max(0,o.enemies[target]-d);total+=d;};const blessed=active('priest')?(alive.some(hid=>heroes.find(h=>h.id===hid).classId==='priest'&&hasTalent(hid,1))?1.15:1.1):1;let skill20='';o.actionCounts??={};o.actionCounts[id]=(o.actionCounts[id]||0)+1;if(hero.level>=20){if(cls==='warrior'&&o.actionCounts[id]%4===0){o.shield=2;skill20='철벽 결계';}if(cls==='mage'&&o.actionCounts[id]%4===0){o.frozen=true;skill20='빙결 폭풍';}if(cls==='priest'&&o.poison){o.poison=false;skill20='정화';}}
@@ -1052,7 +1140,7 @@ button:active:not(:disabled){filter:brightness(.88)}
     const EXPEDITION_TIMES=[60,300,600,1800,3600,7200,14400,28800,57600,86400];
     let selectedDuration=60;
     const DUNGEON_GROUPS=[{name:'기본·일반 장비',ids:[1,2,3]},{name:'고급 장비',ids:[4,5,6]},{name:'희귀 장비',ids:[7,11,12]},{name:'영웅 장비',ids:[13,14,8]},{name:'전설 장비',ids:[15,16,9]},{name:'신화 장비',ids:[17,18,10]}];
-    const extra=[[11,'지하 묘실',27,2000,2200,65,7],[12,'망자의 성',29,2200,2900,72,7],[13,'눈보라 고개',30,2400,3100,75,8],[14,'얼음 동굴',33,2650,3400,78,8],[15,'잿불 평원',38,3100,4500,95,9],[16,'용암 동굴',42,3550,5200,103,9],[17,'고룡의 길목',47,4100,7200,125,10],[18,'용의 신전',50,4450,8300,138,10]];
+    const extra=[[11,'지하 묘실',27,2000,2200,65,11],[12,'망자의 성',29,2200,2900,72,12],[13,'눈보라 고개',30,2400,3100,75,13],[14,'얼음 동굴',33,2650,3400,78,14],[15,'잿불 평원',38,3100,4500,95,15],[16,'용암 동굴',42,3550,5200,103,16],[17,'고룡의 길목',47,4100,7200,125,17],[18,'용의 신전',50,4450,8300,138,18]];
     for(const [id,name,level,recommended,hp,atk,art] of extra){adventures.push({id,name,level,recommended,hp,atk,art,time:1800,reward:Math.floor(recommended/2),exp:Math.floor(level*10),difficulty:level,scrolls:Math.ceil(level/5),gear:''});MONSTER_NAMES[id-1]=MONSTER_NAMES[art-1];}
     DUNGEON_GROUPS.forEach((g,tier)=>g.ids.forEach((id,index)=>{const a=adventures.find(a=>a.id===id);a.group=tier;a.gear=g.name+' +'+[0,4,8][index]+' 권장';a.art??=id;a.boss=index===2;}));
     const DUNGEON_PATH=DUNGEON_GROUPS.flatMap(g=>g.ids);
@@ -1591,9 +1679,11 @@ $('cb-start').onclick=()=>{if(!selectedAdventure)selectedAdventure=1;startAdvent
   const BUILDINGS=[
     {go:'heroes',label:'모험가 길드',x:24,y:28,w:112,h:112,roof:'#8a3030',dark:'#5a1c1c'},
     {go:'shop',label:'상점',x:224,y:28,w:112,h:100,roof:'#355878',dark:'#203a52'},
-    {go:'inventory',label:'창고',x:24,y:298,w:112,h:96,roof:'#6a4a28',dark:'#443018'},
-    {go:'battle',label:'원정 현황',x:224,y:298,w:112,h:96,roof:'#4a5e34',dark:'#2e3c20'}];
-  const ACTIONS={heroes:()=>setMainTab('heroes'),shop:()=>openShop(),inventory:()=>openInventory(),battle:()=>setMainTab('battle'),adventure:()=>setMainTab('adventure')};
+    {go:'weaponShop',label:'무기 상점',x:24,y:290,w:112,h:70,roof:'#7a3a20',dark:'#4e2414'},
+    {go:'armorShop',label:'방어구 상점',x:224,y:290,w:112,h:70,roof:'#4a5a6a',dark:'#2e3a46'},
+    {go:'inventory',label:'창고',x:24,y:388,w:112,h:96,roof:'#6a4a28',dark:'#443018'},
+    {go:'battle',label:'원정 현황',x:224,y:388,w:112,h:96,roof:'#4a5e34',dark:'#2e3c20'}];
+  const ACTIONS={heroes:()=>setMainTab('heroes'),shop:()=>openShop(),weaponShop:()=>openGearShop('weapon'),armorShop:()=>openGearShop('armor'),inventory:()=>openInventory(),battle:()=>setMainTab('battle'),adventure:()=>setMainTab('adventure')};
   const R=(x,y,w,h,c,o)=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+c+'"'+(o?' opacity="'+o+'"':'')+'/>';
   function sign(cx,y,text){const w=text.length*13+20;return R(cx-w/2+2,y+3,w,20,'#000','.25')+R(cx-w/2,y,w,20,'#4a2e1a')+R(cx-w/2+2,y+2,w-4,16,'#8a5a34')+R(cx-w/2+2,y+2,w-4,2,'#a8744a')+R(cx-w/2+2,y+16,w-4,2,'#6b4428')+'<text class="town-sign" x="'+cx+'" y="'+(y+15)+'" text-anchor="middle">'+text+'</text>';}
   // Cobbled surface: staggered stones over a mortar base.
@@ -1611,7 +1701,9 @@ $('cb-start').onclick=()=>{if(!selectedAdventure)selectedAdventure=1;startAdvent
     // door with frame and step
     a+=R(cx-14,bot-30,28,30,'#4a2e1a')+R(cx-11,bot-27,22,27,'#8a5a34')+R(cx-11,bot-27,22,2,'#a8744a');for(let xx=cx-6;xx<cx+11;xx+=6)a+=R(xx,bot-25,1,25,'#6b4428');a+=R(cx+5,bot-14,3,3,'#ffd24a')+R(cx-16,bot,32,4,'#9c9ca6')+R(cx-16,bot,32,1,'#c4c4cc');
     if(b.go==='heroes'){a+=R(b.x+b.w-30,b.y-18,12,20,'#8c8c96')+R(b.x+b.w-30,b.y-18,12,3,'#b4b4be');for(let k=0;k<3;k++)a+='<rect class="fx-rise" x="'+(b.x+b.w-26+k*2)+'" y="'+(b.y-24)+'" width="6" height="6" fill="#d8dce4" opacity=".6" style="animation-delay:-'+k*1.3+'s;animation-duration:4s"/>';a+=R(b.x+18,b.y-30,3,34,'#5a3a22')+R(b.x+21,b.y-30,20,14,'#7a1e2a')+R(b.x+21,b.y-30,20,2,'#a83a3a')+R(b.x+30,b.y-28,2,10,'#e8d38a')+R(b.x+27,b.y-25,8,2,'#e8d38a');a+=banner(cx-30,bot-30,'#7a1e2a')+banner(cx+20,bot-30,'#7a1e2a')+R(cx-7,wy+14,14,12,'#5a3a22')+R(cx-6,wy+15,12,10,'#a8744a')+R(cx-1,wy+16,2,8,'#e2e6ee')+R(cx-4,wy+19,8,2,'#e2e6ee');}
-    if(b.go==='shop'){for(let k=0;k<7;k++)a+=R(cx-28+k*8,bot-40,8,10,k%2?'#f6efe0':b.roof);a+=R(cx-28,bot-31,56,2,'#000','.2');a+=R(b.x+b.w+2,bot-18,14,18,'#7a5434')+R(b.x+b.w+2,bot-18,14,2,'#a8744a')+R(b.x+b.w+2,bot-11,14,2,'#5a3a22')+anvil(b.x-20,bot-20)+R(cx+18,wy+2,14,14,'#ffd24a')+R(cx+20,wy+4,10,10,'#e8a83a')+R(cx+23,wy+6,4,6,'#ffd24a');}
+    if(b.go==='shop'){for(let k=0;k<7;k++)a+=R(cx-28+k*8,bot-40,8,10,k%2?'#f6efe0':b.roof);a+=R(cx-28,bot-31,56,2,'#000','.2');a+=R(b.x+b.w+2,bot-18,14,18,'#7a5434')+R(b.x+b.w+2,bot-18,14,2,'#a8744a')+R(b.x+b.w+2,bot-11,14,2,'#5a3a22')+R(cx+18,wy+2,14,14,'#ffd24a')+R(cx+20,wy+4,10,10,'#e8a83a')+R(cx+23,wy+6,4,6,'#ffd24a');}
+    if(b.go==='weaponShop'){a+=anvil(b.x+b.w+4,bot-20)+R(b.x-12,bot-26,2,26,'#5a3a22')+R(b.x-14,bot-24,10,2,'#6b4428')+R(b.x-11,bot-34,2,22,'#cfd6de')+R(b.x-12,bot-14,4,2,'#7a5434')+R(cx-8,wy-12,16,12,'#5a3a22')+R(cx-7,wy-11,14,10,'#c49a64');for(let k=0;k<8;k++){a+=R(cx-5+k,wy-10+k,2,1,'#e2e6ee')+R(cx+4-k,wy-10+k,2,1,'#e2e6ee');}}
+    if(b.go==='armorShop'){a+=R(b.x-14,bot-6,12,6,'#5a3a22')+R(b.x-9,bot-24,2,18,'#5a3a22')+R(b.x-13,bot-24,10,10,'#8a92a2')+R(b.x-13,bot-24,10,2,'#b4bcc8')+R(b.x-11,bot-30,6,6,'#8a92a2')+R(b.x-10,bot-28,4,1,'#2a2a34')+R(b.x+b.w+3,bot-18,12,14,'#6a7484')+R(b.x+b.w+4,bot-17,10,12,'#9aa4b4')+R(b.x+b.w+8,bot-16,2,10,'#c0392b')+R(b.x+b.w+5,bot-12,8,2,'#c0392b')+R(cx-7,wy-12,14,12,'#5a3a22')+R(cx-6,wy-11,12,10,'#9aa4b4')+R(cx-4,wy-3,8,2,'#9aa4b4')+R(cx-1,wy-10,2,8,'#c0392b')+R(cx-4,wy-8,8,2,'#c0392b');}
     if(b.go==='inventory'){for(const [dx,dy] of [[2,-16],[2,-30]])a+=R(b.x+b.w+dx,bot+dy,16,16,'#a8744a')+R(b.x+b.w+dx,bot+dy,16,2,'#c49a64')+R(b.x+b.w+dx,bot+dy+7,16,2,'#7a5434')+R(b.x+b.w+dx+7,bot+dy,2,16,'#7a5434');a+=R(b.x-14,bot-20,12,20,'#7a5434')+R(b.x-14,bot-15,12,2,'#5c5c66')+R(b.x-14,bot-6,12,2,'#5c5c66');}
     if(b.go==='battle'){a+=R(b.x+b.w-22,b.y-26,3,30,'#5a3a22')+R(b.x+b.w-19,b.y-26,18,12,'#c0392b')+R(b.x+b.w-19,b.y-26,18,2,'#e05a4a');const nx=b.x+b.w-30;a+=R(nx,bot-34,24,22,'#7a5434')+R(nx+2,bot-32,20,18,'#c49a64')+R(nx+4,bot-30,7,8,'#f6efe0')+R(nx+13,bot-28,7,9,'#f6efe0')+R(nx+6,bot-20,8,5,'#ffe0a0')+R(nx+4,bot-12,3,12,'#5a3a22')+R(nx+17,bot-12,3,12,'#5a3a22');a+=rack(b.x-20,bot-62)+dummy(b.x-16,bot-30);}
     return '<g class="town-bld" data-go="'+b.go+'" tabindex="0" role="button" aria-label="'+b.label+'"><g class="b">'+a+'</g>'+sign(cx,bot+6,b.label)+'</g>';}
@@ -1633,37 +1725,40 @@ $('cb-start').onclick=()=>{if(!selectedAdventure)selectedAdventure=1;startAdvent
   function dummy(x,y){return R(x-2,y+20,14,3,'#14261a','.4')+R(x+4,y,2,22,'#5a3a22')+R(x,y+6,10,10,'#c4a06a')+R(x,y+6,10,2,'#e2c48a')+R(x+1,y-2,8,8,'#c4a06a')+R(x+3,y+1,1,1,'#3e2816')+R(x+6,y+1,1,1,'#3e2816')+R(x-4,y+8,18,2,'#8a5a34')+R(x+3,y+9,4,4,'#a33a3a');}
   function rack(x,y){return R(x,y+16,16,3,'#14261a','.35')+R(x,y+2,2,16,'#5a3a22')+R(x+14,y+2,2,16,'#5a3a22')+R(x,y+4,16,2,'#6b4428')+R(x+4,y-4,2,20,'#cfd6de')+R(x+3,y+12,4,2,'#7a5434')+R(x+9,y-2,2,18,'#8a6a44')+R(x+8,y-6,4,4,'#cfd6de');}
   function anvil(x,y){return '<circle cx="'+(x+7)+'" cy="'+(y+8)+'" r="14" fill="url(#town-glow)" opacity=".5"/>'+R(x,y+16,16,3,'#14261a','.4')+R(x+4,y+8,8,8,'#3a3a46')+R(x,y+4,16,5,'#5c5c6a')+R(x-3,y+4,4,3,'#5c5c6a')+R(x,y+4,16,1,'#8c8c9a')+'<g class="fx-pulse">'+R(x+5,y+1,6,3,'#ff8a3c')+R(x+7,y,2,2,'#ffe27a')+'</g>';}
-  function townArt(){let a='<defs><radialGradient id="town-glow"><stop offset="0" stop-color="#ffc46a"/><stop offset="1" stop-color="#ffc46a" stop-opacity="0"/></radialGradient><radialGradient id="fire-glow"><stop offset="0" stop-color="#ff9a3c"/><stop offset=".5" stop-color="#ff7a2a" stop-opacity=".35"/><stop offset="1" stop-color="#ff7a2a" stop-opacity="0"/></radialGradient><radialGradient id="portal-glow"><stop offset="0" stop-color="#b36bff"/><stop offset="1" stop-color="#b36bff" stop-opacity="0"/></radialGradient><linearGradient id="dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9a50" stop-opacity=".16"/><stop offset=".55" stop-color="#7a4a8a" stop-opacity=".06"/><stop offset="1" stop-color="#1a1240" stop-opacity=".3"/></linearGradient><radialGradient id="vignette" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#0a0818" stop-opacity="0"/><stop offset="1" stop-color="#0a0818" stop-opacity=".45"/></radialGradient></defs>'+R(0,0,360,480,'#4a7238');
-    for(let i=0;i<60;i++){const x=(i*73)%344,y=(i*131+i*i*7)%464;a+=R(x,y,16,12,'#42683a','.8');}
-    for(let i=0;i<130;i++){const x=(i*53+i*i)%356,y=(i*97+i*i*3)%476;a+=R(x,y,2,4,'#62914a')+R(x+2,y+2,2,2,'#3a5e30');}
-    for(let i=0;i<22;i++){const x=(i*89+17)%340,y=(i*61+31)%460;if(!(x>140&&x<220))a+=R(x,y,8,5,'#6a6a72')+R(x,y,8,1,'#8c8c96')+R(x+1,y+5,7,1,'#2a3a26');}
+  function townArt(){let a='<defs><radialGradient id="town-glow"><stop offset="0" stop-color="#ffc46a"/><stop offset="1" stop-color="#ffc46a" stop-opacity="0"/></radialGradient><radialGradient id="fire-glow"><stop offset="0" stop-color="#ff9a3c"/><stop offset=".5" stop-color="#ff7a2a" stop-opacity=".35"/><stop offset="1" stop-color="#ff7a2a" stop-opacity="0"/></radialGradient><radialGradient id="portal-glow"><stop offset="0" stop-color="#b36bff"/><stop offset="1" stop-color="#b36bff" stop-opacity="0"/></radialGradient><linearGradient id="dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9a50" stop-opacity=".16"/><stop offset=".55" stop-color="#7a4a8a" stop-opacity=".06"/><stop offset="1" stop-color="#1a1240" stop-opacity=".3"/></linearGradient><radialGradient id="vignette" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#0a0818" stop-opacity="0"/><stop offset="1" stop-color="#0a0818" stop-opacity=".45"/></radialGradient></defs>'+R(0,0,360,570,'#4a7238');
+    for(let i=0;i<60;i++){const x=(i*73)%344,y=(i*131+i*i*7)%554;a+=R(x,y,16,12,'#42683a','.8');}
+    for(let i=0;i<130;i++){const x=(i*53+i*i)%356,y=(i*97+i*i*3)%566;a+=R(x,y,2,4,'#62914a')+R(x+2,y+2,2,2,'#3a5e30');}
+    for(let i=0;i<26;i++){const x=(i*89+17)%340,y=(i*61+31)%550;if(!(x>140&&x<220))a+=R(x,y,8,5,'#6a6a72')+R(x,y,8,1,'#8c8c96')+R(x+1,y+5,7,1,'#2a3a26');}
     // packed-earth roads with wheel ruts, cobbled plaza
     const dirt=(x,y,w,h,v)=>{let s=R(x,y,w,h,'#8a6e48');for(let i=0;i<(w*h)/90;i++){const px=x+(i*37)%w,py=y+(i*53)%h;s+=R(px,py,3,2,i%3?'#7a6040':'#a08458');}return s+(v?R(x+10,y,2,h,'#6e5638')+R(x+w-12,y,2,h,'#6e5638'):R(x,y+10,w,2,'#6e5638')+R(x,y+h-12,w,2,'#6e5638'));};
-    a+=dirt(160,0,40,480,1)+dirt(0,214,360,40,0)+cobble(124,180,112,108);
-    a+=R(156,0,4,180,'#5e4a30')+R(200,0,4,180,'#5e4a30')+R(156,288,4,192,'#5e4a30')+R(200,288,4,192,'#5e4a30')+R(0,210,124,4,'#5e4a30')+R(236,210,124,4,'#5e4a30')+R(0,254,124,4,'#5e4a30')+R(236,254,124,4,'#5e4a30')+R(120,180,4,30,'#5e4a30')+R(236,180,4,30,'#5e4a30')+R(120,258,4,30,'#5e4a30')+R(236,258,4,30,'#5e4a30');
-    a+=R(0,0,360,480,'url(#dusk)');
+    a+=dirt(160,0,40,570,1)+dirt(0,214,360,40,0)+cobble(124,180,112,108);
+    a+=R(156,0,4,180,'#5e4a30')+R(200,0,4,180,'#5e4a30')+R(156,288,4,282,'#5e4a30')+R(200,288,4,282,'#5e4a30')+R(0,210,124,4,'#5e4a30')+R(236,210,124,4,'#5e4a30')+R(0,254,124,4,'#5e4a30')+R(236,254,124,4,'#5e4a30')+R(120,180,4,30,'#5e4a30')+R(236,180,4,30,'#5e4a30')+R(120,258,4,30,'#5e4a30')+R(236,258,4,30,'#5e4a30');
+    a+=R(0,0,360,570,'url(#dusk)');
     // palisade walls, north gate and watchtowers
-    a+=stakes(0,0,152,22)+stakes(208,0,152,22)+stakes(0,22,0,188,1)+stakes(0,258,0,150,1)+stakes(346,22,0,188,1)+stakes(346,258,0,150,1);
+    a+=stakes(0,0,152,22)+stakes(208,0,152,22)+stakes(0,22,0,188,1)+stakes(0,258,0,240,1)+stakes(346,22,0,188,1)+stakes(346,258,0,240,1);
     a+=R(148,-2,12,30,'#4a3020')+R(200,-2,12,30,'#4a3020')+R(148,-2,64,6,'#5a3a22')+R(148,-2,64,2,'#8a5a34')+banner(151,6,'#7a1e2a')+banner(199,6,'#7a1e2a');
-    a+=tree(16,150)+tree(316,150)+tree(14,262)+tree(316,262)+tree(96,150)+tree(264,150)+tree(96,262)+tree(264,262)+tree(10,410)+tree(320,410)+tree(40,440)+tree(290,442);
+    a+=tree(16,150)+tree(316,150)+tree(96,150)+tree(264,150)+tree(10,500)+tree(320,500)+tree(40,530)+tree(290,532);
     // campfire plaza
     a+=bonfire(180,238)+lamp(126,184)+lamp(230,184)+lamp(126,262)+lamp(230,262);
     // dungeon gate: stone arch, skull keystone, torches, swirling portal
-    a+='<circle cx="180" cy="452" r="50" fill="url(#portal-glow)" opacity=".7"/>';for(let yy=404;yy<480;yy+=8)for(const xx of [128,204])a+=R(xx,yy,28,7,(yy/8)%2?'#5e6474':'#6e7484')+R(xx,yy,28,1,'#8a92a2')+R(xx+((yy/8)%2?6:18),yy+2,4,3,'#3f6a3a','.8');a+=R(124,396,112,14,'#525868')+R(124,396,112,2,'#8a92a2')+R(156,410,48,70,'#140c26')+R(162,418,36,62,'#26183e');
-    a+=R(174,410,12,10,'#d8d2c0')+R(176,413,3,3,'#140c26')+R(181,413,3,3,'#140c26')+R(177,418,6,2,'#a8a290');
-    a+='<g class="fx-pulse">'+R(170,432,20,20,'#7a4ad6','.7')+R(174,436,12,12,'#b36bff')+R(178,440,4,4,'#f0e0ff')+'</g>';for(const x of [118,238]){a+=R(x,412,4,14,'#5a3a22')+R(x-2,406,8,6,'#ff9a3c')+R(x,402,4,4,'#ffe27a')+'<circle cx="'+(x+2)+'" cy="408" r="20" fill="url(#town-glow)" opacity=".7"/>';}
-    a+=npcGuard(104,440,0)+npcGuard(256,440,1);
-    a+='<g class="town-bld" data-go="adventure" tabindex="0" role="button" aria-label="던전 입구"><g class="b">'+R(124,396,112,84,'#000','0')+'</g>'+sign(180,398,'던전 입구')+'</g>';
+    a+='<circle cx="180" cy="542" r="50" fill="url(#portal-glow)" opacity=".7"/>';for(let yy=494;yy<570;yy+=8)for(const xx of [128,204])a+=R(xx,yy,28,7,(yy/8)%2?'#5e6474':'#6e7484')+R(xx,yy,28,1,'#8a92a2')+R(xx+((yy/8)%2?6:18),yy+2,4,3,'#3f6a3a','.8');a+=R(124,486,112,14,'#525868')+R(124,486,112,2,'#8a92a2')+R(156,500,48,70,'#140c26')+R(162,508,36,62,'#26183e');
+    a+=R(174,500,12,10,'#d8d2c0')+R(176,503,3,3,'#140c26')+R(181,503,3,3,'#140c26')+R(177,508,6,2,'#a8a290');
+    a+='<g class="fx-pulse">'+R(170,522,20,20,'#7a4ad6','.7')+R(174,526,12,12,'#b36bff')+R(178,530,4,4,'#f0e0ff')+'</g>';for(const x of [118,238]){a+=R(x,502,4,14,'#5a3a22')+R(x-2,496,8,6,'#ff9a3c')+R(x,492,4,4,'#ffe27a')+'<circle cx="'+(x+2)+'" cy="498" r="20" fill="url(#town-glow)" opacity=".7"/>';}
+    a+=npcGuard(104,530,0)+npcGuard(256,530,1);
+    a+='<g class="town-bld" data-go="adventure" tabindex="0" role="button" aria-label="던전 입구"><g class="b">'+R(124,486,112,84,'#000','0')+'</g>'+sign(180,488,'던전 입구')+'</g>';
     a+=bunting(140,220,156)+BUILDINGS.map(building).join('');
-    return a+R(0,0,360,480,'url(#vignette)').replace('/>',' pointer-events="none"/>');}
-  const DOORS={heroes:[80,146],shop:[280,134],inventory:[80,400],battle:[280,400],adventure:[180,428]},SPOTS=[[136,262],[196,262],[136,170],[196,170]];
+    return a+R(0,0,360,570,'url(#vignette)').replace('/>',' pointer-events="none"/>');}
+  const DOORS={heroes:[80,146],shop:[280,134],weaponShop:[80,362],armorShop:[280,362],inventory:[80,490],battle:[280,490],adventure:[180,518]},SPOTS=[[168,290],[192,290],[152,280],[208,280]];
   function townHeroes(){const busy=new Set(ongoing.flatMap(o=>o.partyIds||[]));const picked=party.filter(Boolean).concat(heroes.map(h=>h.id)).filter((id,i,a)=>a.indexOf(id)===i&&!busy.has(id)).slice(0,4);
     return picked.map((id,i)=>{const h=heroes.find(h=>h.id===id);const svg=heroSprite(h.classId,h.id).replace(/<svg class="[^"]*"/,'<svg x="-16" y="-34" width="32" height="34"');return '<g class="town-walker idle'+(i===0?' leader':'')+'" style="transform:translate('+SPOTS[i][0]+'px,'+SPOTS[i][1]+'px)"><g class="town-bob">'+svg+'</g></g>';}).join('');}
   let walking=false;
-  function renderTown(){const map=document.getElementById('town-map');map.innerHTML='<svg viewBox="0 0 360 480" preserveAspectRatio="xMidYMid meet" shape-rendering="crispEdges">'+townArt()+'<g id="town-people">'+townHeroes()+'</g></svg>';
+  function renderTown(){const map=document.getElementById('town-map');map.innerHTML='<svg viewBox="0 0 360 570" preserveAspectRatio="xMidYMid meet" shape-rendering="crispEdges">'+townArt()+'<g id="town-people">'+townHeroes()+'</g></svg>';
     map.querySelectorAll('.town-bld').forEach(el=>{const go=el.dataset.go;el.onclick=()=>visit(go);el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();visit(go);}};});townStatus();}
-  function visit(go){if(walking)return;const leader=document.querySelector('#town-people .leader');if(!leader){ACTIONS[go]();return;}walking=true;const start=leader.style.transform,d=DOORS[go];leader.classList.remove('idle');leader.style.transform='translate('+d[0]+'px,'+d[1]+'px)';
-    setTimeout(()=>{ACTIONS[go]();walking=false;leader.style.transition='none';leader.style.transform=start;leader.classList.add('idle');requestAnimationFrame(()=>leader.style.transition='');},520);}
+  // The whole party walks together: the leader heads for the door and the others trail behind in a short column.
+  function visit(go){if(walking)return;const people=[...document.querySelectorAll('#town-people .town-walker')];if(!people.length){ACTIONS[go]();return;}walking=true;const d=DOORS[go],starts=people.map(p=>p.style.transform);
+    const bx=180-d[0],by=234-d[1],len=Math.hypot(bx,by)||1,ux=bx/len,uy=by/len;
+    people.forEach((p,i)=>{const row=Math.ceil(i/2),side=i===0?0:(i%2?-1:1)*(i===3?0:9);p.classList.remove('idle');p.style.transitionDelay=(i*40)+'ms';p.style.transform='translate('+Math.round(d[0]+ux*row*16-uy*side)+'px,'+Math.round(d[1]+uy*row*16+ux*side)+'px)';});
+    setTimeout(()=>{ACTIONS[go]();walking=false;people.forEach((p,i)=>{p.style.transition='none';p.style.transitionDelay='';p.style.transform=starts[i];p.classList.add('idle');});requestAnimationFrame(()=>people.forEach(p=>p.style.transition=''));},560);}
   function townStatus(){const el=document.getElementById('town-status');if(!el||main.dataset.tab!=='town')return;const t=Date.now()/1000,o=ongoing.find(o=>!o.liveCombat);el.classList.remove('ready');
     if(!o){el.textContent='📜 원정 대기 중 · 길드에서 파티를 꾸리고 던전 입구로 가세요';return;}const a=adventures.find(a=>a.id===o.adventureId),left=Math.ceil(o.startTime+o.duration-t);
     if(left<=0){el.classList.add('ready');el.textContent='✓ '+(a?a.name:'원정')+' 완료 · 원정 현황에서 보상을 받으세요';}else{const h=Math.floor(left/3600),m=Math.floor(left%3600/60),sec=left%60;el.textContent='⚔ '+(a?a.name:'원정')+' 공략 중 · 남은 시간 '+(h?h+':'+String(m).padStart(2,'0'):m)+':'+String(sec).padStart(2,'0');}}
@@ -1680,5 +1775,5 @@ $('cb-start').onclick=()=>{if(!selectedAdventure)selectedAdventure=1;startAdvent
   document.getElementById('intro-save').onclick=()=>{openInventory();const d=document.getElementById('inventory-dialog');d.scrollTop=d.scrollHeight;};
 })();
 </script>
-<script>if('serviceWorker' in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script></body>
+<script>if('serviceWorker' in navigator&&location.protocol.startsWith('http')&&!window.Capacitor)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script></body>
 </html>
