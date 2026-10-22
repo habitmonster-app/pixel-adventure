@@ -1,5 +1,5 @@
 // 픽셀 모험단 오프라인 캐시. 게임 파일을 바꿔 배포할 때 CACHE 버전을 올리세요.
-const CACHE = 'pixel-adventure-v4';
+const CACHE = 'pixel-adventure-v5';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-512-maskable.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
