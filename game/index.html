@@ -10001,5 +10001,17 @@ function drawDex104(){if(!P)return;const all=dexL104(),K=dexK104(P),ch=DEXCH104C
  const full=setNeed104(s,P,s.g.length);
  h+=`<div class="set104"><div class="h">${s.n} (${n}/${full})</div>${parts.join('')}${s.b.map(([c,,t])=>{const need=setNeed104(s,P,c);return `<div class="b${n>=need?' on':''}">${need}세트: ${t}</div>`;}).join('')}</div>`;}catch(e){console.warn('[set104]',e);}return h;};}
 
+// ===================== v105: 스킬 '포인트 되돌리기' = 보상형 광고 보고 되돌리기 =====================
+// 앱: 광고(place 'skill_reset')를 끝까지 보면 되돌려요. 광고 제거를 산 사람은 바로 되돌려요.
+// 웹(앱 아님, 광고 없음): 예전처럼 바로 되돌려요(시험용).
+{const btn=$('skReset'),_rs=btn.onclick;
+ const spent105=()=>P&&Object.values(P.sk||{}).some(v=>(v|0)>0);
+ const label105=()=>{const A=APP86();btn.textContent=A&&!adRemoved86()?'📺 광고 보고 포인트 되돌리기':'포인트 되돌리기';};
+ btn.onclick=function(){if(!P)return;if(!spent105()){toast('되돌릴 스킬 포인트가 없어요','w');return;}
+  const A=APP86();if(!A||adRemoved86()){_rs.call(btn);return;}
+  showAd86('skill_reset',()=>{_rs.call(btn);toast('광고를 봐서 스킬 포인트를 모두 되돌렸어요','g');});};
+ label105();setTimeout(label105,1500);
+ const _ds=drawSkill;drawSkill=function(){const r=_ds.apply(this,arguments);try{label105();}catch(e){}return r;};}
+
 openSelect();
 </script>
