@@ -868,7 +868,7 @@ function update(dt){
   if(s.mine){for(const m of mobs)if(m.st!=='dead'&&Math.hypot(s.x-m.x,s.y-(m.y-24))<14){shotHit(m,s);s.l=0;break;}}
   else if(Math.hypot(s.x-hero.x,s.y-(hero.y-24))<10){heroDamage(s.dmg*hitK81('r'));if(s.pm&&s.pm.m)tryPoison(s.pm);s.l=0;}if(s.l<=0)shots.splice(i,1);}
  // 줍기
- for(let i=drops.length-1;i>=0;i--){const d=drops[i];d.t+=dt;if(hero.st!=='dead'&&dist(d,hero)<16){gainDrop81(d.k);toast('['+GRADE[grd(d.k)].n+'] '+GEAR[d.k].n+'을(를) 주웠어요','g');drops.splice(i,1);refreshSide();}}
+ for(let i=drops.length-1;i>=0;i--){const d=drops[i];d.t+=dt;if(hero.st!=='dead'&&dist(d,hero)<16){if(INST81[d.k]&&bagFull107()){bagWarn107();continue;}gainDrop81(d.k);toast('['+GRADE[grd(d.k)].n+'] '+GEAR[d.k].n+'을(를) 주웠어요','g');drops.splice(i,1);refreshSide();}}
  for(let i=fx.length-1;i>=0;i--){fx[i].l-=dt;fx[i].y-=dt*22;if(fx[i].l<=0)fx.splice(i,1);}
  if(toastT>0){toastT-=dt;if(toastT<=0)$('toast').style.display='none';}
  {const nn=nearNpc(),nd=!nn&&nearNode();$('talk').style.display=!talk&&!gath&&(nn||nd)?'block':'none';const tx=nd?(nd.lb?nd.lb:nd.fix?'수리':nd.st?'사용':nd.chest?'열기':nd.rest?'쉬기':nd.vine?'자르기':nd.bchest?'열기':(nd.sp||nd.sp4)?'조사':'채집'):'말걸기';if($('talk').textContent!==tx)$('talk').textContent=tx;}
@@ -2431,7 +2431,7 @@ function drawInvBag(){const B=$('ivBag');const items=ivItems(),gearTab=IV.tab===
    <select id="ivSort">${opt('slot',IV.sort,'부위 순')}${opt('grade',IV.sort,'등급 높은 순')}${opt('enh',IV.sort,'강화 높은 순')}${opt('got',IV.sort,'얻은 순서')}${opt('new',IV.sort,'최신 아이템')}</select>
    ${IV.slot?`<button id="ivSlotX" class="iv-chip on">${IV_SN[GEAR_SLOT(IV.slot)]||IV.slot} 칸만 ✕</button>`:''}</div>`:''}
   <div class="iv-grid" id="ivGrid"></div>
-  <div class="iv-foot"><span><i class="coin"></i> ${P.gold}</span><span>📜 ${P.scroll|0}</span><span>${items.length}칸</span><button id="ivAll">시험용: 모든 장비</button></div>`;
+  <div class="iv-foot"><span><i class="coin"></i> ${P.gold}</span><span>📜 ${P.scroll|0}</span><span class="cap107${bagFull107()?' full':''}">장비 ${gearCnt107()}/${bagCap107()}칸</span>${APP86()?'<button id="ivCap107">＋ 칸 늘리기</button>':''}<button id="ivAll">시험용: 모든 장비</button></div>`;
  const G=$('ivGrid');
  if(!items.length)G.innerHTML=`<div class="iv-empty">${IV.tab==='quest'?'퀘스트 아이템이 없어요.':'여기에 맞는 아이템이 없어요.'}</div>`;
  for(const it of items){const b=document.createElement('button');const sel=IV.sel&&IV.sel.t===it.t&&IV.sel.k===it.k;b.className='iv-it'+(sel?' sel':'')+(it.t==='gear'&&!canWear(P,it.k)?' no':'');
@@ -8926,7 +8926,7 @@ const CHREC81=[['fogRec','안개숲'],['thornRec','가시왕숲'],['gobRec','고
 // ---------- 드롭 · 보스 보상 ----------
 function dropGear81(m){if(!m||!m.m||m.cl10||m.m.dummy||LATE81[m.m.id]||m.m.id==='versh_c')return;
  const tier=m.m.boss?'boss':m.m.elite?'elite':'mob';if(tier==='mob'&&Math.random()>=0.45)return;
- const T=Math.min(5,1+Math.floor(m.m.lv/3)),pool=Object.keys(GEAR).filter(k=>{const g=GEAR[k];return g.d1?0:g.s==='weapon'?g.atk<=4+m.m.lv*2:g.t<=T&&g.t>=T-1;});if(!pool.length)return;
+ const T=Math.min(5,1+Math.floor(m.m.lv/3)),pool=pool107(m.m.lv,T);if(!pool.length)return;
  const b=pool[Math.random()*pool.length|0],r=pickR81(DROPR81[tier]),iid=mkInst81(b,{r,l:m.m.lv,src:'drop'});if(iid)drops.push({k:iid,x:m.x,y:m.y,t:0});}
 function gainDrop81(iid){const r=INST81[iid];if(!r){P.bag[iid]=(P.bag[iid]||0)+1;return;}P.inv=P.inv||{};P.inv[iid]=r;P.bag[iid]=1;}
 const COREID81='lcore81';
@@ -9394,14 +9394,14 @@ function deadDraw86(){let e=$('dead86');if(!e){e=document.createElement('div');e
  const A=APP86(),rv=P.rv86|0,camp=dyingCamp86(),boss=(typeof BS8!=='undefined'&&BS8.lock)||(typeof BS9!=='undefined'&&BS9.lock)||(typeof BS10!=='undefined'&&BS10.lock);
  e.innerHTML=`<div class="bx"><h3>쓰러졌어요</h3><p>어떻게 할까요?${boss?'<br>보스와의 싸움은 처음부터 다시 해요.':''}</p><div class="bt">
   ${A?`<button class="gold" data-a="ad">${adRemoved86()?'바로 부활':'광고 보고 바로 부활'}</button>`:''}
-  ${rv>0?`<button class="gold" data-a="tk">부활권 쓰고 바로 부활 (${rv}장)</button>`:A?`<button data-a="buy">부활권 3장 사기 (${price86('revive_3')})</button>`:''}
+  ${rv>0?`<button class="gold" data-a="tk">부활권 쓰고 바로 부활 (${rv}장)</button>`:A?`<button data-a="buy">부활권 1장 사기 (💎${DITEM107.rv1.c})</button>`:''}
   <button data-a="town">${camp?'쉼터에서 일어나기':'마을에서 일어나기'}</button></div>
   <small id="dead86t">${Math.ceil(D86.t)}초 뒤 자동으로 ${camp?'쉼터':'마을'}에서 일어나요</small></div>`;
  e.querySelectorAll('button').forEach(b=>b.onclick=()=>{const a=b.dataset.a;
   if(a==='town'){deadClose86();hero.dt=0;}
   else if(a==='ad')showAd86('revive',revive86);
   else if(a==='tk'){if((P.rv86|0)<1)return;P.rv86--;revive86();}
-  else if(a==='buy')buy86('revive_3',()=>{if(D86.on)deadDraw86();});});}
+  else if(a==='buy')diaSpend107('rv1',()=>{if(D86.on)deadDraw86();});});}
 function revive86(){if(!D86.on||hero.st!=='dead')return;deadClose86();hero.st='idle';hero.dt=0;hero.f=0;P.hp=stats().hp;P.mp=mpMax();D86.imm=performance.now()+IMM86*1000;save();refreshSide();
  SND&&SND.play&&SND.play('pick');setTimeout(()=>toast('그 자리에서 다시 일어났어요 ('+IMM86+'초 동안 보호)','g'),60);}
 {const _up=update;update=function(dt){_up.apply(this,arguments);if(!P)return;
@@ -9418,7 +9418,7 @@ function revive86(){if(!D86.on||hero.st!=='dead')return;deadClose86();hero.st='i
  const ad=row('ad86','강화주문서 1장 (광고)',`광고를 보면 무료로 받아요 · 오늘 ${left}/${ADMAX86.scroll_daily}번 남음`,left>0?(adRemoved86()?'받기':'광고 보기'):'내일 다시',()=>{if(adLeft86('scroll_daily')<1)return;
   showAd86('scroll_daily',()=>{adUse86('scroll_daily');P.scroll=(P.scroll|0)+1;note='강화주문서 1장을 받았어요.';log(note,'g');save();refreshSide();drawShop();});});
  if(left<1)ad.querySelector('button').disabled=true;
- for(const [id,n] of [['scroll_10',10],['scroll_30',30]])row('pay86',`강화주문서 ${n}장 묶음`,'현금 결제 · 사지 않아도 게임 안에서 다 얻을 수 있어요',price86(id),()=>buy86(id,()=>{if(isOpen('pShop'))drawShop();}));};}
+ for(const id of ['sc1','sc10'])row('pay86',DITEM107[id].n,'다이아로 사요 · 사지 않아도 게임 안에서 다 얻을 수 있어요','💎'+DITEM107[id].c,()=>diaSpend107(id,()=>{if(isOpen('pShop'))drawShop();}));};}
 
 // 3) 설정: 광고 제거 · 부활권 · 클라우드 저장 (앱에서만 보여요)
 {const _do=drawOpt78;drawOpt78=function(){const had=!!$('opt78');_do.apply(this,arguments);const A=APP86(),o=$('opt78');if(had||!A||!o||!P)return;
@@ -9426,13 +9426,13 @@ function revive86(){if(!D86.on||hero.st!=='dead')return;deadClose86();hero.st='i
  const rm=adRemoved86();
  w.innerHTML=`<h4>상점·저장</h4>
   <div class="row86">${rm?'<small style="flex:1">광고 제거됨 · 광고 보상은 광고 없이 바로 받아요</small>':`<button data-a="noads">광고 제거 (${price86('noads')})</button>`}</div>
-  <div class="row86"><small style="flex:1">부활권 ${P.rv86|0}장 · 쓰러졌을 때 그 자리에서 일어나요</small><button data-a="rv">3장 사기 (${price86('revive_3')})</button></div>
+  <div class="row86"><small style="flex:1">부활권 ${P.rv86|0}장 · 쓰러졌을 때 그 자리에서 일어나요</small><button data-a="rv">3장 사기 (💎${DITEM107.rv3.c})</button></div>
   ${A.cloud?`<div class="row86"><button data-a="up">클라우드에 저장 올리기</button><button data-a="down">클라우드에서 받기</button></div>
   <small>클라우드에서 받으면 이 기기의 저장이 바뀌고 게임이 다시 켜져요.</small>`:''}`;
  const C=A.cloud||{};let arm=0;
  w.querySelectorAll('button').forEach(b=>b.onclick=()=>{const a=b.dataset.a;
   if(a==='noads')buy86('noads',()=>{if($('opt78')){$('opt78').remove();drawOpt78();}});
-  else if(a==='rv')buy86('revive_3',()=>{if($('opt78')){$('opt78').remove();drawOpt78();}});
+  else if(a==='rv')diaSpend107('rv3',()=>{if($('opt78')){$('opt78').remove();drawOpt78();}});
   else if(a==='up'){if(!C.backup)return;save();Promise.resolve(C.backup()).then(r=>toast(r&&r.ok===false?'올리지 못했어요':'클라우드에 저장을 올렸어요','g')).catch(()=>toast('올리지 못했어요','w'));}
   else if(a==='down'){if(!C.restore)return;if(!arm){arm=1;b.textContent='한 번 더 누르면 받아요';setTimeout(()=>{arm=0;b.textContent='클라우드에서 받기';},3000);return;}
    Promise.resolve(C.restore()).then(r=>{if(r&&r.ok===false)toast('받지 못했어요','w');}).catch(()=>toast('받지 못했어요','w'));}});
@@ -9472,7 +9472,7 @@ setTimeout(resize,50);
   b.innerHTML='<svg viewBox="0 0 24 24" fill="#e0b866"><path d="M12 2l3 7h7l-6 4 2 8-6-5-6 5 2-8-6-4h7z"/></svg>스킬<b class="dot88"></b>';b.onclick=()=>toggle('pSkill');
   const q=$('mQuest');if(q&&q.parentNode===g)g.insertBefore(b,q.nextSibling);else g.appendChild(b);}
  if(g&&!$('mCash')){const b=document.createElement('button');b.className='ib';b.id='mCash';b.style.display='none';
-  b.innerHTML='<span style="font-size:20px;line-height:22px">💎</span>현금 상점';b.onclick=()=>openCash88();g.appendChild(b);}}
+  b.innerHTML='<span style="font-size:20px;line-height:22px">💎</span>다이아 상점';b.onclick=()=>openCash88();g.appendChild(b);}}
 function menuSync88(){const n=typeof ptsLeft==='function'&&P?ptsLeft():0,d=document.querySelector('#mSkill .dot88');if(d){d.style.display=n>0?'block':'none';d.textContent=n;}
  const c=$('mCash');if(c)c.style.display=APP86()?'':'none';}
 {const _op=openPan;openPan=function(id){_op.apply(this,arguments);if(id==='pMenu')menuSync88();};}
@@ -9637,7 +9637,7 @@ function roll95(tab){const t=Math.random()*100;let a=0;for(const r of Object.key
 {const _dg=dropGear81;dropGear81=function(m){const t=tier95(m);if(t==='mob')return _dg.apply(this,arguments);
  if(!m||!m.m||m.cl10||m.m.dummy||LATE81[m.m.id]||m.m.id==='versh_c')return;
  const r=roll95(DROP95[late95(m.m.lv)?'late':'early'][t]);if(!r)return;
- const T=Math.min(5,1+Math.floor(m.m.lv/3)),pool=Object.keys(GEAR).filter(k=>{const g=GEAR[k];return g.d1?0:g.s==='weapon'?g.atk<=4+m.m.lv*2:g.t<=T&&g.t>=T-1;});if(!pool.length)return;
+ const T=Math.min(5,1+Math.floor(m.m.lv/3)),pool=pool107(m.m.lv,T);if(!pool.length)return;
  const b=pool[Math.random()*pool.length|0],iid=mkInst81(b,{r,l:m.m.lv,src:'drop'});if(iid){drops.push({k:iid,x:m.x,y:m.y,t:0});log('['+GRADE[r].n+'] '+GEAR[b].n+'이(가) 떨어졌어요!','g');}};}
 // 후반 지정 보스(카이렌·수호병기·수문장·베르샤르): 장비는 영웅 2% · 전설 1%, 전설의 핵은 예전 그대로
 bossLoot81=function(id,first){const L=LATE81[id];if(!L||!P)return;
@@ -9653,7 +9653,7 @@ const MOBDROP96={1:7,2:2,3:1};
 {const _dg=dropGear81;dropGear81=function(m){if(tier95(m)!=='mob')return _dg.apply(this,arguments);
  if(!m||!m.m||m.cl10||m.m.dummy||LATE81[m.m.id]||m.m.id==='versh_c')return;
  const r=roll95(MOBDROP96);if(!r)return;
- const T=Math.min(5,1+Math.floor(m.m.lv/3)),pool=Object.keys(GEAR).filter(k=>{const g=GEAR[k];return g.d1?0:g.s==='weapon'?g.atk<=4+m.m.lv*2:g.t<=T&&g.t>=T-1;});if(!pool.length)return;
+ const T=Math.min(5,1+Math.floor(m.m.lv/3)),pool=pool107(m.m.lv,T);if(!pool.length)return;
  const b=pool[Math.random()*pool.length|0],iid=mkInst81(b,{r,l:m.m.lv,src:'drop'});if(iid)drops.push({k:iid,x:m.x,y:m.y,t:0});};}
 
 /* ===== v97: 일반 장비(상점·드롭·대장간) 능력치 = 같은 레벨 제작 장비의 85% ===== */
@@ -10023,6 +10023,123 @@ function fix106(){if(!P||!P.inv)return 0;let n=0;
   if(INST81[iid]&&INST81[iid]!==r)INST81[iid]=r;delete VIEW81[iid];n++;}
  if(n){try{save();refreshSide();}catch(e){}}return n;}
 {const _sg=startGame;startGame=function(){const r=_sg.apply(this,arguments);try{const n=fix106();if(n)console.log('[v106] 장비 '+n+'개 원래 레벨로');}catch(e){console.warn('[v106]',e);}return r;};}
+
+// ===================== v107 (사용자 요청 2026-11-05) =====================
+// 1) 후반 사냥터용 일반 장비 Lv32·38·44·50 (그림은 원래 장비에 색만, 수치는 레벨에 고정)
+// 2) 장비 가방 기본 30칸 · 다이아로 5칸씩 영구 늘리기 (최대 80칸)
+// 3) 현금 상점 → 다이아 상점: 다이아는 현금으로(첫 구매 2배), 주문서·부활권·가방 칸·상자는 다이아로
+
+// ---------- 1) 후반 일반 장비 ----------
+const NLV107=[[32,'흑철',['n32',220,.18,.38]],[38,'은빛',['n38',205,.3,.78]],[44,'청옥',['n44',160,.5,.5]],[50,'마계',['n50',285,.55,.42]]];
+const NSRC107=(()=>{const L=['w_redglow','w_glowsword','w_scimitar','w_bowD','w_diamondR','w_gnarledR',
+  'g_helm','hat_helmet_mail','g_torso','torso_armour_leather','tabW','shield_crusader','g_legs','legs_pants','g_feet','g_arms','g_paul','neck_necklace_chain'];
+ const best=f=>{let b=null;for(const k in GEAR){const g=GEAR[k];if(g.d1||!f(k,g))continue;if(!b||(g.t||1)>(GEAR[b].t||1))b=k;}return b;};
+ const cape=best((k,g)=>g.s==='cape'),mh=best(k=>/hat_magic/.test(k)),belt=best((k,g)=>g.s==='belt');
+ return [...L,cape,mh,belt].filter(k=>k&&GEAR[k]);})();
+{const _lv=lvOf81;lvOf81=function(b){const g=GEAR[b];if(g&&g.lv107)return g.lv107;return _lv.apply(this,arguments);};}
+(()=>{for(const [lv,pre,tc] of NLV107)for(const src of NSRC107){const g0=GEAR[src],k=src+'_L'+lv;if(GEAR[k])continue;
+  const lb=lvOf81(src),s=g0.s,mk=main97(s),ref=CUR97[s],useRef=ref&&ref[mk]&&ref[mk].some(p=>p[1]>0);
+  const f=useRef?(at97(AVG97[s]&&AVG97[s][mk],lv)/Math.max(.01,at97(AVG97[s]&&AVG97[s][mk],lb))):grow97(lv)/grow97(lb);
+  const g=Object.assign({},g0,{n:pre+' '+g0.n.replace(/^금 /,''),src:g0.src||src,t:6,lv107:lv,tc});
+  for(const st of ST97)if(g0[st])g[st]=Math.max(1,Math.round(g0[st]*f));
+  GEAR[k]=g;if(RANGED[src])RANGED[k]=RANGED[src];for(const c in CW)if(CW[c].includes(src))CW[c].push(k);}})();
+// 몬스터 드롭 목록: 28레벨 미만은 예전 그대로, 그 위는 몬스터 레벨 -8 ~ +2 사이 아이템 레벨
+function pool107(lv,T){const old=k=>{const g=GEAR[k];return g.d1||g.lv107?0:g.s==='weapon'?g.atk<=4+lv*2:g.t<=T&&g.t>=T-1;};const ks=Object.keys(GEAR);
+ if(lv<28)return ks.filter(old);
+ return ks.filter(k=>{const g=GEAR[k];if(g.d1||INST81[k])return 0;const L=lvOf81(k);if(g.lv107)return L<=lv+2&&L>=lv-8;return old(k)&&L>=lv-8;});}
+
+// ---------- 2) 장비 가방 칸 ----------
+const BAG0_107=30,BAGADD107=5,BAGMAXX107=50;
+const bagCap107=()=>BAG0_107+Math.min(BAGMAXX107,P&&P.bagx107|0);
+function gearCnt107(){if(!P||!P.bag)return 0;const eq=new Set(Object.values(P.eq||{}));let n=0;for(const k in P.bag)if((P.bag[k]|0)>0&&INST81[k]&&!eq.has(k))n++;return n;}
+const bagFull107=()=>gearCnt107()>=bagCap107();
+let BAGW107=-1e9;
+function bagWarn107(){const t=performance.now();if(t-BAGW107<3000)return;BAGW107=t;toast('장비 가방이 가득 찼어요 ('+gearCnt107()+'/'+bagCap107()+') · 팔거나 분해하거나, 다이아 상점에서 칸을 늘려요','w');}
+{const _b=buy;buy=function(k){if(!POT[k]&&GEAR[k]&&bagFull107()){note='장비 가방이 가득 찼어요. ('+gearCnt107()+'/'+bagCap107()+')';bagWarn107();drawShop();return;}return _b.apply(this,arguments);};}
+{const _c=craft;craft=function(k){if(!POT[k]&&GEAR[k]&&bagFull107()){bagWarn107();return;}return _c.apply(this,arguments);};}
+{const _d=drawInv;drawInv=function(){_d.apply(this,arguments);const b=$('ivCap107');if(b)b.onclick=()=>{closeAll();openDia107('item');};};}
+
+// ---------- 3) 다이아 상점 ----------
+const today107=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();};
+const diaN107=()=>DB.dia107|0;
+const fmt107=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+// 현금으로 사는 다이아 묶음 (앱 상품 ID · 다이아 수 · 원래 정한 가격). 묶음마다 첫 구매는 2배.
+const PACK107=[['dia_90',90,'3,300원'],['dia_160',160,'5,500원'],['dia_340',340,'11,000원'],['dia_1100',1100,'33,000원']];
+// 다이아로 사는 것
+const DITEM107={
+ sc1:{n:'강화주문서 1장',d:'바로 들어가요',c:30,ico:'📜',go:()=>{P.scroll=(P.scroll|0)+1;return '강화주문서 1장';}},
+ sc10:{n:'강화주문서 10장',d:'1장씩 사는 것보다 싸요',c:270,ico:'📜',go:()=>{P.scroll=(P.scroll|0)+10;return '강화주문서 10장';}},
+ rv1:{n:'부활권 1장',d:'그 자리에서 일어나요',c:30,ico:'✨',go:()=>{P.rv86=(P.rv86|0)+1;return '부활권 1장';}},
+ rv3:{n:'부활권 3장',d:'그 자리에서 일어나요',c:80,ico:'✨',go:()=>{P.rv86=(P.rv86|0)+3;return '부활권 3장';}},
+ bag5:{n:'장비 가방 +5칸',d:'이 캐릭터 영구 · 최대 80칸',c:100,ico:'🎒',ok:()=>(P.bagx107|0)<BAGMAXX107||'가방은 80칸이 최대예요',go:()=>{P.bagx107=(P.bagx107|0)+BAGADD107;return '장비 가방 '+bagCap107()+'칸';}},
+ box_gold:{n:'골드 상자',d:'레벨×80~200 골드',c:20,day:10,ico:'💰',box:1,go:()=>{const g=Math.round(P.lv*(80+Math.random()*120));P.gold+=g;return fmt107(g)+' 골드';}},
+ box_sc:{n:'주문서 상자',d:'강화주문서 1~3장',c:40,day:5,ico:'📜',box:1,go:()=>{const r=Math.random(),n=r<.6?1:r<.9?2:3;P.scroll=(P.scroll|0)+n;return '강화주문서 '+n+'장';}},
+ box_gear:{n:'장비 상자',d:'내 레벨 장비 1개<br>고급 60 · 희귀 32 · 영웅 8%',c:120,day:3,ico:'⚔️',box:1,ok:()=>!bagFull107()||'장비 가방이 가득 찼어요',
+  go:()=>{const T=Math.min(5,1+Math.floor(P.lv/3));let pool=pool107(P.lv,T).filter(k=>canWear(P,k)&&!/^shirt|^face|^ear/.test(GEAR[k].s));if(!pool.length)pool=Object.keys(GEAR).filter(k=>!GEAR[k].d1&&!INST81[k]&&canWear(P,k));
+   const b=pool[Math.random()*pool.length|0],x=Math.random(),r=x<.6?2:x<.92?3:4,iid=addGear81(b,'box',{r});return '['+GRADE[r].n+'] '+GEAR[b].n+(iid?'':'');}}};
+function dayLeft107(id){const it=DITEM107[id];if(!it.day)return Infinity;DB.dbox107=DB.dbox107&&DB.dbox107.d===today107()?DB.dbox107:{d:today107(),n:{}};return it.day-(DB.dbox107.n[id]|0);}
+function diaSpend107(id,after){const it=DITEM107[id];if(!it||!P)return false;
+ if(diaN107()<it.c){toast('다이아가 모자라요 (💎'+it.c+' 필요)','w');return false;}
+ if(dayLeft107(id)<1){toast('오늘은 다 샀어요. 내일 다시 살 수 있어요','w');return false;}
+ if(it.ok){const o=it.ok();if(o!==true){toast(o,'w');return false;}}
+ DB.dia107=diaN107()-it.c;if(it.day){dayLeft107(id);DB.dbox107.n[id]=(DB.dbox107.n[id]|0)+1;}
+ const got=it.go();save();saveDB();refreshSide();toast((it.box?it.n+' → ':'')+got+' 받았어요','g');log('다이아 상점: '+(it.box?it.n+' → ':'')+got,'g');if(after)after(got);return true;}
+// 앱 결제 끝 → 다이아 지급 (계정 공용 · 캐릭터를 고르기 전이어도 바로)
+{const _g=window.GAME_GRANT;window.GAME_GRANT=function(id){const p=PACK107.find(x=>x[0]===id);if(!p)return _g?_g.apply(this,arguments):false;
+ try{DB.diaF107=DB.diaF107||{};const first=!DB.diaF107[id],n=p[1]*(first?2:1);DB.dia107=diaN107()+n;DB.diaF107[id]=1;if(!saveDB())return false;
+  toast('💎 다이아 '+fmt107(n)+'개를 받았어요'+(first?' (첫 구매 2배)':''),'g');if($('dia107'))drawDia107();return true;}catch(e){return false;}};}
+let DTAB107='buy',DARM107=null;
+function openDia107(tab){closeAll();prodLoad86();DTAB107=tab||'buy';DARM107=null;drawDia107();}
+openCash88=function(){openDia107('buy');};
+{const _p=prodLoad86;prodLoad86=function(){_p.apply(this,arguments);setTimeout(()=>{if($('dia107'))drawDia107();},400);};}
+{const st=document.createElement('style');st.textContent=`
+#dia107{position:fixed;inset:0;z-index:8000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6)}
+#dia107 .bx{display:flex;flex-direction:column;background:linear-gradient(#1b2236,#0b0f1c);border:2px solid #c9a45c;border-radius:12px;width:min(760px,96vw);height:min(400px,94vh);color:#eee;font-size:13px;box-shadow:0 6px 24px #000a;overflow:hidden}
+#dia107 .hd{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid rgba(201,164,92,.35);background:rgba(0,0,0,.25)}
+#dia107 .hd b{font-size:17px;color:#ffd34a;flex:1}#dia107 .hd .bal{font-weight:800;color:#bfe8ff;background:rgba(0,0,0,.4);border:1px solid #4a78a8;border-radius:14px;padding:3px 12px;font-variant-numeric:tabular-nums}
+#dia107 .hd .x{min-width:36px;min-height:32px}
+#dia107 .bd{display:flex;flex:1;min-height:0}
+#dia107 .tb{display:flex;flex-direction:column;gap:4px;padding:8px;width:104px;flex-shrink:0;background:rgba(0,0,0,.25);border-right:1px solid rgba(201,164,92,.25)}
+#dia107 .tb button{padding:10px 6px;border-radius:8px;font-weight:700;background:transparent;border:1px solid transparent;color:#cfc8b4;text-align:left}
+#dia107 .tb button.on{background:linear-gradient(#3a4a6a,#24304a);border-color:#6a8ac0;color:#fff}
+#dia107 .gd{flex:1;overflow-y:auto;padding:10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;align-content:start;grid-auto-rows:max-content;touch-action:pan-y}
+#dia107 .cd{position:relative;display:flex;flex-direction:column;align-items:center;border:1px solid rgba(120,160,220,.35);border-radius:9px;background:radial-gradient(circle at 50% 35%,#2a3e60,#121a2c 70%);padding:8px 6px 6px;overflow:hidden;min-height:max-content}
+#dia107 .cd .art{height:62px;display:flex;align-items:center;justify-content:center;font-size:40px;filter:drop-shadow(0 0 8px rgba(120,200,255,.6))}
+#dia107 .cd .art i{font-style:normal;display:inline-block;margin:0 -7px}
+#dia107 .cd .nm{font-weight:800;font-size:13px;text-align:center;margin-top:2px}#dia107 .cd .nm em{font-style:normal;color:#ff7aa8}
+#dia107 .cd .ds{font-size:10.5px;color:#aab;text-align:center;min-height:14px;line-height:1.3;margin:2px 0 5px}
+#dia107 .cd button{width:100%;margin-top:auto;padding:7px 4px;font-weight:800;border-radius:7px}
+#dia107 .cd button.arm{background:linear-gradient(#e0a040,#a06010);color:#fff}
+#dia107 .rb{position:absolute;left:-26px;top:10px;transform:rotate(-40deg);width:96px;text-align:center;font-size:9.5px;font-weight:900;color:#fff;background:#d23a4a;padding:2px 0;box-shadow:0 1px 3px #0008}
+#dia107 .rb.g{background:#3aa04a}
+#dia107 .lim{position:absolute;right:6px;top:5px;font-size:10px;color:#ffd34a;background:rgba(0,0,0,.5);border-radius:8px;padding:1px 6px}
+#dia107 .nt{grid-column:1/-1;font-size:11px;color:#9aa;margin-top:2px}
+#dia107 .row{grid-column:1/-1;display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid rgba(201,164,92,.35);border-radius:8px;background:rgba(0,0,0,.25)}
+#dia107 .row span{flex:1;font-size:12px}
+.iv-foot .cap107.full{color:#ff7a6a;font-weight:800}
+#ivCap107{padding:2px 8px;font-size:11px;border-radius:10px}
+`;document.head.appendChild(st);}
+function gems107(n){const c=n>=1000?5:n>=300?4:n>=150?3:2;return Array.from({length:c},(_,i)=>`<i style="font-size:${30+i%2*8}px">💎</i>`).join('');}
+function drawDia107(){let e=$('dia107');if(!e){e=document.createElement('div');e.id='dia107';document.body.appendChild(e);e.onclick=ev=>{if(ev.target===e)e.remove();};}
+ const A=APP86(),rm=adRemoved86(),F=DB.diaF107||{};let h='';
+ if(DTAB107==='buy'){h=PACK107.map(([id,n,won])=>{const f=!F[id],pr=PROD86[id]&&PROD86[id].price;
+   return `<div class="cd">${f?'<div class="rb">첫 구매 2배</div>':''}<div class="art">${gems107(n)}</div><div class="nm">${f?`${fmt107(n)} <em>+ ${fmt107(n)}</em>`:fmt107(n)} 다이아</div><div class="ds">${f?'묶음마다 처음 한 번만 2배':'&nbsp;'}</div><button data-p="${id}" ${A&&pr?'':'disabled'}>${pr||(A?'준비 중':won)}</button></div>`;}).join('')+
+  `<div class="row"><span><b>광고 제거</b> · 광고 보상을 광고 없이 바로 받아요 (한 번 사면 계속)</span><button data-p="noads" ${rm||!A||!(PROD86.noads&&PROD86.noads.price)?'disabled':''}>${rm?'구매함':PROD86.noads&&PROD86.noads.price||'준비 중'}</button></div>`+
+  `<div class="nt">다이아는 이 기기의 모든 캐릭터가 같이 써요. 다이아로 사는 것은 모두 게임 안에서도 얻을 수 있어요.${A?'':' (웹에서는 다이아를 살 수 없어요 · 앱에서만)'}</div>`;}
+ else{const ids=DTAB107==='box'?['box_gold','box_sc','box_gear']:['bag5','sc1','sc10','rv1','rv3'];
+  h=ids.map(id=>{const it=DITEM107[id],left=dayLeft107(id),arm=DARM107===id;
+   const extra=id==='bag5'?`지금 ${gearCnt107()}/${bagCap107()}칸`:id.startsWith('rv')?`가진 것 ${P.rv86|0}장`:id.startsWith('sc')?`가진 것 ${P.scroll|0}장`:'';
+   return `<div class="cd">${it.day?`<div class="lim">매일 ${it.day-left}/${it.day}</div>`:''}${id==='sc10'?'<div class="rb g">10% 할인</div>':''}<div class="art" style="filter:drop-shadow(0 0 8px rgba(255,200,90,.6))">${it.box?'<span style="font-size:44px">🎁</span><span style="font-size:22px;margin-left:-14px;margin-top:22px">'+it.ico+'</span>':it.ico}</div><div class="nm">${it.n}</div><div class="ds">${it.d}${extra?'<br>'+extra:''}</div><button data-d="${id}" class="${arm?'arm':''}" ${left<1?'disabled':''}>${left<1?'오늘 끝':arm?'한 번 더 누르면 사요':'💎 '+fmt107(it.c)}</button></div>`;}).join('')+
+  `<div class="nt">${DTAB107==='box'?'상자는 매일 살 수 있는 횟수가 정해져 있어요 (밤 12시에 다시 채워져요).':'산 것은 지금 캐릭터에게 바로 들어가요.'}</div>`;}
+ e.innerHTML=`<div class="bx"><div class="hd"><b>💎 다이아 상점</b><span class="bal">💎 ${fmt107(diaN107())}</span>${A&&A.shop.restore?'<button data-a="rs">구매 복원</button>':''}<button class="x" data-a="x">✕</button></div>
+  <div class="bd"><div class="tb">${[['buy','💎 다이아'],['box','🎁 상자'],['item','📦 아이템']].map(([t,n])=>`<button data-t="${t}" class="${DTAB107===t?'on':''}">${n}</button>`).join('')}</div><div class="gd">${h}</div></div></div>`;
+ e.querySelectorAll('button').forEach(b=>b.onclick=()=>{const d=b.dataset;
+  if(d.a==='x'){e.remove();return;}
+  if(d.a==='rs'){try{Promise.resolve(A.shop.restore()).then(()=>{toast('구매 내역을 다시 불러왔어요','g');drawDia107();}).catch(()=>toast('복원하지 못했어요','w'));}catch(err){}return;}
+  if(d.t){DTAB107=d.t;DARM107=null;drawDia107();return;}
+  if(d.p){buy86(d.p,()=>{if($('dia107'))drawDia107();});return;}
+  if(d.d){if(DARM107!==d.d){DARM107=d.d;drawDia107();setTimeout(()=>{if(DARM107===d.d){DARM107=null;if($('dia107'))drawDia107();}},2500);return;}
+   DARM107=null;diaSpend107(d.d);drawDia107();}});}
 
 openSelect();
 </script>
