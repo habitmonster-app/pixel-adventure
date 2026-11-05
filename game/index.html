@@ -9457,5 +9457,71 @@ window.GAME_PAUSE=h=>SND.pause(!!h);
  const sm=o.querySelector(':scope>small:last-of-type');o.insertBefore(w,sm||null);};}
 setTimeout(resize,50);
 
+
+/* ===== v88: 화면 정리 — 위쪽 가방·캐릭터·스킬 버튼 빼기(메뉴에 있음) · 캐릭터 창에서 장비 칸 누르면 가방 같이 · 부위별 정렬 · 현금 상점 · 아이템 정보 버튼 항상 보이게 ===== */
+// 1) 위쪽 버튼: 가방·캐릭터·스킬은 숨기고, 스킬 점수 빨간 숫자는 메뉴 버튼으로
+{['bBag','bChar','bSkill'].forEach(id=>{const b=$(id);if(b)b.style.display='none';});
+ const d=$('skDot'),m=$('bMenu');if(d&&m){m.style.position='relative';m.appendChild(d);}
+ const g=document.querySelector('#pMenu .mgrid');
+ if(g&&!$('mSkill')){const b=document.createElement('button');b.className='ib';b.id='mSkill';b.style.position='relative';
+  b.innerHTML='<svg viewBox="0 0 24 24" fill="#e0b866"><path d="M12 2l3 7h7l-6 4 2 8-6-5-6 5 2-8-6-4h7z"/></svg>스킬<b class="dot88"></b>';b.onclick=()=>toggle('pSkill');
+  const q=$('mQuest');if(q&&q.parentNode===g)g.insertBefore(b,q.nextSibling);else g.appendChild(b);}
+ if(g&&!$('mCash')){const b=document.createElement('button');b.className='ib';b.id='mCash';b.style.display='none';
+  b.innerHTML='<span style="font-size:20px;line-height:22px">💎</span>현금 상점';b.onclick=()=>openCash88();g.appendChild(b);}}
+function menuSync88(){const n=typeof ptsLeft==='function'&&P?ptsLeft():0,d=document.querySelector('#mSkill .dot88');if(d){d.style.display=n>0?'block':'none';d.textContent=n;}
+ const c=$('mCash');if(c)c.style.display=APP86()?'':'none';}
+{const _op=openPan;openPan=function(id){_op.apply(this,arguments);if(id==='pMenu')menuSync88();};}
+
+// 4) 현금 상점 (앱에서만 · 웹에서는 버튼이 안 보여요)
+const CASH88=[['noads','광고 제거','광고 보상을 광고 없이 바로 받아요 (한 번 사면 계속)'],['scroll_10','강화주문서 10장','지금 캐릭터에게 바로 들어가요'],['scroll_30','강화주문서 30장','지금 캐릭터에게 바로 들어가요'],['revive_3','부활권 3장','쓰러졌을 때 그 자리에서 일어나요']];
+function openCash88(){closeAll();prodLoad86();drawCash88();}
+function drawCash88(){let e=$('cash88');if(!e){e=document.createElement('div');e.id='cash88';document.body.appendChild(e);e.onclick=ev=>{if(ev.target===e)e.remove();};}
+ const A=APP86(),rm=adRemoved86();
+ e.innerHTML=`<div class="bx"><div class="hd"><b>💎 현금 상점</b><button class="x" data-a="x">✕</button></div>
+  <div class="have">가진 것: 강화주문서 ${P?P.scroll|0:0}장 · 부활권 ${P?P.rv86|0:0}장${rm?' · 광고 제거됨':''}</div>
+  <div class="ls">${CASH88.map(([id,n,d])=>{const own=id==='noads'&&rm,pr=PROD86[id]&&PROD86[id].price;
+   return `<div class="it"><div class="tx"><b>${n}</b><span>${d}</span></div><button data-id="${id}" ${own||!pr?'disabled':''}>${own?'구매함':pr||'준비 중'}</button></div>`;}).join('')}</div>
+  <div class="ft"><small>사지 않아도 게임 안에서 다 얻을 수 있어요.</small>${A&&A.shop.restore?'<button data-a="rs">구매 복원</button>':''}</div></div>`;
+ e.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(b.dataset.a==='x'){e.remove();return;}
+  if(b.dataset.a==='rs'){try{Promise.resolve(A.shop.restore()).then(()=>{toast('구매 내역을 다시 불러왔어요','g');drawCash88();}).catch(()=>toast('복원하지 못했어요','w'));}catch(err){}return;}
+  if(b.dataset.id)buy86(b.dataset.id,()=>{if($('cash88'))drawCash88();});});}
+{const _p=prodLoad86;prodLoad86=function(){_p.apply(this,arguments);setTimeout(()=>{if($('cash88'))drawCash88();},400);};}
+
+// 2·3) 캐릭터 창에서 장비 칸을 누르면: 장비 인형 + 그 칸 가방 목록 + 정보 (예전 '장비·가방'처럼)
+{const _de=drawInvEq;drawInvEq=function(){_de.apply(this,arguments);if(ivTabMode())return;
+ document.querySelectorAll('#ivL>*,#ivR>*,#ivW>*').forEach(el=>{const o=el.onclick;if(!o||el.dataset.w88)return;el.dataset.w88=1;
+  el.onclick=function(){const v0=IV.v;o.apply(this,arguments);if(v0!=='eq')return;const s=IV.sel&&IV.sel.slot||IV.slot;if(!s)return;
+   IV.mix88=1;IV.v='eq';IV.slot=s;IV.tab='gear';IV.kind='all';drawInv();};});};}
+{const _d=drawInv;drawInv=function(){_d.apply(this,arguments);const W=$('pInv');if(!W||!isOpen('pInv')||ivTabMode())return;
+ const mix=IV.mix88&&IV.v==='eq';W.classList.toggle('mix88',!!mix);if(mix){W.classList.remove('sp85');const t=W.querySelector('.ph>span');if(t)t.textContent='장비 · 가방';}};}
+{const _o=openInv;openInv=function(v){IV.mix88=0;_o.apply(this,arguments);};}
+{const _c=closeInv;closeInv=function(){IV.mix88=0;_c.apply(this,arguments);};}
+
+// 정렬 버튼: 부위별(무기 · 투구 · 갑옷 · 장화 …)로 모아서 이름표를 붙여 보여요
+{const _db=drawInvBag;drawInvBag=function(){_db.apply(this,arguments);const B=$('ivBag'),F=B&&B.querySelector('.iv-flt');
+ if(F&&!$('ivSort88')){const b=document.createElement('button');b.id='ivSort88';b.className='iv-chip'+(IV.sort==='slot'?' on':'');b.textContent='⇅ 부위별 정렬';
+  b.onclick=()=>{IV.sort='slot';IV.kind='all';drawInv();};const k=F.querySelector('.iv-kind');F.insertBefore(b,k?k.nextSibling:F.firstChild);}
+ if(IV.sort!=='slot')return;const G=$('ivGrid');if(!G)return;const items=ivItems(),cells=[...G.querySelectorAll('.iv-it')];if(cells.length!==items.length)return;
+ const grp=it=>it.t==='gear'?(GEAR[it.k]&&IV_SN[GEAR_SLOT(GEAR[it.k].s)])||'장비':it.t==='scroll'?'강화주문서':it.t==='pot'||it.t==='spec'?'소비':it.t==='quest'?'퀘스트':'재료';
+ let last=null;items.forEach((it,i)=>{const g=grp(it);if(g!==last){const h=document.createElement('div');h.className='grp88';h.textContent=g;G.insertBefore(h,cells[i]);last=g;}});};}
+
+// 5) 아이템 정보: 장착·강화·잠금·분해 버튼은 아래에 늘 보이고, 위 내용만 스크롤
+{const _dd=drawInvDet;drawInvDet=function(){_dd.apply(this,arguments);if(ivTabMode())return;const D=$('ivDet');if(!D)return;const bs=[...D.querySelectorAll(':scope>.iv-btns')];if(!bs.length)return;
+ const sc=document.createElement('div');sc.className='dsc88';const ft=document.createElement('div');ft.className='dft88';
+ [...D.childNodes].forEach(n=>{(n.classList&&n.classList.contains('iv-btns')?ft:sc).appendChild(n);});D.appendChild(sc);D.appendChild(ft);D.classList.add('det88');};}
+
+{const st=document.createElement('style');st.textContent=`.dot88{position:absolute;right:4px;top:2px;min-width:16px;height:16px;border-radius:8px;background:#d9342a;color:#fff;font-size:10px;font-weight:700;line-height:16px;display:none}
+#pInv.mix88 .iv-body{grid-template-columns:minmax(230px,.9fr) minmax(0,1.3fr) minmax(220px,280px)}
+.iv-grid .grp88{grid-column:1/-1;font-size:11px;color:#e0b866;font-weight:700;border-bottom:1px solid rgba(201,164,92,.3);padding:4px 2px 2px;margin-top:2px}
+.iv-det.det88{overflow:hidden;padding-bottom:6px}.iv-det.det88 .dsc88{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:6px;-webkit-overflow-scrolling:touch}
+.iv-det.det88 .dft88{flex:none;display:flex;flex-direction:column;gap:5px;padding-top:6px;border-top:1px solid rgba(201,164,92,.25)}.iv-det.det88 .dft88 .iv-btns{margin:0}
+#cash88{position:fixed;inset:0;z-index:8000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55)}
+#cash88 .bx{background:linear-gradient(#1a2038,#0a0d1a);border:2px solid #c9a45c;border-radius:12px;padding:12px 14px;width:min(460px,92vw);max-height:92vh;overflow:auto;color:#eee;font-size:13px;box-shadow:0 6px 24px #000a}
+#cash88 .hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}#cash88 .hd b{font-size:16px;color:#ffd34a}#cash88 .x{min-width:34px;min-height:30px}
+#cash88 .have{font-size:11px;color:#cfc8b4;margin-bottom:8px}#cash88 .ls{display:flex;flex-direction:column;gap:6px}
+#cash88 .it{display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid rgba(201,164,92,.35);border-radius:8px;background:rgba(0,0,0,.25)}
+#cash88 .it .tx{flex:1;display:flex;flex-direction:column}#cash88 .it .tx span{font-size:11px;color:#a9a28e}#cash88 .it button{min-width:88px;min-height:36px;font-weight:700;background:linear-gradient(#e8c470,#a87a2a);color:#1a1206}
+#cash88 .it button:disabled{background:#333;color:#888}#cash88 .ft{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}#cash88 .ft small{color:#9a917c;font-size:11px}`;document.head.appendChild(st);}
+
 openSelect();
 </script>
