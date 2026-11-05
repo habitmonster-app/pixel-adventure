@@ -10141,5 +10141,17 @@ function drawDia107(){let e=$('dia107');if(!e){e=document.createElement('div');e
   if(d.d){if(DARM107!==d.d){DARM107=d.d;drawDia107();setTimeout(()=>{if(DARM107===d.d){DARM107=null;if($('dia107'))drawDia107();}},2500);return;}
    DARM107=null;diaSpend107(d.d);drawDia107();}});}
 
+// ===================== v108: 다이아 값 다시 매기기 (사용자 2026-11-05) =====================
+// 기준: 다이아 100개 = 9,900원 (1개 ≈ 99원) · 강화주문서 1장 = 다이아 10개
+PACK107.splice(0,PACK107.length,['dia_3300',33,'3,300원'],['dia_5500',56,'5,500원'],['dia_9900',100,'9,900원'],['dia_33000',340,'33,000원'],['dia_99000',1050,'99,000원']);
+Object.assign(DITEM107.sc1,{c:10});Object.assign(DITEM107.sc10,{c:90});
+Object.assign(DITEM107.rv1,{c:10});Object.assign(DITEM107.rv3,{c:25});
+Object.assign(DITEM107.bag5,{c:30});
+Object.assign(DITEM107.box_gold,{c:7});Object.assign(DITEM107.box_sc,{c:13});
+Object.assign(DITEM107.box_gear,{c:40,d:'내 레벨 장비 1개<br>고급 60 · 희귀 31 · 영웅 8 · 전설 1%',
+ go:()=>{const T=Math.min(5,1+Math.floor(P.lv/3));let pool=pool107(P.lv,T).filter(k=>canWear(P,k)&&!/^shirt|^face|^ear/.test(GEAR[k].s));if(!pool.length)pool=Object.keys(GEAR).filter(k=>!GEAR[k].d1&&!INST81[k]&&canWear(P,k));
+  const b=pool[Math.random()*pool.length|0],x=Math.random(),r=x<.6?2:x<.91?3:x<.99?4:5;addGear81(b,'box',{r});return '['+GRADE[r].n+'] '+GEAR[b].n;}});
+gems107=function(n){const c=n>=1000?5:n>=300?4:n>=90?3:2;return Array.from({length:c},(_,i)=>`<i style="font-size:${30+i%2*8}px">💎</i>`).join('');};
+
 openSelect();
 </script>

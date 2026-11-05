@@ -6,10 +6,10 @@
  const CFG={
   testing:true,
   rewardedId:'ca-app-pub-3940256099942544/5224354917', // 구글 시험용 보상형 광고
-  // 스토어 상품: 광고 제거 + 다이아 묶음 4개(소모성). scroll_10·scroll_30·revive_3은 옛 상품(이제 다이아로 사요)
+  // 스토어 상품: 광고 제거 + 다이아 묶음 5개(소모성, 다이아 100개=9,900원 기준). scroll_10·scroll_30·revive_3은 옛 상품(이제 다이아로 사요)
   // → 스토어에 안 만들어도 돼요. 예전에 결제가 끝나지 않은 거래를 마저 지급하려고 등록만 남겨 둬요.
   products:[{id:'noads',type:'non consumable'},
-   {id:'dia_90',type:'consumable'},{id:'dia_160',type:'consumable'},{id:'dia_340',type:'consumable'},{id:'dia_1100',type:'consumable'},
+   {id:'dia_3300',type:'consumable'},{id:'dia_5500',type:'consumable'},{id:'dia_9900',type:'consumable'},{id:'dia_33000',type:'consumable'},{id:'dia_99000',type:'consumable'},
    {id:'scroll_10',type:'consumable'},{id:'scroll_30',type:'consumable'},{id:'revive_3',type:'consumable'}]
  };
  const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
