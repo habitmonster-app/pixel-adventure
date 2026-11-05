@@ -8,9 +8,11 @@
     "sync": "npm run build && npx cap sync"
   },
   "dependencies": {
+    "@capacitor-community/admob": "^8.3.0",
     "@capacitor/android": "8.5.3",
     "@capacitor/core": "8.5.3",
-    "@capacitor/ios": "8.5.3"
+    "@capacitor/ios": "8.5.3",
+    "cordova-plugin-purchase": "^13.20.0"
   },
   "devDependencies": {
     "@capacitor/cli": "8.5.3"
