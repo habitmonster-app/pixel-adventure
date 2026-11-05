@@ -10302,7 +10302,7 @@ function drawGdex112(){if(!P)return;const all=gdList112(),K=P.gdex112||{},tab=GD
  $('gdG').innerHTML=L.map((m,i)=>{const h=!!K[m.k];return `<button class="dxc${h?'':' unk'}${m===GDS112?' on':''}" data-i="${i}"><span class="lvb">Lv.${m.lv}</span><span class="im">${ivCell(m.k,{})}</span><span class="nm">${esc(m.n)}</span><span class="st">${h?'✔':''}</span></button>`;}).join('');
  $('gdG').querySelectorAll('.dxc').forEach(b=>b.onclick=()=>{GDS112=L[+b.dataset.i];drawGdex112();});
  const m=GDS112;if(!m){$('gdR').innerHTML='';return;}const h=!!K[m.k],g=GEAR[m.k],gr=GRADE[m.g]||GRADE[1];
- const cls=(g.cls&&g.cls.length)?g.cls.map(c=>CLASS[c]?CLASS[c].n:c).join('·'):'모든 직업';
+ const cls=whoTxt(m.k);
  $('gdR').innerHTML=`<div class="dxbig${h?'':' unk'}">${ivCell(m.k,{})}</div>
  <div class="dxn">${esc(m.n)}</div>
  <div class="dxkv"><span>부위</span><b>${IV_SN[m.s]||m.s}</b><span>레벨</span><b>Lv.${m.lv}</b><span>직업</span><b>${cls}</b><span>도감</span><b style="color:${h?'#7fe08a':'#9aa0b8'}">${h?'얻은 적 있음 ✔':'아직 못 얻음'}</b></div>
