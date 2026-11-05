@@ -9967,7 +9967,7 @@ let DEXCH104C=1,DEXSEL104=null,DEXINIT104=0;
 .set104{flex:1 1 100%!important;width:100%;min-width:100%;display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:1px;margin-top:6px;border-top:1px solid rgba(224,184,102,.3);padding-top:5px;font-size:11.5px}.set104>div{display:block!important;width:100%;text-align:left}.set104 .h{color:#7fe08a;font-weight:700}.set104 .p{color:#6a7470}.set104 .p.on{color:#7fe08a}.set104 .b{color:#6a7470}.set104 .b.on{color:#7fe08a}
 @media (max-height:430px){.dxbig{height:70px}.dxbig img{max-height:66px}}`;document.head.appendChild(st);
  const g=document.querySelector('#pMenu .mgrid');const mb=document.createElement('button');mb.className='ib';mb.id='mDex';
- mb.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#e0b866" stroke-width="1.8"><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H19v16H5.5A1.5 1.5 0 0 0 4 20.5z" fill="#4a2a2a"/><path d="M4 20.5A1.5 1.5 0 0 0 5.5 22H19v-3"/><circle cx="11.5" cy="10" r="3"/><path d="M8 15h7"/></svg>도감';
+ mb.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#e0b866" stroke-width="1.8"><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H19v16H5.5A1.5 1.5 0 0 0 4 20.5z" fill="#4a2a2a"/><path d="M4 20.5A1.5 1.5 0 0 0 5.5 22H19v-3"/><circle cx="11.5" cy="10" r="3"/><path d="M8 15h7"/></svg>몬스터 도감';
  const ref=$('mQuest');if(ref&&ref.nextSibling)g.insertBefore(mb,ref.nextSibling);else g.appendChild(mb);mb.onclick=()=>openDex104();})();
 function openDex104(){if(!P)return;closeAll();$('pDex').style.display='flex';
  if(!DEXINIT104){DEXINIT104=1;for(let c=10;c>=1;c--)if(dexReach104(c)){DEXCH104C=c;break;}}drawDex104();}
@@ -10231,6 +10231,99 @@ addEventListener('resize',()=>{if(P&&isOpen('pStat')){ST.last='';drawStat();}});
 #pStat.sh111 .sv-body>*{flex-shrink:0}
 #pStat.sh111 .sv-body{grid-column:2;grid-row:1/3;min-height:0;overflow-y:auto;touch-action:pan-y}
 `;document.head.appendChild(css);}
+
+// ===== v112: 장비 도감 · 채집 도감 (몬스터 도감과 같은 모양) =====
+// 기록: P.gdex112 {장비 원본 키:처음 얻은 순서}, P.mdex112 {재료 키:모은 개수}. 보상은 아직 없음(사용자 결정 대기).
+const GD_SLOTS112=['weapon','shield','head','armor','arm','feet','cape','belt','neck','ring'];
+const GD_TABS112=[['weapon','무기',['weapon']],['armor','방어구',['shield','head','armor','arm','feet','cape','belt']],['acc','장신구',['neck','ring']]];
+let GDL112=null;
+function gdList112(){if(GDL112)return GDL112;const L=[];for(const k in GEAR){const g=GEAR[k];const s=GEAR_SLOT(g.s);if(!GD_SLOTS112.includes(s))continue;
+ let lv=1;try{lv=lvOf81(k)|0||1;}catch(e){}L.push({k,s,n:g.n,lv,g:grdOld81(k)});}
+ const so={};GD_SLOTS112.forEach((s,i)=>so[s]=i);L.sort((a,b)=>a.lv-b.lv||so[a.s]-so[b.s]||a.g-b.g);return GDL112=L;}
+function gdMark112(k){if(!P||!k)return;const b=baseOf81(k);if(!GEAR[b]||!GD_SLOTS112.includes(GEAR_SLOT(GEAR[b].s)))return;P.gdex112=P.gdex112||{};
+ if(!P.gdex112[b]){P.gdex112[b]=Object.keys(P.gdex112).length+1;log('📘 장비 도감 등록: '+GEAR[b].n,'g');if(isOpen('pGdex'))drawGdex112();}}
+function gdSync112(){if(!P)return;P.gdex112=P.gdex112||{};const ks=[...Object.keys(P.bag||{}),...Object.keys(P.inv||{}),...Object.values(P.eq||{})].filter(Boolean);
+ for(const x of ks){const b=baseOf81(x);if(GEAR[b]&&GD_SLOTS112.includes(GEAR_SLOT(GEAR[b].s))&&!P.gdex112[b])P.gdex112[b]=Object.keys(P.gdex112).length+1;}}
+{const _a=addGear81;addGear81=function(k){const r=_a.apply(this,arguments);try{if(r)gdMark112(r);}catch(e){}return r;};}
+// 채집 도감 보상(사용자 결정): 재료마다 10·50·150개 모을 때 강화주문서 1장씩
+const MDTH112=[10,50,150];
+function mdPay112(quiet){if(!P||!P.mdex112)return 0;P.mdr112=P.mdr112||{};let tot=0;
+ for(const m of mdList112()){const n=P.mdex112[m.k]|0,s=MDTH112.filter(x=>n>=x).length,had=P.mdr112[m.k]|0;
+  if(s>had){const add=s-had;P.mdr112[m.k]=s;P.scroll=(P.scroll|0)+add;tot+=add;
+   if(!quiet){toast(`📗 ${m.n} ${'★'.repeat(s)} 달성! 강화주문서 ${add}장`,'g');log(`채집 도감 ${m.n} ★${s}: 강화주문서 ${add}장을 받았어요`,'g');}}}
+ if(quiet&&tot){toast(`📗 채집 도감: 그동안 모은 재료로 강화주문서 ${tot}장을 받았어요`,'g');log(`채집 도감 보상: 강화주문서 ${tot}장`,'g');}return tot;}
+// 채집 도감: 지역 채집 자리에서 나오는 재료
+let MDL112=null;
+function mdList112(){if(MDL112)return MDL112;const L=[],seen=new Set();for(const r of WORLD){for(const x of (r.res||[])){if(typeof x!=='string'||!MAT[x]||seen.has(x))continue;seen.add(x);L.push({k:x,n:MAT[x].n,ch:r.ch,rg:r.n});}}return MDL112=L;}
+{const _m=addMat;addMat=function(k,n){const r=_m.apply(this,arguments);try{if(P&&n>0&&MAT[k]){P.mdex112=P.mdex112||{};const f=!P.mdex112[k];P.mdex112[k]=(P.mdex112[k]|0)+n;
+ if(f&&mdList112().some(m=>m.k===k)){log('📗 채집 도감 등록: '+MAT[k].n,'g');}mdPay112();if(isOpen('pMdex'))drawMdex112();}}catch(e){}return r;};}
+function mdSync112(){if(!P)return;P.mdex112=P.mdex112||{};for(const k in (P.mat||{}))if((P.mat[k]|0)>0&&!P.mdex112[k])P.mdex112[k]=P.mat[k]|0;}
+// ----- 창 -----
+let GDT112='weapon',GDS112=null,MDC112=0,MDS112=null;
+(function(){const mk=(id,title,tot,tabs,P_,G_,R_,xid)=>{const d=document.createElement('div');d.id=id;d.className='pan dx112';
+  d.innerHTML=`<div class="ph"><span>${title} <small id="${tot}" style="font-weight:400;color:#9aa0b8"></small></span><button id="${xid}">✕</button></div><div class="tabs dxt112" id="${tabs}"></div><div class="dxb"><div class="dxl"><div class="dxp" id="${P_}"></div><div class="dxg" id="${G_}"></div></div><div class="dxr" id="${R_}"></div></div>`;
+  $('pMenu').parentNode.appendChild(d);PANS.push(id);$(xid).onclick=()=>d.style.display='none';};
+ mk('pGdex','장비 도감','gdTot','gdTabs','gdP','gdG','gdR','gdX');mk('pMdex','채집 도감','mdTot','mdTabs','mdP','mdG','mdR','mdX');
+ const st=document.createElement('style');st.textContent=`
+#pGdex,#pMdex{left:50%;transform:translateX(-50%);width:min(760px,calc(100% - 16px))}
+.dxt112,#gdTabs,#mdTabs{display:flex;gap:4px;overflow-x:auto;flex-shrink:0;flex-wrap:nowrap;padding:6px 8px}.dxt112 button,#gdTabs button,#mdTabs button{white-space:nowrap;flex:0 0 auto;padding:3px 12px;border-radius:6px;background:rgba(40,46,66,.85);border:1px solid #3a3424;color:#cfc8b4;font-size:12px;font-family:inherit}.dxt112 button.on,#gdTabs button.on,#mdTabs button.on{background:var(--brass);color:#1a1206;border-color:var(--brass2)}
+.dx112 .dxc .im{height:46px;align-items:center}.dx112 .dxc .iv-ic{transform:scale(.92)}#pMdex .dxc.unk img{filter:brightness(0) opacity(.55)}#pGdex .dxc.unk .iv-ic{opacity:.45}#pGdex .dxc.unk .nm{color:#8a90a6}
+.dx112 .dxc img{width:34px;height:34px;max-height:none}
+.dx112 .lvb{position:absolute;top:2px;right:3px;font-size:9px;color:#9aa0b8}
+.dx112 .dxbig{align-items:center}.dx112 .dxbig .iv-ic{transform:scale(1.5)}.dx112 .dxbig img{width:56px;height:56px}
+#pMdex .dxbig.unk img{filter:brightness(0) opacity(.55)}#pGdex .dxbig.unk .iv-ic{opacity:.5}
+.dx112 .iv-stats{display:grid;grid-template-columns:auto 1fr;gap:1px 10px}.dx112 .iv-stats>div{display:contents}.dx112 .iv-stats span{color:#9aa0b8}.dx112 .iv-stats em{color:#7fe08a;font-style:normal}
+.gr112w{display:flex;flex-direction:column;gap:2px}.gr112{display:flex;gap:8px;align-items:baseline;font-size:11.5px;border-bottom:1px solid #232a44;padding:2px 0}.gr112 i{font-style:normal;font-weight:700;width:30px;flex-shrink:0}.gr112 span{color:#9aa0b8}.gr112 b{color:#ece6d6}
+.dx112 .dxc .st{color:#7fe08a}
+.dx112 .note{font-size:11px;color:#7c8296;border-top:1px dashed #3d4560;padding-top:5px}
+`;document.head.appendChild(st);
+ // 메뉴 버튼 2개 (몬스터 도감 다음)
+ const g=document.querySelector('#pMenu .mgrid'),ref=$('mDex');
+ const btn=(id,svg,label,fn)=>{const b=document.createElement('button');b.className='ib';b.id=id;b.innerHTML=svg+label;b.onclick=fn;return b;};
+ const b1=btn('mGdex','<svg viewBox="0 0 24 24" fill="none" stroke="#e0b866" stroke-width="1.8"><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H19v16H5.5A1.5 1.5 0 0 0 4 20.5z" fill="#2a3550"/><path d="M4 20.5A1.5 1.5 0 0 0 5.5 22H19v-3"/><path d="M14.5 6.5l-5 5M9 9.5l3 3M8.5 13l-1.5 1.5"/></svg>','장비 도감',()=>openGdex112());
+ const b2=btn('mMdex','<svg viewBox="0 0 24 24" fill="none" stroke="#e0b866" stroke-width="1.8"><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H19v16H5.5A1.5 1.5 0 0 0 4 20.5z" fill="#2a4a30"/><path d="M4 20.5A1.5 1.5 0 0 0 5.5 22H19v-3"/><path d="M11.5 15V9.5M11.5 11c0-2 1.5-3.5 3.5-3.5 0 2-1.5 3.5-3.5 3.5zM11.5 12.5c0-1.6-1.2-2.8-2.8-2.8 0 1.6 1.2 2.8 2.8 2.8z"/></svg>','채집 도감',()=>openMdex112());
+ if(ref){ref.after(b1);b1.after(b2);}else{g.appendChild(b1);g.appendChild(b2);}})();
+function openGdex112(){if(!P)return;closeAll();gdSync112();$('pGdex').style.display='flex';drawGdex112();}
+function openMdex112(){if(!P)return;closeAll();mdSync112();mdPay112(1);$('pMdex').style.display='flex';
+ if(!MDC112){const K=P.mdex112||{},L=mdList112();const got=L.filter(m=>K[m.k]>0);MDC112=got.length?Math.max(...got.map(m=>m.ch)):1;}drawMdex112();}
+// 등급별 최저~최대 (품질 70%~100%). 임시 장비로 실제 게임 계산을 그대로 써요.
+const GDMX112={};
+function gdMax112(b,r){const id='gdx112~'+b+'~'+r;if(GDMX112[id])return GDMX112[id];
+ if(!INST81[id])reg81(id,{b,r,l:lvOf81(b),o:[],lk:0,v:1,src:'dex'});const v=GEAR[id]||{},o={};for(const st of ['atk','def','hp'])o[st]=v[st]|0;return GDMX112[id]=o;}
+function gdRange112(b){const rows=[];for(let r=1;r<=5;r++){const mx=gdMax112(b,r);const cells=[['atk','공격'],['def','방어'],['hp','체력']].filter(([f])=>mx[f]>0).map(([f,n])=>`${n} <b>${Math.max(1,Math.round(mx[f]*QLO98))}~${mx[f]}</b>`);
+  rows.push(`<div class="gr112"><i style="color:${GRADE[r].c}">${GRADE[r].n}</i><span>${cells.join(' · ')||'능력치 없음'}</span></div>`);}return rows.join('');}
+function drawGdex112(){if(!P)return;const all=gdList112(),K=P.gdex112||{},tab=GD_TABS112.find(t=>t[0]===GDT112)||GD_TABS112[0],L=all.filter(m=>tab[2].includes(m.s));
+ $('gdTot').textContent=` ${all.filter(m=>K[m.k]).length} / ${all.length}종`;
+ $('gdTabs').innerHTML=GD_TABS112.map(t=>{const l=all.filter(m=>t[2].includes(m.s));return `<button data-t="${t[0]}" class="${t===tab?'on':''}">${t[1]} ${l.filter(m=>K[m.k]).length}/${l.length}</button>`;}).join('');
+ $('gdTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{GDT112=b.dataset.t;GDS112=null;drawGdex112();});
+ const got=L.filter(m=>K[m.k]).length;
+ $('gdP').innerHTML=`<span>${tab[1]}</span><span class="bar"><i style="width:${L.length?got/L.length*100:0}%"></i></span><span>${got}/${L.length}</span>`;
+ if(!GDS112||!L.includes(GDS112))GDS112=L.find(m=>K[m.k])||L[0];
+ $('gdG').innerHTML=L.map((m,i)=>{const h=!!K[m.k];return `<button class="dxc${h?'':' unk'}${m===GDS112?' on':''}" data-i="${i}"><span class="lvb">Lv.${m.lv}</span><span class="im">${ivCell(m.k,{})}</span><span class="nm">${esc(m.n)}</span><span class="st">${h?'✔':''}</span></button>`;}).join('');
+ $('gdG').querySelectorAll('.dxc').forEach(b=>b.onclick=()=>{GDS112=L[+b.dataset.i];drawGdex112();});
+ const m=GDS112;if(!m){$('gdR').innerHTML='';return;}const h=!!K[m.k],g=GEAR[m.k],gr=GRADE[m.g]||GRADE[1];
+ const cls=(g.cls&&g.cls.length)?g.cls.map(c=>CLASS[c]?CLASS[c].n:c).join('·'):'모든 직업';
+ $('gdR').innerHTML=`<div class="dxbig${h?'':' unk'}">${ivCell(m.k,{})}</div>
+ <div class="dxn">${esc(m.n)}</div>
+ <div class="dxkv"><span>부위</span><b>${IV_SN[m.s]||m.s}</b><span>레벨</span><b>Lv.${m.lv}</b><span>직업</span><b>${cls}</b><span>도감</span><b style="color:${h?'#7fe08a':'#9aa0b8'}">${h?'얻은 적 있음 ✔':'아직 못 얻음'}</b></div>
+ <div class="dxkv" style="grid-template-columns:1fr"><span>등급별 능력치 (최저 ~ 최대, 품질 70~100%)</span></div><div class="gr112w">${gdRange112(m.k)}</div>
+ <div class="note">강화 전 기준이에요. 처음 얻으면(드랍·제작·상점·상자) ✔ 표시가 붙어요.</div>`;}
+function drawMdex112(){if(!P)return;const all=mdList112(),K=P.mdex112||{},chs=[...new Set(all.map(m=>m.ch))].sort((a,b)=>a-b);if(!chs.includes(MDC112))MDC112=chs[0];
+ const L=all.filter(m=>m.ch===MDC112),rg=(WORLD.find(r=>r.ch===MDC112)||{}).n||'';
+ $('mdTot').textContent=` ${all.filter(m=>K[m.k]>0).length} / ${all.length}종`;
+ $('mdTabs').innerHTML=chs.map(c=>{const l=all.filter(m=>m.ch===c),d=l.every(m=>K[m.k]>0);return `<button data-c="${c}" class="${c===MDC112?'on':''}">${c}장${d?' ✔':''}</button>`;}).join('');
+ $('mdTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{MDC112=+b.dataset.c;MDS112=null;drawMdex112();});
+ const got=L.filter(m=>K[m.k]>0).length;
+ $('mdP').innerHTML=`<span>${MDC112}장 ${esc(rg)}</span><span class="bar"><i style="width:${L.length?got/L.length*100:0}%"></i></span><span>${got}/${L.length}</span>`;
+ if(!MDS112||!L.includes(MDS112))MDS112=L[0];
+ $('mdG').innerHTML=L.map((m,i)=>{const n=K[m.k]|0;return `<button class="dxc${n?'':' unk'}${m===MDS112?' on':''}" data-i="${i}"><span class="im"><img alt="" src="${matIco(m.k)}" style="image-rendering:pixelated"></span><span class="nm">${n?esc(m.n):'???'}</span><span class="st">${n?'★'.repeat(MDTH112.filter(x=>n>=x).length)+'☆'.repeat(3-MDTH112.filter(x=>n>=x).length):''}</span></button>`;}).join('');
+ $('mdG').querySelectorAll('.dxc').forEach(b=>b.onclick=()=>{MDS112=L[+b.dataset.i];drawMdex112();});
+ const m=MDS112;if(!m){$('mdR').innerHTML='';return;}const n=K[m.k]|0;
+ $('mdR').innerHTML=`<div class="dxbig${n?'':' unk'}"><img alt="" src="${matIco(m.k)}" style="image-rendering:pixelated"></div>
+ <div class="dxn">${n?esc(m.n):'???'}</div>
+ <div class="dxkv"><span>나오는 곳</span><b>${m.ch}장 ${esc(m.rg)}</b>${MATSRC[m.k]?`<span>자세히</span><b>${esc(MATSRC[m.k])}</b>`:''}<span>모은 수</span><b>${n.toLocaleString()}개</b><span>가진 수</span><b>${matN(m.k).toLocaleString()}개</b></div>
+ <div class="dxs">${MDTH112.map((x,i)=>`<div class="${n>=x?'on':''}">${'★'.repeat(i+1)}<br>${x}개<br><span class="sc">주문서 1장</span></div>`).join('')}</div>
+ <div class="note">채집하거나 몬스터에게서 얻으면 모은 수가 올라가요. 써도 모은 수는 줄지 않아요.</div>`;}
 
 openSelect();
 </script>
