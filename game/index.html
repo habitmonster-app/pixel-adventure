@@ -9712,5 +9712,32 @@ function faceKey99(name){if(!name)return null;const D=[];for(const a of ['N7','N
 {const _sl=showLine;showLine=function(){const r=_sl.apply(this,arguments);try{const m=$('msg');if(m.classList.contains('f94'))return r;const n=talk&&talk.n;
  const k=n&&faceKey99(n.n),f=k&&faceOf94(k);if(f){m.classList.add('f94');m.querySelector('.fc94 img').src=f;}}catch(e){}return r;};}
 
+/* ===== v100: 모든 대화에 얼굴 (줄마다 말하는 사람 찾기) ===== */
+// 내 캐릭터 그림은 칸이 128이라 (32,256+32)에서 잘라요
+// 1) 줄이 '(이름: "…")' 꼴이면 그 사람 얼굴  2) '(혼잣말)'·괄호 설명 줄은 내 캐릭터 얼굴
+// 3) 'N장 · …' 이야기 첫 대화는 퀘스트를 준 사람 얼굴  4) 이름이 다른 인물 이름 안에 들어 있으면 그 사람(예: '부대장' → 전초기지 부대장 로웬)
+// 5) 그림이 따로 없는 인물: 붙잡힌 광부 탄 → 왕성 시민 그림, 강아지 몽이 → 강아지 그림
+const ALIAS100={'붙잡힌 광부 탄':'n7cit0'};
+function crop100(src,sx0,sy0){const S=28,sx=18,sy=13;const o=document.createElement('canvas');o.width=o.height=S*3;const q=o.getContext('2d');q.imageSmoothingEnabled=false;
+ q.drawImage(src,sx0+sx,sy0+sy,S,S,0,0,S*3,S*3);return o.toDataURL();}
+let heroFace100=null,heroFaceV100=-1;
+function heroFace100f(){if(!heroSheet)return null;if(heroFaceV100!==heroVer){try{heroFace100=crop100(heroSheet,32,256+32);heroFaceV100=heroVer;}catch(e){heroFace100=null;}}return heroFace100;}
+let pupFace100=null;
+function pupFace100f(){if(pupFace100)return pupFace100;try{const c=PUPPIX[0],o=document.createElement('canvas');o.width=o.height=84;const q=o.getContext('2d');q.imageSmoothingEnabled=false;q.drawImage(c,0,0,12,10,6,14,72,60);pupFace100=o.toDataURL();}catch(e){}return pupFace100;}
+function key100(name){if(!name)return null;name=String(name).trim();if(ALIAS100[name]&&IMG[ALIAS100[name]])return ALIAS100[name];
+ const k=faceKey99(name);if(k)return k;if(name.length<2)return null;
+ const L=[...npcs,...NPC].filter(x=>x&&x.k&&x.n&&IMG[x.k]);const o=L.find(x=>String(x.n).includes(name));if(o)return o.k;
+ for(const a of ['N7','N8','N9','N10']){try{const v=eval(a);for(const d of v)if(d&&d.n&&(d.k===name||String(d.n).includes(name))){const kk=IMG[d.k]?d.k:d.img;if(IMG[kk])return kk;}}catch(e){}}return null;}
+function faceFor100(name,line){line=String(line||'');name=String(name||'');
+ const m=/^\(\s*([^:()"“]{1,14}?)\s*:\s*["“']/.exec(line);if(m){const k=key100(m[1]);const f=k&&faceOf94(k);if(f)return f;}
+ if(name==='강아지 몽이')return pupFace100f();
+ if(name==='(혼잣말)')return heroFace100f();
+ if(/^\d+장/.test(name)){if(/^\(/.test(line))return heroFace100f();const q=qCur();const fr=q&&(P.q&&P.q.st==='ready'?(q.to||q.from):q.from);
+  if(fr){const n=[...npcs,...NPC].find(x=>x.k===fr);const k=n&&IMG[n.k]?n.k:key100(fr);const f=k&&faceOf94(k);if(f)return f;}return heroFace100f();}
+ const k=key100(name);return k?faceOf94(k):null;}
+{const _sl=showLine;showLine=function(){const r=_sl.apply(this,arguments);try{const m=$('msg'),n=talk&&talk.n;if(!n)return r;const line=n.say&&n.say[talk.i];
+ const own=n.k&&faceOf94(n.k),pre=/^\(\s*[^:()"“]{1,14}?\s*:\s*["“']/.test(String(line||''));
+ const f=(own&&!pre)?own:faceFor100(n.n,line);if(f){m.classList.add('f94');m.querySelector('.fc94 img').src=f;}else m.classList.remove('f94');}catch(e){}return r;};}
+
 openSelect();
 </script>
