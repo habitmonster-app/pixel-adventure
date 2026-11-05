@@ -9529,5 +9529,17 @@ function drawCash88(){let e=$('cash88');if(!e){e=document.createElement('div');e
  const b=D.querySelector('button#ivEnh');if(b)b.onclick=()=>{IV.mode='enh';IV.msg='';drawInv();};
  document.querySelectorAll('select#ivEnh').forEach(s=>{s.onclick=null;});};}
 
+
+/* ===== v90: 메뉴에 '저장하기' 버튼 (지금 상태를 바로 저장 · 앱에 클라우드가 있으면 같이 올려요) ===== */
+{const g=document.querySelector('#pMenu .mgrid');
+ if(g&&!$('mSave')){const b=document.createElement('button');b.className='ib';b.id='mSave';
+  b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#e0b866" stroke-width="1.8"><path d="M5 3h11l3 3v15H5z" fill="#2c3a5a"/><path d="M8 3v6h8V3M8 21v-7h8v7"/></svg>저장하기';
+  b.onclick=()=>{if(!P)return;save();const ok=typeof SAVE77_STATUS==='undefined'||SAVE77_STATUS.ok!==false;
+   const t=new Date(),hm=String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
+   if(!ok){toast('저장하지 못했어요. 저장 공간을 확인해 주세요','w');return;}
+   toast('저장했어요 ('+hm+')','g');
+   const A=window.APP;if(A&&A.cloud&&A.cloud.backup){try{Promise.resolve(A.cloud.backup()).catch(()=>{});}catch(e){}}};
+  const c=$('mCash');if(c&&c.parentNode===g)g.insertBefore(b,c.nextSibling);else g.appendChild(b);}}
+
 openSelect();
 </script>
