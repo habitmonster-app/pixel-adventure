@@ -9541,5 +9541,10 @@ function drawCash88(){let e=$('cash88');if(!e){e=document.createElement('div');e
    const A=window.APP;if(A&&A.cloud&&A.cloud.backup){try{Promise.resolve(A.cloud.backup()).catch(()=>{});}catch(e){}}};
   const c=$('mCash');if(c&&c.parentNode===g)g.insertBefore(b,c.nextSibling);else g.appendChild(b);}}
 
+
+/* ===== v91: 몬스터 경험치 ×0.4 (사용자 결정 2026-11-05: 1/2과 1/3 사이) · 퀘스트·서브·이벤트·훈련 경험치는 그대로 ===== */
+const MOBXP91=0.4;
+(()=>{for(const k in MOB){const m=MOB[k];if(m&&m.ex>0)m.ex=Math.max(1,Math.round(m.ex*MOBXP91));}})();
+
 openSelect();
 </script>
