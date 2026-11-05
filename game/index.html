@@ -9426,7 +9426,7 @@ function revive86(){if(!D86.on||hero.st!=='dead')return;deadClose86();hero.st='i
  const rm=adRemoved86();
  w.innerHTML=`<h4>상점·저장</h4>
   <div class="row86">${rm?'<small style="flex:1">광고 제거됨 · 광고 보상은 광고 없이 바로 받아요</small>':`<button data-a="noads">광고 제거 (${price86('noads')})</button>`}</div>
-  <div class="row86"><small style="flex:1">부활권 ${P.rv86|0}장 · 쓰러졌을 때 그 자리에서 일어나요</small><button data-a="rv">3장 사기 (💎${DITEM107.rv3.c})</button></div>
+  <div class="row86"><small style="flex:1">부활권 ${P.rv86|0}장 · 쓰러졌을 때 그 자리에서 일어나요</small><button data-a="rv">6장 사기 (💎${DITEM107.rv3.c})</button></div>
   ${A.cloud?`<div class="row86"><button data-a="up">클라우드에 저장 올리기</button><button data-a="down">클라우드에서 받기</button></div>
   <small>클라우드에서 받으면 이 기기의 저장이 바뀌고 게임이 다시 켜져요.</small>`:''}`;
  const C=A.cloud||{};let arm=0;
@@ -10152,6 +10152,10 @@ Object.assign(DITEM107.box_gear,{c:40,d:'내 레벨 장비 1개<br>고급 60 · 
  go:()=>{const T=Math.min(5,1+Math.floor(P.lv/3));let pool=pool107(P.lv,T).filter(k=>canWear(P,k)&&!/^shirt|^face|^ear/.test(GEAR[k].s));if(!pool.length)pool=Object.keys(GEAR).filter(k=>!GEAR[k].d1&&!INST81[k]&&canWear(P,k));
   const b=pool[Math.random()*pool.length|0],x=Math.random(),r=x<.6?2:x<.91?3:x<.99?4:5;addGear81(b,'box',{r});return '['+GRADE[r].n+'] '+GEAR[b].n;}});
 gems107=function(n){const c=n>=1000?5:n>=300?4:n>=90?3:2;return Array.from({length:c},(_,i)=>`<i style="font-size:${30+i%2*8}px">💎</i>`).join('');};
+
+// ===================== v109: 부활권 6장 50다이아 · 가방 +5칸 100다이아 (사용자 2026-11-05) =====================
+Object.assign(DITEM107.rv3,{n:'부활권 6장',c:50,go:()=>{P.rv86=(P.rv86|0)+6;return '부활권 6장';}});
+Object.assign(DITEM107.bag5,{c:100});
 
 openSelect();
 </script>
