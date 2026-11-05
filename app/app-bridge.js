@@ -44,12 +44,13 @@
   store.register(CFG.products.map(p=>({id:p.id,platform:S.Platform.GOOGLE_PLAY,type:p.type==='consumable'?S.ProductType.CONSUMABLE:S.ProductType.NON_CONSUMABLE})));
   store.when().approved(t=>grant(t)).productUpdated(p=>{if(p.id==='noads'&&p.owned)LS.set('app_noads',true);});
   store.error(e=>{for(const k in pend){pend[k]({ok:false,err:e&&e.message});delete pend[k];}});
-  store.initialize([S.Platform.GOOGLE_PLAY]).catch(()=>{});}
+  store.initialize([S.Platform.GOOGLE_PLAY]).catch(()=>{});
+  store.ready(()=>{try{window.prodLoad86&&window.prodLoad86();}catch(e){}});}
  window.APP={
   version:1,
   ads:{removed:()=>!!LS.get('app_noads',false),showRewarded},
   shop:{
-   products:async()=>{shopInit();if(!store)return [];try{await store.ready&&new Promise(r=>store.ready(r));}catch(e){}
+   products:async()=>{shopInit();if(!store)return [];try{await Promise.race([new Promise(r=>store.ready(r)),new Promise(r=>setTimeout(r,6000))]);}catch(e){}
     return (store.products||[]).map(p=>({id:p.id,title:p.title||p.id,price:(p.pricing&&p.pricing.price)||''}));},
    buy:id=>new Promise(res=>{shopInit();const p=store&&store.get(id);const o=p&&p.getOffer&&p.getOffer();
     if(!o){res({ok:false,err:'noproduct'});return;}pend[id]=res;o.order().then(r=>{if(r&&r.isError){delete pend[id];res({ok:false,err:r.message});}});}),

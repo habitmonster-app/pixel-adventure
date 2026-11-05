@@ -9338,5 +9338,100 @@ const NPCSKIP85=['kid','traveler','guard','guard2','watch','priest','ford'];   /
   for(const [dx,dy] of [[0,12],[0,-12],[0,24],[0,-24],[-34,0],[34,0],[-34,12],[34,12],[-34,-12],[34,-12],[0,36],[0,-36],[-50,24],[50,24]]){if(ok)break;b.style.left=(x+dx)+'px';b.style.top=(y0+dy)+'px';r=b.getBoundingClientRect();ok=!hit(r);}
   if(!ok){b.remove();continue;}used.push(r);}}catch(err){}};}
 
+
+/* ===== v86: 앱 연결 자리 (광고·결제·클라우드) — 앱이 window.APP을 만들어 줘요. 웹에서는 APP이 없어서 버튼이 다 숨겨져요 ===== */
+// 앱 함수: APP.ads.removed() · APP.ads.showRewarded(place)→{ok} · APP.shop.products()→[{id,title,price}] · APP.shop.buy(id)→{ok}
+//          APP.cloud.backup() · APP.cloud.restore()   /  게임이 주는 함수: window.GAME_GRANT(id) → true/false
+const APP86=()=>{const a=window.APP;return a&&a.ads&&a.shop?a:null;};
+const ADMAX86={scroll_daily:3};          // 광고 보고 받는 강화주문서: 하루 3번
+const REVIVE_WAIT86=15;                  // 쓰러진 창: 아무것도 안 누르면 15초 뒤 마을(쉼터)로
+const IMM86=3;                           // 바로 부활 뒤 3초 동안 피해 안 받음
+const GRANT86={scroll_10:{scroll:10},scroll_30:{scroll:30},revive_3:{rv:3},noads:{}};
+let PROD86={};                           // 앱 상품 가격 (표시용 글자)
+function prodLoad86(){const A=APP86();if(!A)return;try{Promise.resolve(A.shop.products()).then(l=>{PROD86={};(l||[]).forEach(p=>{if(p&&p.id)PROD86[p.id]=p;});if(isOpen('pShop'))drawShop();}).catch(()=>{});}catch(e){}}
+setTimeout(prodLoad86,800);
+const adRemoved86=()=>{try{const A=APP86();return !!(A&&A.ads.removed());}catch(e){return false;}};
+const today86=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();};
+function adLeft86(place){DB.ad86=DB.ad86&&DB.ad86.d===today86()?DB.ad86:{d:today86(),n:{}};return (ADMAX86[place]||0)-(DB.ad86.n[place]|0);}
+function adUse86(place){adLeft86(place);DB.ad86.n[place]=(DB.ad86.n[place]|0)+1;}
+// 광고 보기: 끝까지 봐서 ok가 올 때만 보상
+let ADBUSY86=0;
+function showAd86(place,onOk){const A=APP86();if(!A||ADBUSY86)return;ADBUSY86=1;
+ let p;try{p=Promise.resolve(A.ads.showRewarded(place));}catch(e){p=Promise.reject(e);}
+ p.then(r=>{ADBUSY86=0;if(r&&r.ok)onOk();else toast('광고를 끝까지 봐야 보상을 받아요','w');}).catch(()=>{ADBUSY86=0;toast('지금은 광고를 불러올 수 없어요. 잠시 뒤 다시 해 주세요','w');});}
+// 유료 구매: 결제가 끝나면 앱이 GAME_GRANT를 불러 지급해요 (여기서는 화면만 새로 그려요)
+function buy86(id,after){const A=APP86();if(!A||ADBUSY86)return;ADBUSY86=1;
+ let p;try{p=Promise.resolve(A.shop.buy(id));}catch(e){p=Promise.reject(e);}
+ p.then(r=>{ADBUSY86=0;if(r&&r.ok)toast('구매가 끝났어요. 고마워요!','g');if(after)after();}).catch(()=>{ADBUSY86=0;toast('구매를 마치지 못했어요','w');if(after)after();});}
+const price86=id=>PROD86[id]&&PROD86[id].price||'…';
+// 지급: 지금 플레이 중인 캐릭터에게 · 캐릭터를 고르기 전이면 보관했다가 다음에 들어온 캐릭터에게
+function give86(g){if(g.scroll)P.scroll=(P.scroll|0)+g.scroll;if(g.rv)P.rv86=(P.rv86|0)+g.rv;}
+window.GAME_GRANT=function(id){const g=GRANT86[id];if(!g)return false;
+ try{if(id==='noads'){if(P)toast('광고 제거가 적용됐어요','g');return true;}
+  if(P){give86(g);save();refreshSide();toast((g.scroll?'강화주문서 '+g.scroll+'장':'부활권 '+g.rv+'장')+'을 받았어요','g');if(isOpen('pShop'))drawShop();}
+  else{DB.pay86=DB.pay86||{scroll:0,rv:0};DB.pay86.scroll+=g.scroll|0;DB.pay86.rv+=g.rv|0;if(!saveDB())return false;}
+  return true;}catch(e){return false;}};
+{const _sg=startGame;startGame=function(){_sg.apply(this,arguments);if(!P||!DB.pay86)return;const g=DB.pay86;if(g.scroll||g.rv){give86(g);delete DB.pay86;save();
+ setTimeout(()=>toast('구매한 '+[g.scroll?'강화주문서 '+g.scroll+'장':'',g.rv?'부활권 '+g.rv+'장':''].filter(Boolean).join(' · ')+'을 받았어요','g'),600);}};}
+
+// 1) 쓰러졌을 때 고르기: 마을(쉼터)로 / 광고 보고 바로 부활 / 부활권 쓰기 / 부활권 사기
+const D86={on:0,t:0,imm:0};
+{const st=document.createElement('style');st.textContent=`#dead86{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;background:rgba(20,0,0,.55)}
+#dead86 .bx{background:linear-gradient(#2a2018,#17110c);border:2px solid #a8823c;border-radius:12px;padding:14px 16px;min-width:250px;max-width:88vw;color:#eee;text-align:center;font-size:13px;box-shadow:0 6px 24px #000a}
+#dead86 h3{margin:0 0 4px;color:#ff9a8a;font-size:17px}#dead86 p{margin:0 0 10px;color:#cfc8b4;font-size:12px;line-height:1.4}
+#dead86 .bt{display:flex;flex-direction:column;gap:7px}#dead86 button{min-height:40px;font-size:14px}#dead86 button.gold{background:linear-gradient(#e8c470,#a87a2a);color:#1a1206;font-weight:800}
+#dead86 small{display:block;margin-top:8px;color:#9a917c;font-size:11px}
+.srow.ad86 b{color:#9fe0ff}.srow.pay86 b{color:#ffb0e0}.opt78 .row86{display:flex;gap:6px;align-items:center}.opt78 .row86 button{flex:1;min-height:34px}`;document.head.appendChild(st);}
+const dyingCamp86=()=>(typeof S8!=='undefined'&&S8.dead)||(typeof S9!=='undefined'&&S9.dead)||(typeof S10!=='undefined'&&S10.dead);
+function deadOpen86(){D86.on=1;D86.t=REVIVE_WAIT86;hero.dt=1e9;deadDraw86();toast('쓰러졌어요…','w');}
+function deadClose86(){D86.on=0;const e=$('dead86');if(e)e.remove();}
+function deadDraw86(){let e=$('dead86');if(!e){e=document.createElement('div');e.id='dead86';document.body.appendChild(e);}
+ const A=APP86(),rv=P.rv86|0,camp=dyingCamp86(),boss=(typeof BS8!=='undefined'&&BS8.lock)||(typeof BS9!=='undefined'&&BS9.lock)||(typeof BS10!=='undefined'&&BS10.lock);
+ e.innerHTML=`<div class="bx"><h3>쓰러졌어요</h3><p>어떻게 할까요?${boss?'<br>보스와의 싸움은 처음부터 다시 해요.':''}</p><div class="bt">
+  ${A?`<button class="gold" data-a="ad">${adRemoved86()?'바로 부활':'광고 보고 바로 부활'}</button>`:''}
+  ${rv>0?`<button class="gold" data-a="tk">부활권 쓰고 바로 부활 (${rv}장)</button>`:A?`<button data-a="buy">부활권 3장 사기 (${price86('revive_3')})</button>`:''}
+  <button data-a="town">${camp?'쉼터에서 일어나기':'마을에서 일어나기'}</button></div>
+  <small id="dead86t">${Math.ceil(D86.t)}초 뒤 자동으로 ${camp?'쉼터':'마을'}에서 일어나요</small></div>`;
+ e.querySelectorAll('button').forEach(b=>b.onclick=()=>{const a=b.dataset.a;
+  if(a==='town'){deadClose86();hero.dt=0;}
+  else if(a==='ad')showAd86('revive',revive86);
+  else if(a==='tk'){if((P.rv86|0)<1)return;P.rv86--;revive86();}
+  else if(a==='buy')buy86('revive_3',()=>{if(D86.on)deadDraw86();});});}
+function revive86(){if(!D86.on||hero.st!=='dead')return;deadClose86();hero.st='idle';hero.dt=0;hero.f=0;P.hp=stats().hp;P.mp=mpMax();D86.imm=performance.now()+IMM86*1000;save();refreshSide();
+ SND&&SND.play&&SND.play('pick');setTimeout(()=>toast('그 자리에서 다시 일어났어요 ('+IMM86+'초 동안 보호)','g'),60);}
+{const _up=update;update=function(dt){_up.apply(this,arguments);if(!P)return;
+ if(hero.st==='dead'&&!D86.on&&hero.dt>0&&(APP86()||(P.rv86|0)>0))deadOpen86();
+ if(D86.on){if(hero.st!=='dead'){deadClose86();return;}if(!ADBUSY86&&dt>0){D86.t-=dt;const s=$('dead86t');if(s)s.textContent=s.textContent.replace(/^\d+/,Math.max(0,Math.ceil(D86.t)));}
+  if(D86.t<=0&&!ADBUSY86){deadClose86();hero.dt=0;}}};}
+{const _hd=heroDamage;heroDamage=function(d){if(performance.now()<D86.imm)return;return _hd.apply(this,arguments);};}
+
+// 2) 상점(잡화점·방어구점): 광고 보고 주문서 1장(하루 3번) · 주문서 묶음 유료 판매 — 게임 안에서는 계속 골드로도 살 수 있어요
+{const _ds=drawShop;drawShop=function(){_ds.apply(this,arguments);const A=APP86();if(!A||!P||shopTab!=='buy'||!SCROLL_SHOPS85.includes(shopId))return;const L=$('slist');if(!L)return;
+ const ref=L.children[1]||null,row=(cls,name,sub,btn,fn)=>{const d=document.createElement('div');d.className='srow '+cls;
+  d.innerHTML=`<div class="slot q3">${SCROLL_SVG}</div><div class="tx"><b>${name}</b><span>${sub}</span></div><button class="buy">${btn}</button>`;d.querySelector('button').onclick=fn;L.insertBefore(d,ref);return d;};
+ const left=adLeft86('scroll_daily');
+ const ad=row('ad86','강화주문서 1장 (광고)',`광고를 보면 무료로 받아요 · 오늘 ${left}/${ADMAX86.scroll_daily}번 남음`,left>0?(adRemoved86()?'받기':'광고 보기'):'내일 다시',()=>{if(adLeft86('scroll_daily')<1)return;
+  showAd86('scroll_daily',()=>{adUse86('scroll_daily');P.scroll=(P.scroll|0)+1;note='강화주문서 1장을 받았어요.';log(note,'g');save();refreshSide();drawShop();});});
+ if(left<1)ad.querySelector('button').disabled=true;
+ for(const [id,n] of [['scroll_10',10],['scroll_30',30]])row('pay86',`강화주문서 ${n}장 묶음`,'현금 결제 · 사지 않아도 게임 안에서 다 얻을 수 있어요',price86(id),()=>buy86(id,()=>{if(isOpen('pShop'))drawShop();}));};}
+
+// 3) 설정: 광고 제거 · 부활권 · 클라우드 저장 (앱에서만 보여요)
+{const _do=drawOpt78;drawOpt78=function(){const had=!!$('opt78');_do.apply(this,arguments);const A=APP86(),o=$('opt78');if(had||!A||!o||!P)return;
+ const w=document.createElement('div');w.style.cssText='display:flex;flex-direction:column;gap:7px';
+ const rm=adRemoved86();
+ w.innerHTML=`<h4>상점·저장</h4>
+  <div class="row86">${rm?'<small style="flex:1">광고 제거됨 · 광고 보상은 광고 없이 바로 받아요</small>':`<button data-a="noads">광고 제거 (${price86('noads')})</button>`}</div>
+  <div class="row86"><small style="flex:1">부활권 ${P.rv86|0}장 · 쓰러졌을 때 그 자리에서 일어나요</small><button data-a="rv">3장 사기 (${price86('revive_3')})</button></div>
+  ${A.cloud?`<div class="row86"><button data-a="up">클라우드에 저장 올리기</button><button data-a="down">클라우드에서 받기</button></div>
+  <small>클라우드에서 받으면 이 기기의 저장이 바뀌고 게임이 다시 켜져요.</small>`:''}`;
+ const C=A.cloud||{};let arm=0;
+ w.querySelectorAll('button').forEach(b=>b.onclick=()=>{const a=b.dataset.a;
+  if(a==='noads')buy86('noads',()=>{if($('opt78')){$('opt78').remove();drawOpt78();}});
+  else if(a==='rv')buy86('revive_3',()=>{if($('opt78')){$('opt78').remove();drawOpt78();}});
+  else if(a==='up'){if(!C.backup)return;save();Promise.resolve(C.backup()).then(r=>toast(r&&r.ok===false?'올리지 못했어요':'클라우드에 저장을 올렸어요','g')).catch(()=>toast('올리지 못했어요','w'));}
+  else if(a==='down'){if(!C.restore)return;if(!arm){arm=1;b.textContent='한 번 더 누르면 받아요';setTimeout(()=>{arm=0;b.textContent='클라우드에서 받기';},3000);return;}
+   Promise.resolve(C.restore()).then(r=>{if(r&&r.ok===false)toast('받지 못했어요','w');}).catch(()=>toast('받지 못했어요','w'));}});
+ o.appendChild(w);};}
+
 openSelect();
 </script>
