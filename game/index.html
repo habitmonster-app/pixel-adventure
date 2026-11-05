@@ -9643,5 +9643,13 @@ bossLoot81=function(id,first){const L=LATE81[id];if(!L||!P)return;
  if(msg.length){log('보스 보상: '+msg.join(' · '),'g');toast('보스 보상: '+msg.join(' · '),'g');}save();
  try{elixRoll93(hero.x,hero.y);}catch(e){}};
 
+/* ===== v96: 일반 몬스터 장비 드롭 (한 마리당 %) : 일반 7 · 고급 2 · 희귀 1 = 10% ===== */
+const MOBDROP96={1:7,2:2,3:1};
+{const _dg=dropGear81;dropGear81=function(m){if(tier95(m)!=='mob')return _dg.apply(this,arguments);
+ if(!m||!m.m||m.cl10||m.m.dummy||LATE81[m.m.id]||m.m.id==='versh_c')return;
+ const r=roll95(MOBDROP96);if(!r)return;
+ const T=Math.min(5,1+Math.floor(m.m.lv/3)),pool=Object.keys(GEAR).filter(k=>{const g=GEAR[k];return g.d1?0:g.s==='weapon'?g.atk<=4+m.m.lv*2:g.t<=T&&g.t>=T-1;});if(!pool.length)return;
+ const b=pool[Math.random()*pool.length|0],iid=mkInst81(b,{r,l:m.m.lv,src:'drop'});if(iid)drops.push({k:iid,x:m.x,y:m.y,t:0});};}
+
 openSelect();
 </script>
