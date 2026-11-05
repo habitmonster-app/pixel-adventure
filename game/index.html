@@ -1653,7 +1653,7 @@ function openCraft(tab){craftTab=tab||craftTab;openPan('pCraft');}
 const needTxt=(need,gold)=>Object.entries(need).map(([m,n])=>`<b style="color:${matN(m)>=n?'#9fe07a':'#ff8a7a'}">${MAT[m].n} ${matN(m)}/${n}</b>`).join(' · ')+(gold?` · <b style="color:${P.gold>=gold?'#9fe07a':'#ff8a7a'}">${gold}골드</b>`:'');
 function drawCraft(){if(!isOpen('pCraft')||!P)return;const B=$('craftB');
  [...$('ctabs2').children].forEach(b=>b.classList.toggle('on',b.dataset.t===craftTab));
- const rec=craftTab==='pot'?POTREC.map(([k,n])=>[k,n,0]):craftTab==='d1'?d1Rec():craftTab==='cook'?cookRec():craftTab==='fog'?fogRec():craftTab==='thorn'?thornRec():craftTab==='gob'?gobRec():craftTab==='mine'?mineRec():craftTab==='castle'?castleRec():craftTab==='gate'?gateRec():craftTab==='rift'?riftRec():craftTab==='vault'?vaultRec():gearRec();
+ const rec=craftTab==='pot'?POTREC.map(([k,n])=>[k,n,typeof potGold92==='function'?potGold92(k):0]):craftTab==='d1'?d1Rec():craftTab==='cook'?cookRec():craftTab==='fog'?fogRec():craftTab==='thorn'?thornRec():craftTab==='gob'?gobRec():craftTab==='mine'?mineRec():craftTab==='castle'?castleRec():craftTab==='gate'?gateRec():craftTab==='rift'?riftRec():craftTab==='vault'?vaultRec():gearRec();
  B.innerHTML=`<div class="mats">${Object.keys(MAT).filter(k=>craftTab==='gate'?F10MAT.includes(k):!F10ONLY.includes(k)&&(craftTab==='rift'?F9MAT.includes(k):!F9ONLY.includes(k)&&(craftTab==='vault'?F8MAT.includes(k):!F8ONLY.includes(k)&&(craftTab==='castle'?F7MAT.includes(k):!F7ONLY.includes(k)&&(craftTab==='mine'?F6MAT.includes(k):craftTab==='mine'||!F6ONLY.includes(k)&&(craftTab==='gob'?F5MAT.includes(k):craftTab==='thorn'?F4MAT.includes(k):(craftTab==='fog')===F3MAT.includes(k)&&!(F4MAT.includes(k)&&!F3MAT.includes(k)&&!['leather'].includes(k))&&!(F5MAT.includes(k)&&!['ore','leather','rshroom','rherb','tshroom','fess','twood'].includes(k)))))))).map(k=>`<span style="--c:${MAT[k].c}">${MAT[k].n} <b>${matN(k)}</b></span>`).join('')}</div><div id="clist"></div>
   <div class="note">${craftTab==='d1'?'새벽풀·맑은샘물·마을 철조각은 마을 가까이에서 채집해요. 척후의 발톱은 토끼·고블린·척후 마수, 마른목재는 쥐마물도 떨어뜨려요. 이야기를 진행하면 더 생겨요.':craftTab==='gate'?'최종 봉인구 = 순수 봉인초 3(봉인 문양을 맑게 이어 줌 · 외곽 의식장 봉인초 숲) · 타버린 기둥목 2(봉인구의 틀 · 관문 아래 광장의 탄 기둥) · 사도 피막 3(새는 마기를 가두는 막 · 피막마수·사도 수하·친위대). 셋 다 퀘스트 보상으로도 꼭 받아요. 한 번 만들면 써도 사라지지 않아요 (100% 성공 · 모든 직업).':craftTab==='rift'?'균열석 파편은 황무지·잔해 지대 곳곳의 붉은 결정에서, 전초기지 목재는 무너진 울타리·보급 상자에서 얻어요. 균열 정수는 소균열을 안정시키거나 마족에게서, 마족 강철은 정예 결계 파괴자·균열 수문장에게서 나와요. 결계 부품은 전초기지 작업대에서 만들어요.':craftTab==='vault'?'룬 파편은 지하 1층 곳곳(조사)·망령·룬 감시구에게서, 정화 이끼는 지하 2층 수로 가에서 채집해요. 봉인 금속편은 망령 기사·정예 봉인감시자·수호병기, 잔류 마력은 중계석·벽 장치를 고치거나 균열 파편체에게서 얻어요. 설계도 조각은 봉인감시자·수호병기에게서 나와요. 봉인 조율구는 한 번 만들면 계속 써요.':craftTab==='castle'?'왕성강은 대장장이 토르에게서 제련(철광석·은광석·석탄), 정제 마력석은 연금술사 노바에게서(검은 수정 조각·수정 가루). 고급 가죽·고급 천은 시장 상인에게 사거나 밀수단에게서, 왕실 문장 조각은 근위병·친위대장·카이렌·훈련 S등급에서 얻어요. 훈련 증표는 교관 하르덴에게 교환해요.':craftTab==='mine'?'석탄·푸른 수정·보라 공명 수정·진동 수정 원석·오래된 기계 부품은 버려진 광산에서 캐요. 광부 장비 파편·박쥐 날개·공명 점액·수정 가루는 광산 몬스터가 떨어뜨려요. 진동 수정 원석은 고급 채광 곡괭이가 있어야 캘 수 있어요. 광부 방어구·진동핵 갑옷은 설계도가 있어야 보여요.':craftTab==='gob'?'은광석·쿤 수정 파편·고블린 부품·마력석·화약 가루는 고블린 던전에서 채집하거나 고블린에게서 얻어요. 두룬의 기계핵·고블린 설계도가 있으면 고블린 장비를 만들 수 있어요.':craftTab==='thorn'?'붉은 약초·질긴 목재·독버섯·독가시는 가시왕숲에서 채집, 가시덩굴은 덩굴을 베거나 덩굴 괴물에게서, 엄니·늑대 가죽·발톱은 짐승 몬스터, 가시왕 송곳니·가죽은 가시왕 멧돼지가 떨어뜨려요.':craftTab==='fog'?'숲 약초·안개버섯·고목 수액·이끼·독초·오래된 목재·희귀 버섯은 안개숲에서 채집, 거미줄·늑대 송곳니·나방 가루는 몬스터, 고목의 정수는 꿈뿌리 고목이 떨어뜨려요.':craftTab==='pot'?'새벽풀·푸른 꽃은 풀숲, 맑은샘물은 샘가에서 채집해요.':'철광석은 위험한 땅 쪽, 나무는 숲, 가죽은 짐승 몬스터가 떨어뜨려요.'}</div>`;
  const L=$('clist');
@@ -9545,6 +9545,35 @@ function drawCash88(){let e=$('cash88');if(!e){e=document.createElement('div');e
 /* ===== v91: 몬스터 경험치 ×0.4 (사용자 결정 2026-11-05: 1/2과 1/3 사이) · 퀘스트·서브·이벤트·훈련 경험치는 그대로 ===== */
 const MOBXP91=0.4;
 (()=>{for(const k in MOB){const m=MOB[k];if(m&&m.ex>0)m.ex=Math.max(1,Math.round(m.ex*MOBXP91));}})();
+
+
+/* ===== v92: 장비 등급 기준 · 제작 골드 · 칸 배경색 (숫자는 여기서만) ===== */
+// 1) 등급에 따른 기본 능력치(공격·방어·체력) 배율 — 같은 장비라도 등급이 높을수록 강해요. 희귀 = 예전 그대로.
+//    같은 장(레벨)에서 전설이 확실히 세고, 한 장 아래 전설 ≥ 다음 장 영웅이 되도록.
+const GMUL92={1:.9,2:.95,3:1,4:1.1,5:1.25};
+const GST92=['atk','def','hp'];
+const gscale92=(v,r)=>v>0?Math.max(1,Math.round(v*(GMUL92[r]||1))):v;
+{const _v=view81;view81=function(iid){const had=VIEW81[iid];const v=_v.apply(this,arguments);if(!v||had||v._g92)return v;const r=INST81[iid]&&INST81[iid].r||1;
+ for(const s of GST92)if(typeof v[s]==='number')v[s]=gscale92(v[s],r);v._g92=1;return v;};
+ for(const k in VIEW81)delete VIEW81[k];}
+// 제작·상점 목록에 보이는 숫자도 그 등급 기준으로 (예: 제작에서 '영웅'을 고르면 영웅 숫자)
+{const _st=statTxt;statTxt=function(k){const t=_st.apply(this,arguments);if(!t||typeof t!=='string'||POT[k]||!GEAR[k]||INST81[k])return t;const r=grd(k);
+ return t.replace(/(공격|방어|체력) \+(\d+)/g,(m,a,n)=>a+' +'+gscale92(+n,r));};}
+
+// 2) 제작에 골드: 모든 제작(물약 포함)에 골드가 들어가요. 이미 골드가 있는 제작법은 그대로.
+const TABLV92={d1:5,fog:15,thorn:20,gob:25,mine:30,castle:35,vault:40,rift:45,gate:50};
+const gold92=(k,tab)=>{const g=GEAR[k];const lv=g?(typeof lvOf81==='function'?lvOf81(k):TABLV92[tab]||5):TABLV92[tab]||5;
+ const v=1.4*lv*lv*(g?1:.5);return Math.max(20,Math.round(v/10)*10);};
+const potGold92=k=>{const p=POT[k];const v=p&&p.p?p.p*.2:20;return Math.max(10,Math.round(v/5)*5);};
+for(const [fn,tab] of [['d1Rec','d1'],['fogRec','fog'],['thornRec','thorn'],['gobRec','gob'],['mineRec','mine'],['castleRec','castle'],['vaultRec','vault'],['riftRec','rift'],['gateRec','gate'],['gearRec','gear']]){
+ let f;try{f=eval(fn);}catch(e){continue;}if(typeof f!=='function')continue;
+ const w=function(){const L=f.apply(this,arguments);return Array.isArray(L)?L.map(r=>{if(!Array.isArray(r)||r[2]>0)return r;const k=r[0];return [k,r[1],POT[k]&&!POT[k].spec&&!POT[k].food?potGold92(k):gold92(k,tab)].concat(r.slice(3));}):L;};
+ try{eval(fn+'=w');}catch(e){}}
+
+// 3) 칸 배경: 전설만 주황 배경·빛, 고급·희귀·영웅은 테두리 색만
+{const st=document.createElement('style');st.textContent=`.slot.gr2,.slot.gr3,.slot.gr4{background:#0d1119}
+.iv-ic.q2,.iv-ic.q3,.iv-ic.q4{background:radial-gradient(circle at 50% 40%,#1a2030,#0b0e16)!important;box-shadow:none!important}
+.slot.gr4:not(.on){border-color:#c07bff}.slot.gr3:not(.on){border-color:#4aa8ff99}.slot.gr2:not(.on){border-color:#5fd35f88}`;document.head.appendChild(st);}
 
 openSelect();
 </script>
