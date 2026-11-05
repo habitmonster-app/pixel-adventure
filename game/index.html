@@ -2395,7 +2395,7 @@ function closeInv(){$('pInv').style.display='none';document.body.classList.remov
 const _openPan29=openPan;openPan=function(id){if(id==='pChar'){openInv('eq');return;}if(id==='pBag'){openInv('bag');return;}if(isOpen('pInv'))closeInv();_openPan29(id);};
 const _toggle29=toggle;toggle=function(id){if(id==='pChar'||id==='pBag'){const v=id==='pChar'?'eq':'bag';if(isOpen('pInv')&&(IV.v===v||!ivTabMode()))closeInv();else openInv(v);return;}_toggle29(id);};
 const _closeAll29=closeAll;closeAll=function(){const o=$('pInv')&&isOpen('pInv');_closeAll29();if(o)closeInv();};
-const ivTabMode=()=>innerHeight>innerWidth||innerWidth<700;
+const ivTabMode=()=>innerHeight>innerWidth||innerWidth<520;
 // ---------------- 장비 (왼쪽/위) ----------------
 function ivSlot(s,lb){const it=P.eq[s],d=document.createElement('button');d.className='iv-slot'+(it?' has':'')+(IV.sel&&IV.sel.t==='gear'&&IV.sel.k===it&&it?' sel':'')+(s==='weapon'?' big':'');
  d.innerHTML=it?ivCell(it):`<div class="iv-ic q0"><span class="iv-lb">${lb}</span></div>`;d.title=it?GEAR[it].n:lb;
@@ -10156,6 +10156,31 @@ gems107=function(n){const c=n>=1000?5:n>=300?4:n>=90?3:2;return Array.from({leng
 // ===================== v109: 부활권 6장 50다이아 · 가방 +5칸 100다이아 (사용자 2026-11-05) =====================
 Object.assign(DITEM107.rv3,{n:'부활권 6장',c:50,go:()=>{P.rv86=(P.rv86|0)+6;return '부활권 6장';}});
 Object.assign(DITEM107.bag5,{c:100});
+
+// ===================== v110: 작은 가로 화면(앱 안 미리보기 등)에서 가방·캐릭터 창 정리 · 정보 버튼 줄바꿈 =====================
+{const st=document.createElement('style');st.textContent=`
+/* 정보 창 버튼: 가로 화면은 6개(장착·비교·강화·잠금·분해·제작 정보)가 안 들어가면 두 줄로, 세로는 한 줄에 작게 */
+#pInv .iv-btns{flex-wrap:wrap!important;row-gap:6px}
+#pInv .iv-btns .iv-b{flex:1 1 64px!important;min-width:64px!important}
+#pInv.tm .iv-btns{flex-wrap:nowrap!important;gap:4px}
+#pInv.tm .iv-btns .iv-b{flex:1 1 0!important;min-width:0!important;padding-left:1px!important;padding-right:1px!important;font-size:12.5px;letter-spacing:-.6px;white-space:nowrap}
+/* 낮은 가로 화면: 가방·캐릭터 창을 화면 높이 가득, 위 거르기 줄은 한 줄(옆으로 밀기) */
+@media (orientation:landscape) and (max-height:430px){
+ #pInv:not(.tm){top:max(4px,env(safe-area-inset-top))!important;bottom:max(4px,env(safe-area-inset-bottom))!important;max-height:none!important;height:auto!important}
+ #pInv:not(.tm) .ph{min-height:0;padding-top:3px;padding-bottom:3px}
+ #pInv:not(.tm) .iv-tabs button{padding-top:4px;padding-bottom:4px}
+ #pInv:not(.tm) .iv-flt{flex-wrap:nowrap!important;overflow-x:auto;overflow-y:hidden;flex-shrink:0;scrollbar-width:none;touch-action:pan-x}
+ #pInv:not(.tm) .iv-flt::-webkit-scrollbar{display:none}
+ #pInv:not(.tm) .iv-flt>*{flex-shrink:0}
+ #pInv:not(.tm) .iv-grid{min-height:60px}
+ #pInv:not(.tm) .iv-eq{overflow-y:auto;min-height:0;touch-action:pan-y}
+}
+@media (orientation:landscape) and (max-height:340px){
+ #pInv:not(.tm) .iv-col{gap:3px}
+ #pInv:not(.tm) .iv-slot{min-height:0!important;height:40px!important}
+ #pInv:not(.tm) .iv-slot .iv-ic{width:34px!important;height:34px!important}
+}
+`;document.head.appendChild(st);}
 
 openSelect();
 </script>
