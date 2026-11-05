@@ -1038,8 +1038,9 @@ const SHOPS={
  weapon:{n:'무기점',hi:'무기상인 매: 직업에 맞는 무기를 골라 봐!',list:()=>Object.keys(GEAR).filter(k=>GEAR[k].s==='weapon'&&GEAR[k].atk<=16)},
  armor:{n:'대장간 · 방어구',hi:'대장장이 무쇠: 튼튼한 걸로 골라 가게.',list:()=>Object.keys(GEAR).filter(k=>ARMS.includes(GEAR[k].s)&&(GEAR[k].t||1)<=3)},
  item:{n:'잡화점',hi:'잡화 상인 바람: 물약은 넉넉히 챙겨!',list:()=>[...Object.keys(POT),...Object.keys(GEAR).filter(k=>!ARMS.includes(GEAR[k].s)&&GEAR[k].s!=='weapon'&&(GEAR[k].t||1)<=2)]}};
-const price=k=>{if(POT[k])return POT[k].p;const g=GEAR[k],v=(g.atk||0)*3+(g.def||0)*4+(g.hp||0)*.6;return Math.max(10,Math.round((10+v*v*.45)/5)*5);};
-const sellPrice=k=>Math.max(1,Math.floor((POT[k]&&POT[k].p0!=null?POT[k].p0:price(k))*.3));
+const price0=k=>{if(POT[k])return POT[k].p;const g=GEAR[k],v=(g.atk||0)*3+(g.def||0)*4+(g.hp||0)*.6;return Math.max(10,Math.round((10+v*v*.45)/5)*5);};
+const price=k=>POT[k]?POT[k].p:Math.round(price0(k)*(typeof GPK85!=='undefined'?GPK85:1)/5)*5;
+const sellPrice=k=>Math.max(1,Math.floor((POT[k]?(POT[k].p0!=null?POT[k].p0:POT[k].p):price0(k))*.3));
 let shopId=null,shopTab='buy',shopMine=true;
 function openShop(id){shopId=id;shopTab='buy';note=SHOPS[id].hi;openPan('pShop');note=SHOPS[id].hi;drawShop();log(SHOPS[id].hi,'n');}
 [...$('stabs').children].forEach(b=>b.onclick=()=>{shopTab=b.dataset.t;note='';drawShop();});
@@ -2493,7 +2494,7 @@ function drawInvDet(){const D=$('ivDet'),S=IV.sel;
    ${IV.mode==='craft'&&rc?`<div class="iv-sh">제작법 <small>${rc.at}</small></div>${rc.open?'':`<div class="iv-msg">🔒 ${rc.lock}</div>`}${ivNeed(rc.need,rc.gold)}`:''}${IV.msg?`<div class="iv-msg">${esc(IV.msg)}</div>`:''}</div>
    <div class="iv-btns">${S.t==='pot'?`<button class="iv-b gold" id="ivUse" ${n>0?'':'disabled'}>사용</button>`:''}${rc?(IV.mode==='craft'?`<button class="iv-b gold" id="ivMake" ${rc.open&&Object.entries(rc.need).every(([m,q])=>matN(m)>=q)&&!(p.spec&&P[p.spec])?'':'disabled'}>제작하기</button><button class="iv-b" id="ivBack">◀ 정보</button>`:'<button class="iv-b" id="ivCraft">제작 정보</button>'):''}</div>`;}
  else if(S.t==='scroll'){h=`<div class="iv-top"><div class="iv-ic q3">${SCROLL_SVG}</div><div><b>강화주문서</b><span>모든 장비에 쓰는 한 종류</span></div>${close}</div>
-   <div class="iv-sec"><div class="iv-kv"><span>가진 개수</span><b>${P.scroll|0}장</b></div><div class="iv-kv"><span>쓰는 곳</span><b>장비 정보 → 강화</b></div><div class="iv-kv"><span>얻는 곳</span><b>몬스터(가끔) · 사기 ${ENH_COST}G</b></div>
+   <div class="iv-sec"><div class="iv-kv"><span>가진 개수</span><b>${P.scroll|0}장</b></div><div class="iv-kv"><span>쓰는 곳</span><b>장비 정보 → 강화</b></div><div class="iv-kv"><span>얻는 곳</span><b>잡화점·방어구점·대장간에서 ${ENH_COST}G · 몬스터(가끔)</b></div>
    <div class="iv-hint">+1 100% · +2 90% · … · +10 10%. 실패하면 한 단계 내려가지만 장비는 사라지지 않아요.</div>${IV.msg?`<div class="iv-msg">${esc(IV.msg)}</div>`:''}</div>
    <div class="iv-btns"><button class="iv-b" id="ivBuy">주문서 사기 ${ENH_COST}G</button></div>`;}
  else{const k=S.k,m=MAT[k],uses=[...D1.filter(x=>x[6][k]).map(x=>GEAR[x[0]]&&GEAR[x[0]].n),...D1X.filter(x=>x[1][k]).map(x=>POT[x[0]].n),...POTREC.filter(x=>x[1][k]).map(x=>POT[x[0]].n)].filter(Boolean);
@@ -2687,7 +2688,7 @@ const ZONES={R01:{x0:0,x1:MAP.river+1},R02:{x0:MAP.river+2,x1:MAP.tw}};
 // 마을 시설: [이름, 가는 곳(npc 또는 칸), 하는 일]
 const FACS=[['중앙 광장',{npc:'elder'},'촌장 해송 · 메인 퀘스트'],['여관',{npc:'inn'},'쉬어 가기 (체력·마나 회복, 저장)'],['창고',{npc:'keeper'},'물건 맡기기·찾기'],
  ['무기점',{npc:'hunter'},'무기 사고팔기'],['방어구점',{npc:'armorer'},'방어구 사고팔기'],['잡화점',{npc:'shop'},'물약·장신구'],
- ['대장간·강화소',{npc:'smith'},'장비 만들기 · 강화'],['연금술 작업대',{st:'alch'},'물약 만들기'],['요리대',{st:'cook'},'요리 만들기'],
+ ['대장간·강화소',{npc:'smith'},'장비 만들기 · 강화 · 강화주문서 사기'],['연금술 작업대',{st:'alch'},'물약 만들기'],['요리대',{st:'cook'},'요리 만들기'],
  ['길드·퀘스트 게시판',{st:'board'},'퀘스트·이야기 진행'],['훈련장',{npc:'trainer'},'허수아비로 피해량 시험'],['마계문 감시탑',{npc:'watch'},'세계 지도 보기']];
 // 지역 지도 이름표 (칸 좌표는 마을 가운데 기준). 순서를 바꾸면 퀘스트의 poi 번호도 같이 봐야 해요
 const POI31=[{n:'샘빛 마을 광장',s:'광장',x:0,y:2,town:1},{n:'북쪽 들판 Lv1~5',s:'북쪽 들판',x:0,y:-19,hunt:1},{n:'서쪽 들판 Lv1~5',s:'서쪽 들판',x:-29,y:-4,hunt:1},
@@ -9278,6 +9279,64 @@ window.addEventListener('pointercancel',()=>prEnd84(0),true);
 #qbar .q.pa84 u.pa84t{background:#2a8a4a;color:#fff;font-weight:bold}`;document.head.appendChild(css);}
 // 독 칩: 남은 시간 + 강한 독
 {const _t=v13Tick;v13Tick=function(dt){_t(dt);const q=$('buffs').querySelector('.psn');if(q&&PSN&&PSN.tier>1&&!q.dataset.t84){q.dataset.t84=1;q.innerHTML=q.innerHTML.replace('☠ 독','☠ 강한 독');}};}
+
+
+/* ===== v85: 캐릭터/가방 화면 나누기 · 장비 가격 · 제작 탭 단계별 열기 · 마을 지도 NPC 표시 · 강화주문서 파는 곳 ===== */
+const GPK85=2;                 // 상점 장비 가격 배율 (예전 가격 × 2). 파는 값은 예전 그대로
+const SCROLL_SHOPS85=['item','armor'];   // 강화주문서를 파는 상점: 잡화점 · 방어구점 (+ 대장간·강화소 대장장이 메뉴)
+// 1) 캐릭터 = 장비 칸 + 능력치 / 가방 = 아이템 목록 + 고른 아이템 정보
+{const _d=drawInv;drawInv=function(){_d.apply(this,arguments);const W=$('pInv');if(!W||!isOpen('pInv'))return;
+ W.classList.toggle('sp85',!ivTabMode());const t=W.querySelector('.ph>span');if(t)t.textContent=IV.v==='eq'?'캐릭터':'가방';
+ const sb=$('ivStatBtn');if(sb)sb.style.display=IV.v==='eq'?'':'none';};}
+{const _t=toggle;toggle=function(id){if((id==='pChar'||id==='pBag')&&isOpen('pInv')&&!ivTabMode()){const v=id==='pChar'?'eq':'bag';if(IV.v===v)closeInv();else{IV.sel=null;IV.mode='info';openInv(v);}return;}_t(id);};}
+{const _o=openInv;openInv=function(v){if(v&&v!==IV.v){IV.sel=null;IV.mode='info';}_o(v);};}
+// 가방 화면에서 아무것도 안 골랐을 때: 능력치 대신 짧은 안내
+{const _dd=drawInvDet;drawInvDet=function(){_dd.apply(this,arguments);if(IV.sel||IV.v!=='bag'||ivTabMode()||(IV.mode&&IV.mode!=='info'))return;const D=$('ivDet');if(!D)return;
+ const sum=D.querySelector('.iv-sum'),dh=D.querySelector('.iv-dh');if(dh)dh.innerHTML='<b>가방</b><span>아이템을 누르면 정보·착용·사용 버튼이 나와요</span>';
+ if(sum)sum.innerHTML=[['골드',P.gold],['강화주문서',(P.scroll|0)+'장'],['장비 가루',(typeof matN==='function'?matN(DUST83):0)+'개']].map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('');
+ const h=D.querySelector('.iv-hint');if(h)h.textContent='능력치는 캐릭터 화면에서 볼 수 있어요. 강화주문서는 잡화점·방어구점·대장간에서 사요.';};}
+{const css=document.createElement('style');css.textContent=`#pInv.sp85[data-v=eq] .iv-bag,#pInv.sp85[data-v=bag] .iv-eq{display:none}
+#pInv.sp85[data-v=eq] .iv-body{grid-template-columns:minmax(300px,1fr) minmax(260px,340px)}
+#pInv.sp85[data-v=bag] .iv-body{grid-template-columns:minmax(0,1fr) minmax(240px,300px)}
+#pInv.sp85[data-v=eq] .iv-eq{border-right:1px solid rgba(201,164,92,.25)}
+.poi.npc85{font-size:9px;padding:1px 4px;border-radius:6px;background:rgba(10,14,24,.82);border-color:rgba(160,200,255,.6);color:#d8e8ff;z-index:1}
+.poi.npc85::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:#7cc0ff;margin-right:3px;vertical-align:1px}`;document.head.appendChild(css);}
+
+// 2) 제작 탭: 이야기를 진행해 그 지역에 이르면 열려요 (첫 마을에서는 물약만)
+const qAt85=id=>{const i=QUESTS.findIndex(q=>q.id===id);return i>=0&&P&&P.q&&P.q.i>=i;};
+const CTAB85={pot:()=>true,d1:()=>d1Open(4),cook:()=>d1Open(4),gear:()=>!!P.ch1,
+ fog:()=>qAt85('Q03_01')||!!P.ch3,thorn:()=>qAt85('Q04_01')||!!P.ch4,gob:()=>qAt85('Q05_01')||!!P.ch5,mine:()=>qAt85('Q06_01')||!!P.ch6,
+ castle:()=>qAt85('Q07_01')||!!P.ch7,vault:()=>qAt85('Q08_01')||!!P.ch8,rift:()=>qAt85('Q09_01')||!!P.ch9,gate:()=>qAt85('Q10_01')||!!P.ch10};
+const ctOpen85=t=>{try{const f=CTAB85[t];return f?!!f():true;}catch(e){return true;}};
+{const _dc=drawCraft;drawCraft=function(){if(P&&!ctOpen85(craftTab))craftTab='pot';_dc.apply(this,arguments);
+ if(craftTab==='pot'){const need=new Set(POTREC.flatMap(([k,n])=>Object.keys(n)).map(m=>MAT[m]&&MAT[m].n));document.querySelectorAll('#pCraft .mats>*').forEach(c=>{const t=c.textContent.replace(/\s*\d+\s*$/,'').trim();if(!need.has(t))c.style.display='none';});}const T=$('ctabs2');if(T)[...T.children].forEach(b=>{b.style.display=ctOpen85(b.dataset.t)?'':'none';});};}
+// 대장장이 메뉴: 아직 안 열린 제작은 숨기고, 강화주문서 사기 추가
+{const _s=FAC31.smith;FAC31.smith=n=>{_s(n);const bt=document.querySelector('#fmB .fm-bt');if(!bt)return;
+ [...bt.children].forEach(b=>{if(b.textContent==='새벽 장비 만들기'&&!ctOpen85('d1'))b.remove();if(b.textContent==='장비 만들기'&&!ctOpen85('gear'))b.remove();});
+ const b=document.createElement('button');b.textContent=`강화주문서 사기 (${ENH_COST}G · 가진 것 ${P.scroll|0}장)`;
+ b.onclick=()=>{if(P.gold<ENH_COST){toast('골드가 모자라요. ('+ENH_COST+'G 필요)','w');return;}P.gold-=ENH_COST;P.scroll=(P.scroll|0)+1;b.textContent=`강화주문서 사기 (${ENH_COST}G · 가진 것 ${P.scroll}장)`;log('강화주문서 1장을 샀어요.','g');save();refreshSide();};
+ bt.appendChild(b);};}
+// 3) 상점: 강화주문서 줄 (잡화점·방어구점 사기 탭 맨 위)
+{const _ds=drawShop;drawShop=function(){_ds.apply(this,arguments);if(!P||shopTab!=='buy'||!SCROLL_SHOPS85.includes(shopId))return;const L=$('slist');if(!L)return;
+ const d=document.createElement('div');d.className='srow';
+ d.innerHTML=`<div class="slot q3">${SCROLL_SVG}${(P.scroll|0)?`<small>${P.scroll|0}</small>`:''}</div><div class="tx"><b style="color:#ffd34a">강화주문서</b><span>모든 장비 강화에 1장 (성공·실패 모두 사용)</span></div><button class="buy"><i class="coin"></i>${ENH_COST}</button>`;
+ d.querySelector('button').onclick=()=>{if(P.gold<ENH_COST){note='골드가 모자라요. ('+ENH_COST+' 골드 필요)';drawShop();return;}P.gold-=ENH_COST;P.scroll=(P.scroll|0)+1;note='강화주문서 1장을 샀어요.';log(note,'g');save();refreshSide();drawShop();};
+ L.insertBefore(d,L.firstChild);};}
+// 4) 마을 지도(이 지역): 사람 위치 간단히 (시설 이름 또는 직업)
+const NPCLB85={elder:'촌장',hunter:'무기점',armorer:'방어구점',shop:'잡화점',smith:'대장간',inn:'여관',keeper:'창고',trainer:'교관',herb:'약초사',mage:'기록관'};
+const NPCSKIP85=['kid','traveler','guard','guard2','watch','priest','ford'];   // 마을 지도에서 뺄 사람 (겹침 줄이기)
+{const _dl=drawLocal;drawLocal=function(){_dl.apply(this,arguments);try{const c=$('mapc'),lb=$('maplb');if(!c||!lb||!c.width)return;
+ const cr=c.getBoundingClientRect(),br=$('mapbox').getBoundingClientRect(),RX=RG.x0,RWd=RG.x1-RG.x0,sc=cr.width/RWd;
+ const used=[...lb.querySelectorAll('.poi')].map(e=>e.getBoundingClientRect());
+ const hit=r=>used.some(u=>r.left<u.right&&r.right>u.left&&r.top<u.bottom&&r.bottom>u.top);
+ const PRI85=['shop','armorer','smith','hunter','keeper','inn','elder','trainer','herb','mage'],pr=e=>{const i=PRI85.indexOf(e&&e.k);return i<0?99:i;};
+ for(const e of [...npcs].sort((p,q)=>pr(p)-pr(q))){if(!e||e.x<RX||e.x>RX+RWd||e.hide||NPCSKIP85.includes(e.k))continue;if(RGN.cur==='R01'&&!NPCLB85[e.k])continue;
+  const nm=NPCLB85[e.k]||String(e.n||'').split(' ')[0];if(!nm)continue;
+  const b=document.createElement('button');b.className='poi npc85';b.textContent=nm;b.title=e.n;b.onclick=()=>goTo({n:e.n,s:e.n,npc:e.k});
+  const x=cr.left-br.left+(e.x-RX)*sc,y0=cr.top-br.top+(e.y-18)*sc;b.style.left=x+'px';b.style.top=y0+'px';lb.appendChild(b);
+  let r=b.getBoundingClientRect(),ok=!hit(r);
+  for(const [dx,dy] of [[0,12],[0,-12],[0,24],[0,-24],[-34,0],[34,0],[-34,12],[34,12],[-34,-12],[34,-12],[0,36],[0,-36],[-50,24],[50,24]]){if(ok)break;b.style.left=(x+dx)+'px';b.style.top=(y0+dy)+'px';r=b.getBoundingClientRect();ok=!hit(r);}
+  if(!ok){b.remove();continue;}used.push(r);}}catch(err){}};}
 
 openSelect();
 </script>
