@@ -1321,7 +1321,7 @@ const STN={atk:'공격력',hp:'최대 체력',def:'방어력',dr:'받는 피해 
 const skLv=id=>(P&&P.sk&&P.sk[id])||0;
 const val=(a,lv)=>Math.round((a[0]+a[1]*(lv-1))*100)/100;
 const spent=c=>Object.values(c.sk||{}).reduce((a,b)=>a+b,0);
-const ptsLeft=()=>Math.max(0,P.lv-1-spent(P));
+const ptsLeft=()=>Math.max(0,P.lv-1+((P&&P.sx93)|0)-spent(P));
 function passOf(c){const o={atk:0,hp:0,def:0,dr:0,crit:0,ls:0,sp:0,dodge:0,cdr:0};
  for(const id in (c.sk||{})){const s=SKBY[id],lv=c.sk[id];if(s&&s.t==='pas'&&lv)o[s.st]+=val(s.v,lv);}
  if(c===P)for(const k in BUFF)if(BUFF[k].u>now())o[k]+=BUFF[k].v;return o;}
@@ -9574,6 +9574,31 @@ for(const [fn,tab] of [['d1Rec','d1'],['fogRec','fog'],['thornRec','thorn'],['go
 {const st=document.createElement('style');st.textContent=`.slot.gr2,.slot.gr3,.slot.gr4{background:#0d1119}
 .iv-ic.q2,.iv-ic.q3,.iv-ic.q4{background:radial-gradient(circle at 50% 40%,#1a2030,#0b0e16)!important;box-shadow:none!important}
 .slot.gr4:not(.on){border-color:#c07bff}.slot.gr3:not(.on){border-color:#4aa8ff99}.slot.gr2:not(.on){border-color:#5fd35f88}`;document.head.appendChild(st);}
+
+/* ===== v93: 스킬 엘릭서 · 보스 드롭 등급 (전설 1% · 영웅 3%) ===== */
+// 보스(처음·다시 모두) 장비 등급 확률 (%) : 고급 40 · 희귀 56 · 영웅 3 · 전설 1
+DROPR81.boss={2:40,3:56,4:3,5:1};
+BOSSR81.first={2:40,3:56,4:3,5:1};BOSSR81.again={2:40,3:56,4:3,5:1};
+// 정예가 보스보다 좋은 등급을 주지 않게 : 고급 50 · 희귀 48 · 영웅 2
+DROPR81.elite={2:50,3:48,4:2};
+// 스킬 엘릭서: 보스를 쓰러뜨리면 1% · 쓰면 스킬 포인트 +1 (영구)
+const ELIX93='elix93',ELIXP93=0.01;
+MAT[ELIX93]={n:'스킬 엘릭서',c:'#5fe0ff'};
+MATSRC[ELIX93]='모든 보스를 쓰러뜨리면 1% 확률 · 다시 싸워도 나와요';
+IV_PIX[ELIX93]={p:{k:'#0d2a38',A:'#2fb8e8',a:'#9ff0ff',w:'#ffffff',g:'#ffd34a',c:'#8a5a2a'},m:['............','.....cc.....','.....gg.....','....kwwk....','....kAak....','...kAAaak...','..kAAAAaAk..','..kAAAAAAk..','..kAaAAAAk..','...kAAAAk...','....kkkk....','............']};
+IV_QUEST.push(ELIX93);
+let elixT93=0;
+function elixRoll93(x,y){if(!P||performance.now()-elixT93<3000)return;elixT93=performance.now();if(Math.random()>=ELIXP93)return;
+ addMat(ELIX93,1);if(x!=null)pop(x,y-96,'+스킬 엘릭서','#5fe0ff');log('스킬 엘릭서를 얻었어요! 가방 → 퀘스트 칸에서 마실 수 있어요','g');toast('✨ 스킬 엘릭서를 얻었어요!','g');save();}
+{const _ok=onKill27;onKill27=function(m){const r=_ok.apply(this,arguments);try{if(m&&m.m&&m.m.boss&&!m.m.dummy&&!m.cl10)elixRoll93(m.x,m.y);}catch(e){}return r;};}
+{const _bl=bossLoot81;bossLoot81=function(id,first){const r=_bl.apply(this,arguments);try{if(LATE81[id])elixRoll93(hero.x,hero.y);}catch(e){}return r;};}
+function useElix93(){if(matN(ELIX93)<1)return '스킬 엘릭서가 없어요';P.mat[ELIX93]--;P.sx93=(P.sx93|0)+1;save();
+ log('스킬 엘릭서를 마셨어요. 스킬 포인트 +1 (엘릭서로 얻은 포인트 '+P.sx93+')','g');toast('스킬 포인트 +1!','g');if(typeof refreshSide==='function')refreshSide();return '스킬 포인트 +1! 스킬 창에서 쓸 수 있어요.';}
+{const _dd=drawInvDet;drawInvDet=function(){_dd.apply(this,arguments);const S=IV.sel,D=$('ivDet');if(!D||!S||S.t!=='mat'||S.k!==ELIX93)return;
+ const sec=D.querySelector('.iv-sec');if(sec){sec.insertAdjacentHTML('beforeend',`<div class="iv-kv"><span>효과</span><b class="up">쓰면 스킬 포인트 +1 (영구)</b></div><div class="iv-kv"><span>지금까지 마신 수</span><b>${P.sx93|0}</b></div>${IV.msg?`<div class="iv-msg">${esc(IV.msg)}</div>`:''}`);}
+ const t=D.querySelector('.iv-top span');if(t)t.textContent='특별 물약';
+ D.insertAdjacentHTML('beforeend',`<div class="iv-btns"><button class="iv-b gold" id="ivElix93" ${matN(ELIX93)<1?'disabled':''}>마시기 (스킬 포인트 +1)</button></div>`);
+ const b=$('ivElix93');if(b)b.onclick=()=>{IV.msg=useElix93();drawInv();};};}
 
 openSelect();
 </script>
