@@ -9837,5 +9837,24 @@ setInterval(()=>{try{tutTick101();}catch(e){}},300);
 .mgrid .ib{white-space:nowrap;letter-spacing:-.3px}`;document.head.appendChild(st);}
 {const L={d1:'새벽',thorn:'가시왕',gob:'고블린'};const T=$('ctabs2');if(T)for(const b of T.children)if(L[b.dataset.t])b.textContent=L[b.dataset.t];}
 
+// ===================== v103: 기술 그림 가장자리 잘림 · 메뉴 스크롤 =====================
+// 1) 움직이는 기술 그림(fx·fx2·fx3·fx4)은 한 칸(128)에 꽉 차게 그려져 있어서, 커질 때 칸 끝이 '일자로 잘린 선'으로 보였어요.
+//    그림을 불러올 때 칸마다 가장자리 22px을 부드럽게 어둡게(=투명하게) 만들어, 잘린 선 대신 은은하게 사라지게 해요.
+const SOFT103=22;
+function softMask103(){const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d'),d=g.createImageData(128,128);
+ const s=v=>{v=Math.max(0,Math.min(1,(v-2)/SOFT103));return v*v*(3-2*v);};
+ for(let y=0;y<128;y++)for(let x=0;x<128;x++){const m=s(Math.min(x,127-x)+.5)*s(Math.min(y,127-y)+.5),i=(y*128+x)*4;d.data[i+3]=Math.round((1-m)*255);}
+ g.putImageData(d,0,0);return c;}
+function soft103(img){if(!img)return;const go=()=>{if(img._s103||!img.naturalWidth)return;img._s103=1;
+ try{const W=img.naturalWidth,H=img.naturalHeight,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');g.drawImage(img,0,0);
+  const mk=softMask103();for(let y=0;y<H;y+=128)for(let x=0;x<W;x+=128)g.drawImage(mk,x,y);
+  img.src=c.toDataURL('image/jpeg',.92);}catch(e){}};
+ if(img.complete&&img.naturalWidth)go();else img.addEventListener('load',go,{once:true});}
+[FXIMG,FX2,FX3,FX4].forEach(soft103);
+// 2) 메뉴 창이 화면보다 길어지면(설정 펼침) 아래가 잘리고 손가락으로 내려지지 않았어요 → 화면 안에서 멈추고 위아래로 밀어서 보기.
+{const st=document.createElement('style');st.textContent=`
+#pMenu{max-height:calc(100% - 64px - env(safe-area-inset-bottom));overflow-y:auto!important;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+#pMenu>*{flex-shrink:0}`;document.head.appendChild(st);}
+
 openSelect();
 </script>
