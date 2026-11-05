@@ -807,7 +807,7 @@ function hurt(m,dmg){if(!m||!m.m||m.st==='dead'||m.hp<=0||!Number.isFinite(dmg)|
  {const dx=m.x-hero.x,dy=m.y-hero.y,l=Math.hypot(dx,dy)||1;m.kbx=dx/l;m.kby=dy/l;m.kbv=(cr?타격감.치명밀림:타격감.밀림)*(m.m.boss?.3:1);}
  if(typeof burst==='function'){const o=CUR;CUR=DEFX;burst(m.x,m.y-26,cr?'#ffd34a':'#fff',cr?12:6,cr?160:110,cr?3:2);CUR=o;}
  if(cr){shake=Math.max(shake,2.5);fx.push({x:m.x,y:m.y-44,t:dmg+'!',c:'#ffd34a',l:1.1,big:1});}else pop(m.x,m.y-40,dmg,'#fff');
- if(m.hp<=0){m.st='dead';m.f=0;m.ft=0;m.fade=1.2;if(Math.random()<.04){P.scroll=(P.scroll|0)+1;pop(m.x,m.y-78,'+강화주문서','#ffd34a');log('강화주문서를 주웠어요','g');}qEvent('kill',m.m.id,1);onKill27(m);if(['pig','boar','rabbit','lizard'].includes(m.m.id)&&Math.random()<.35){addMat('leather',1);pop(m.x,m.y-64,'+가죽','#e0a070');}const g=Math.round(rnd(...m.m.g));P.gold+=g;gainExp(m.m.ex);log(m.m.n+' 처치: 경험치 +'+m.m.ex+', '+g+' 골드');pop(m.x,m.y-52,'+'+g+'G','#f2c14e');
+ if(m.hp<=0){m.st='dead';m.f=0;m.ft=0;m.fade=1.2;if(Math.random()<(typeof scrollP95==='function'?scrollP95(m):.04)){P.scroll=(P.scroll|0)+1;pop(m.x,m.y-78,'+강화주문서','#ffd34a');log('강화주문서를 주웠어요','g');}qEvent('kill',m.m.id,1);onKill27(m);if(['pig','boar','rabbit','lizard'].includes(m.m.id)&&Math.random()<.35){addMat('leather',1);pop(m.x,m.y-64,'+가죽','#e0a070');}const g=Math.round(rnd(...m.m.g));P.gold+=g;gainExp(m.m.ex);log(m.m.n+' 처치: 경험치 +'+m.m.ex+', '+g+' 골드');pop(m.x,m.y-52,'+'+g+'G','#f2c14e');
   dropGear81(m);
   setTimeout(spawnMob,rnd(6000,12000));}}
 function gainExp(e){P.exp+=e;while(P.exp>=needExp(P.lv)){P.exp-=needExp(P.lv);P.lv++;P.hp=stats().hp;P.mp=mpMax();pop(hero.x,hero.y-60,'레벨 업!','#7CFC00');toast('레벨 '+P.lv+'이 되었어요!','g');}}
@@ -9617,6 +9617,31 @@ function faceOf94(k){if(k in FACE94)return FACE94[k];const im=IMG[k],meta=SMETA[
  const m=$('msg');if(m&&!m.querySelector('.fc94'))m.insertAdjacentHTML('afterbegin','<div class="fc94"><img alt=""></div>');}
 {const _sl=showLine;showLine=function(){const r=_sl.apply(this,arguments);try{const m=$('msg'),n=talk&&talk.n,f=n&&n.k&&faceOf94(n.k);
  m.classList.toggle('f94',!!f);if(f)m.querySelector('.fc94 img').src=f;}catch(e){}return r;};}
+
+/* ===== v95: 정예·보스 드롭 확률 (한 마리 잡을 때 확률, %) ===== */
+// 1~6장(몬스터 Lv.30 이하)은 전설 안 나옴 · 전설은 7~10장(Lv.31 이상)만
+const DROP95={
+ early:{elite:{3:1,4:.5},boss:{3:2,4:1}},   // 1~6장: 희귀 · 영웅
+ late :{elite:{4:1,5:.5},boss:{4:2,5:1}}};  // 7~10장: 영웅 · 전설
+const SCROLL95={mob:4,elite:5,boss:10};     // 강화주문서 (일반 몬스터는 예전 그대로 4%)
+const tier95=m=>m&&m.m?(m.m.boss?'boss':m.m.elite?'elite':'mob'):'mob';
+const late95=lv=>(lv|0)>=31;
+function scrollP95(m){return (SCROLL95[tier95(m)]||4)/100;}
+// 한 번 굴려서 등급 하나 또는 없음
+function roll95(tab){const t=Math.random()*100;let a=0;for(const r of Object.keys(tab).sort((x,y)=>y-x)){a+=tab[r];if(t<a)return +r;}return 0;}
+{const _dg=dropGear81;dropGear81=function(m){const t=tier95(m);if(t==='mob')return _dg.apply(this,arguments);
+ if(!m||!m.m||m.cl10||m.m.dummy||LATE81[m.m.id]||m.m.id==='versh_c')return;
+ const r=roll95(DROP95[late95(m.m.lv)?'late':'early'][t]);if(!r)return;
+ const T=Math.min(5,1+Math.floor(m.m.lv/3)),pool=Object.keys(GEAR).filter(k=>{const g=GEAR[k];return g.d1?0:g.s==='weapon'?g.atk<=4+m.m.lv*2:g.t<=T&&g.t>=T-1;});if(!pool.length)return;
+ const b=pool[Math.random()*pool.length|0],iid=mkInst81(b,{r,l:m.m.lv,src:'drop'});if(iid){drops.push({k:iid,x:m.x,y:m.y,t:0});log('['+GRADE[r].n+'] '+GEAR[b].n+'이(가) 떨어졌어요!','g');}};}
+// 후반 지정 보스(카이렌·수호병기·수문장·베르샤르): 장비는 영웅 2% · 전설 1%, 전설의 핵은 예전 그대로
+bossLoot81=function(id,first){const L=LATE81[id];if(!L||!P)return;
+ const set=[...Object.keys(GEAR).filter(k=>k.startsWith(L.set)&&GEAR[k].d1),...(L.extra||[])].filter(k=>GEAR[k]&&canWear(P,k));
+ const r=roll95(DROP95.late.boss),msg=[];
+ if(r&&set.length){const b=set[Math.random()*set.length|0];const iid=addGear81(b,'boss',{r,l:lvOf81(b)});if(iid)msg.push('['+GRADE[r].n+'] '+GEAR[b].n);}
+ const [c0,c1]=L.core;let n=first?c0:Math.floor(c1)+(Math.random()<c1%1?1:0);if(n>0){addMat(COREID81,n);msg.push('전설의 핵 '+n);}
+ if(msg.length){log('보스 보상: '+msg.join(' · '),'g');toast('보스 보상: '+msg.join(' · '),'g');}save();
+ try{elixRoll93(hero.x,hero.y);}catch(e){}};
 
 openSelect();
 </script>
