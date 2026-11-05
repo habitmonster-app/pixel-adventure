@@ -12,7 +12,7 @@
  const P=()=>C.Plugins||{};
  // ----- 광고 -----
  let adReady=false,adBusy=false,inited=false;
- async function adInit(){if(inited)return;const A=P().AdMob;if(!A)return;inited=true;try{await A.initialize({initializeForTesting:CFG.testing});}catch(e){}adLoad();}
+ async function adInit(){if(inited)return;const A=P().AdMob;if(!A)return;inited=true;try{await A.initialize({initializeForTesting:CFG.testing});}catch(e){}}
  async function adLoad(){const A=P().AdMob;if(!A||adReady)return;try{await A.prepareRewardVideoAd({adId:CFG.rewardedId,isTesting:CFG.testing});adReady=true;}catch(e){adReady=false;}}
  async function showRewarded(place){
   if(APP.ads.removed())return {ok:true,noads:true};
@@ -25,7 +25,7 @@
    const done=new Promise(res=>{A.addListener('onRewardedVideoAdDismissed',()=>res()).then(h=>hs.push(h));A.addListener('onRewardedVideoAdFailedToShow',()=>res()).then(h=>hs.push(h));});
    adReady=false;await A.showRewardVideoAd();await Promise.race([done,new Promise(r=>setTimeout(r,120000))]);
   }catch(e){}
-  hs.forEach(h=>{try{h.remove();}catch(e){}});adBusy=false;setTimeout(adLoad,500);
+  hs.forEach(h=>{try{h.remove();}catch(e){}});adBusy=false;// 다음 광고는 미리 받지 않아요(게임 중 뒤에서 일하지 않게) → 필요할 때 받기
   return {ok:got,place};}
  // ----- 결제 (구글 플레이) -----
  let store=null;const pend={};
@@ -59,5 +59,5 @@
   // cloud: 클라우드 저장은 다음 단계에서 넣어요 (없으면 게임이 버튼을 숨겨요)
  };
  document.addEventListener('deviceready',shopInit);
- setTimeout(()=>{adInit();shopInit();},1500);
+ setTimeout(()=>{shopInit();},1500);// 광고는 처음 '광고 보기'를 누를 때 켜요
 })();
