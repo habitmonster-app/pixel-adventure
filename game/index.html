@@ -2403,7 +2403,7 @@ function ivSlot(s,lb){const it=P.eq[s],d=document.createElement('button');d.clas
 function drawInvEq(){const E=$('ivEq'),s=stats();
  const L=IV.more?IV_MORE_L:IV_MAIN_L,R=IV.more?IV_MORE_R:IV_MAIN_R;
  E.innerHTML=`<div class="iv-doll"><div class="iv-col" id="ivL"></div><div class="iv-mid"><canvas id="ivPv"></canvas><div class="iv-wpn" id="ivW"></div></div><div class="iv-col" id="ivR"></div></div>
-  <div class="iv-eqf"><button id="ivMore">${IV.more?'◀ 주 장비 칸':'기타 칸 (옷·다리·어깨…) ▶'}</button>
+  <div class="iv-eqf"><button id="ivMore">${IV.more?'◀ 주 장비 칸':'옷·다리·어깨 ▶'}</button>
   <div class="iv-st"><span>공격 <b>${s.atk}</b></span><span>방어 <b>${s.def}</b></span><span>체력 <b>${s.hp}</b></span><span>치명 <b>${s.crit|0}%</b></span></div></div>`;
  L.forEach(([k,n])=>$('ivL').appendChild(ivSlot(k,n)));R.forEach(([k,n])=>$('ivR').appendChild(ivSlot(k,n)));
  $('ivW').appendChild(ivSlot('weapon','무기'));
@@ -2474,7 +2474,7 @@ function drawInvDet(){const D=$('ivDet'),S=IV.sel;
     <div class="iv-kv"><span>성공하면</span><b class="up">+${n+1} · ${statsLine(g,n+1)}</b></div>
     <div class="iv-kv"><span>실패하면</span><b class="dn">+${Math.max(0,n-1)}로 내려감</b></div><div class="iv-safe">🛡 실패해도 장비는 절대 사라지지 않아요</div>`}
     ${IV.msg?`<div class="iv-msg">${esc(IV.msg)}</div>`:''}</div>
-    <div class="iv-btns"><button class="iv-b gold" id="ivEnhGo" ${max||(P.scroll|0)<1?'disabled':''}>강화하기</button><button class="iv-b" id="ivBuy">주문서 사기 ${ENH_COST}G</button><button class="iv-b" id="ivFree">시험용 20장</button><button class="iv-b" id="ivBack">◀ 정보</button></div>`;}
+    <div class="iv-btns"><button class="iv-b gold" id="ivEnhGo" ${max||(P.scroll|0)<1?'disabled':''}>강화하기</button><button class="iv-b" id="ivBuy">주문서 ${ENH_COST}G</button><button class="iv-b" id="ivFree">시험용 20장</button><button class="iv-b" id="ivBack">◀ 정보</button></div>`;}
   else if(IV.mode==='craft'&&rc){const can=rc.open&&Object.entries(rc.need).every(([m,n])=>matN(m)>=n)&&P.gold>=rc.gold;
    h=head+`<div class="iv-sec"><div class="iv-sh">제작법 <small>${rc.at}</small></div>${rc.open?'':`<div class="iv-msg">🔒 ${rc.lock}</div>`}${ivNeed(rc.need,rc.gold)}${craftPrev83(k)}${IV.msg?`<div class="iv-msg">${esc(IV.msg)}</div>`:''}</div>
     <div class="iv-btns"><button class="iv-b gold" id="ivMake" ${can?'':'disabled'}>제작하기</button><button class="iv-b" id="ivBack">◀ 정보</button></div>`;}
@@ -2496,7 +2496,7 @@ function drawInvDet(){const D=$('ivDet'),S=IV.sel;
  else if(S.t==='scroll'){h=`<div class="iv-top"><div class="iv-ic q3">${SCROLL_SVG}</div><div><b>강화주문서</b><span>모든 장비에 쓰는 한 종류</span></div>${close}</div>
    <div class="iv-sec"><div class="iv-kv"><span>가진 개수</span><b>${P.scroll|0}장</b></div><div class="iv-kv"><span>쓰는 곳</span><b>장비 정보 → 강화</b></div><div class="iv-kv"><span>얻는 곳</span><b>잡화점·방어구점·대장간에서 ${ENH_COST}G · 몬스터(가끔)</b></div>
    <div class="iv-hint">+1 100% · +2 90% · … · +10 10%. 실패하면 한 단계 내려가지만 장비는 사라지지 않아요.</div>${IV.msg?`<div class="iv-msg">${esc(IV.msg)}</div>`:''}</div>
-   <div class="iv-btns"><button class="iv-b" id="ivBuy">주문서 사기 ${ENH_COST}G</button></div>`;}
+   <div class="iv-btns"><button class="iv-b" id="ivBuy">주문서 ${ENH_COST}G</button></div>`;}
  else{const k=S.k,m=MAT[k],uses=[...D1.filter(x=>x[6][k]).map(x=>GEAR[x[0]]&&GEAR[x[0]].n),...D1X.filter(x=>x[1][k]).map(x=>POT[x[0]].n),...POTREC.filter(x=>x[1][k]).map(x=>POT[x[0]].n)].filter(Boolean);
   h=`<div class="iv-top"><div class="iv-ic ${S.q?'q4':'q1'}"><img src="${matIco(k)}" alt=""></div><div><b style="color:${m.c}">${esc(m.n)}</b><span>${IV_QUEST.includes(k)?'퀘스트·제작 재료':'제작 재료'}</span></div>${close}</div>
    <div class="iv-sec"><div class="iv-kv"><span>가진 개수</span><b>${matN(k)}</b></div><div class="iv-kv"><span>얻는 곳</span><b>${MATSRC[k]||'—'}</b></div>
@@ -9816,6 +9816,26 @@ setInterval(()=>{try{tutTick101();}catch(e){}},300);
  b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#e0b866" stroke-width="1.8"><circle cx="12" cy="12" r="9" fill="#2c3a5a"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17.2v.1"/></svg>튜토리얼';
  b.onclick=()=>{if(!P)return;P.tut101={off:0,d:{}};TUT.id=null;save();closeAll&&closeAll();toast('튜토리얼을 다시 켰어요. 이미 지난 단계는 할 일이 생길 때 다시 안내해요.','g');};
  const ref=$('mSave');if(ref&&ref.nextSibling)g.insertBefore(b,ref.nextSibling);else g.appendChild(b);}}
+
+/* ===== v102: 글자·칸 잘림 고치기 ===== */
+// 1) 한국어 낱말이 줄 중간에서 쪼개지지 않게 (예: '올/라요', '사/기', '닫/기')  2) 버튼 글자는 한 줄
+// 3) 가방 거르기 줄은 넘치면 두 줄로 (옆으로 잘리지 않게)  4) 오른쪽 정보 칸은 길면 스크롤
+// 5) 장비 칸 이름 한 줄 (보조·방패)  6) 제작 탭 이름 짧게·한 줄
+{const st=document.createElement('style');st.textContent=`
+.pan,.pan *,#facM,#facM *,#msg,#cash88,#dead86,#tut101 .bub{word-break:keep-all;overflow-wrap:break-word}
+.iv-flt{flex-wrap:wrap!important;overflow-x:visible!important;white-space:normal!important}
+.iv-flt>*{flex:0 0 auto}
+.iv-b{white-space:nowrap;padding:0 6px;font-size:13px}
+.iv-btns{flex-wrap:nowrap}
+.iv-btns .iv-b{flex:1 1 0;min-width:0}
+.iv-eqf button{white-space:nowrap}
+#ivDet{overflow-y:auto;overscroll-behavior:contain}
+.iv-slot .lb,.iv-slot span,.iv-slot small{white-space:nowrap;letter-spacing:-.3px}
+#ctabs2{display:flex;flex-wrap:nowrap;overflow:hidden}
+#ctabs2 button{white-space:nowrap;flex:1 1 auto;min-width:0;padding-left:2px;padding-right:2px;font-size:12px;letter-spacing:-.4px}
+.tabs button{white-space:nowrap}
+.mgrid .ib{white-space:nowrap;letter-spacing:-.3px}`;document.head.appendChild(st);}
+{const L={d1:'새벽',thorn:'가시왕',gob:'고블린'};const T=$('ctabs2');if(T)for(const b of T.children)if(L[b.dataset.t])b.textContent=L[b.dataset.t];}
 
 openSelect();
 </script>
