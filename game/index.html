@@ -9600,5 +9600,23 @@ function useElix93(){if(matN(ELIX93)<1)return '스킬 엘릭서가 없어요';P.
  D.insertAdjacentHTML('beforeend',`<div class="iv-btns"><button class="iv-b gold" id="ivElix93" ${matN(ELIX93)<1?'disabled':''}>마시기 (스킬 포인트 +1)</button></div>`);
  const b=$('ivElix93');if(b)b.onclick=()=>{IV.msg=useElix93();drawInv();};};}
 
+/* ===== v94: 대화창 왼쪽에 말하는 사람 얼굴 ===== */
+// 그 인물의 걷기 그림(앞모습 첫 칸)에서 머리·어깨 부분만 잘라 크게 보여 줘요. 그림이 없는 말(안내·이야기)은 얼굴 없이.
+const FACE94={};
+function faceOf94(k){if(k in FACE94)return FACE94[k];const im=IMG[k],meta=SMETA[k];
+ if(!im||!im.complete||!im.naturalWidth||!meta||meta.cre){return null;}
+ try{const c=document.createElement('canvas');c.width=64;c.height=64;const g=c.getContext('2d');g.drawImage(im,0,128,64,64,0,0,64,64);
+  // LPC 앞모습: 눈이 30줄쯤 → 머리·어깨가 들어가게 고정해서 잘라요
+  const S=28,sx=18,sy=13;
+  const d=g.getImageData(sx,sy,S,S).data;let n=0;for(let i=3;i<d.length;i+=4)if(d[i]>40)n++;if(n<60)return FACE94[k]=null;
+  const o=document.createElement('canvas');o.width=o.height=S*3;const q=o.getContext('2d');q.imageSmoothingEnabled=false;
+  q.drawImage(c,sx,sy,S,S,0,0,S*3,S*3);return FACE94[k]=o.toDataURL();}catch(e){return FACE94[k]=null;}}
+{const st=document.createElement('style');st.textContent=`#msg.f94{padding-left:96px;min-height:80px}
+#msg .fc94{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:76px;height:76px;border-radius:50%;border:2px solid var(--brass);background:radial-gradient(circle at 50% 40%,#3a4a66,#141a26 75%);overflow:hidden;display:none}
+#msg.f94 .fc94{display:block}#msg .fc94 img{width:100%;height:100%;image-rendering:pixelated;display:block}`;document.head.appendChild(st);
+ const m=$('msg');if(m&&!m.querySelector('.fc94'))m.insertAdjacentHTML('afterbegin','<div class="fc94"><img alt=""></div>');}
+{const _sl=showLine;showLine=function(){const r=_sl.apply(this,arguments);try{const m=$('msg'),n=talk&&talk.n,f=n&&n.k&&faceOf94(n.k);
+ m.classList.toggle('f94',!!f);if(f)m.querySelector('.fc94 img').src=f;}catch(e){}return r;};}
+
 openSelect();
 </script>
