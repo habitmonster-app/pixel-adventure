@@ -10,6 +10,19 @@
  };
  const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
  const P=()=>C.Plugins||{};
+
+ // ----- 앱이 뒤로 갈 때(홈 화면·다른 앱) 소리 멈추기 -----
+ // 게임이 만드는 소리 장치(AudioContext)를 기억해 두었다가 앱이 뒤로 가면 멈추고, 돌아오면 다시 켜요.
+ const ACS=[];const AC0=window.AudioContext||window.webkitAudioContext;
+ if(AC0){const W=function(...a){const c=new AC0(...a);ACS.push(c);return c;};W.prototype=AC0.prototype;
+  try{Object.setPrototypeOf(W,AC0);}catch(e){}window.AudioContext=W;if(window.webkitAudioContext)window.webkitAudioContext=W;}
+ let bg=false;const was=new Set();
+ function setBg(on){if(on===bg)return;bg=on;
+  ACS.forEach(c=>{try{if(on){if(c.state==='running'){was.add(c);c.suspend();}}else if(was.has(c)){was.delete(c);c.resume();}}catch(e){}});
+  try{window.GAME_PAUSE&&window.GAME_PAUSE(on);}catch(e){}// 게임이 원하면 이 이름으로 받아서 멈출 수 있어요
+  try{window.dispatchEvent(new CustomEvent(on?'apppause':'appresume'));}catch(e){}}
+ window.addEventListener('nativepause',()=>setBg(true));window.addEventListener('nativeresume',()=>setBg(false));
+ document.addEventListener('visibilitychange',()=>setBg(document.hidden));
  // ----- 광고 -----
  let adReady=false,adBusy=false,inited=false;
  async function adInit(){if(inited)return;const A=P().AdMob;if(!A)return;inited=true;try{await A.initialize({initializeForTesting:CFG.testing});}catch(e){}}
@@ -48,6 +61,7 @@
   store.ready(()=>{try{window.prodLoad86&&window.prodLoad86();}catch(e){}});}
  window.APP={
   version:1,
+  isBackground:()=>bg,
   ads:{removed:()=>!!LS.get('app_noads',false),showRewarded},
   shop:{
    products:async()=>{shopInit();if(!store)return [];try{await Promise.race([new Promise(r=>store.ready(r)),new Promise(r=>setTimeout(r,6000))]);}catch(e){}
