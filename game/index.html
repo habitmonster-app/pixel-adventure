@@ -8953,7 +8953,6 @@ function optShort81(k){const r=INST81[k];return r&&r.o.length?r.o.map(([o,v])=>f
 function optHtml81(k){const r=INST81[k],g=GEAR[k];if(!g)return '';const b=baseOf81(k),q=grd(k),n=LINES81[q]|0;
  let h=g.crit?`<div class="iv-kv"><span>기본 옵션</span><b>치명타 확률 +${g.crit}%</b></div>`:'';
  if(!r){const l=lvOf81(b);return h+`<div class="iv-kv"><span>랜덤 옵션</span><b>${n?`${GRADE[q].n}: 얻을 때 ${n}줄`:'없음 (일반·고급)'}</b></div>${n?candHtml81(b,l):''}`;}
- h+=`<div class="iv-kv"><span>아이템 레벨</span><b>Lv.${r.l} <small>(옵션 범위 ${band81(r.l)}구간)</small></b></div>`;
  if(!n)return h+'<div class="iv-kv"><span>랜덤 옵션</span><b>없음 (일반·고급은 옵션이 없어요)</b></div>';
  h+=`<div class="iv-sh">랜덤 옵션 <small>${r.o.length}/${n}줄 · 얻을 때 정해졌고 바뀌지 않아요</small></div>`;
  for(const [o,v] of r.o){const [a,c]=range81(o,r.l);h+=`<div class="iv-kv o81"><span>${OPT81[o].n}${OPT81[o].cond?`<small> · ${OPT81[o].cond}</small>`:''}</span><b class="up">+${v}${OPT81[o].u} <small>(${a}~${c})</small></b></div>`;}
@@ -10012,6 +10011,18 @@ function drawDex104(){if(!P)return;const all=dexL104(),K=dexK104(P),ch=DEXCH104C
   showAd86('skill_reset',()=>{_rs.call(btn);toast('광고를 봐서 스킬 포인트를 모두 되돌렸어요','g');});};
  label105();setTimeout(label105,1500);
  const _ds=drawSkill;drawSkill=function(){const r=_ds.apply(this,arguments);try{label105();}catch(e){}return r;};}
+
+// ===================== v106: 장비 수치는 얻은 레벨과 상관없이 고정 (사용자 결정) =====================
+// 같은 장비는 몇 레벨 사냥터에서 얻든 기본 수치·옵션 범위가 똑같아요. 아이템 레벨 = 그 장비의 원래 레벨.
+// 바뀌는 건 등급(일반~전설)과 얻을 때 정해지는 품질(70~100%), 랜덤 옵션 값뿐이에요.
+{const _mr=mkRec81;mkRec81=function(b,o){o=Object.assign({},o||{});delete o.l;return _mr.call(this,b,o);};}
+// 예전에 얻은 장비도 원래 레벨로 맞춰요 (옵션 값은 그 레벨의 범위 안으로)
+function fix106(){if(!P||!P.inv)return 0;let n=0;
+ for(const iid in P.inv){const r=P.inv[iid];if(!r||!r.b||!GEAR[r.b])continue;const L=lvOf81(r.b);if(r.l===L)continue;
+  r.l=L;if(Array.isArray(r.o))r.o=r.o.map(([o,v])=>{if(!OPT81[o])return [o,v];const [a,c]=range81(o,L);return [o,Math.max(a,Math.min(c,v))];});
+  if(INST81[iid]&&INST81[iid]!==r)INST81[iid]=r;delete VIEW81[iid];n++;}
+ if(n){try{save();refreshSide();}catch(e){}}return n;}
+{const _sg=startGame;startGame=function(){const r=_sg.apply(this,arguments);try{const n=fix106();if(n)console.log('[v106] 장비 '+n+'개 원래 레벨로');}catch(e){console.warn('[v106]',e);}return r;};}
 
 openSelect();
 </script>
