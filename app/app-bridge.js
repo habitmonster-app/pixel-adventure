@@ -44,7 +44,7 @@
   }catch(e){}
   hs.forEach(h=>{try{h.remove();}catch(e){}});adBusy=false;// 다음 광고는 미리 받지 않아요(게임 중 뒤에서 일하지 않게) → 필요할 때 받기
   return {ok:got,place};}
- // ----- 결제 (구글 플레이) -----
+ // ----- 결제 (구글 플레이 / 앱스토어) -----
  let store=null;const pend={};
  function grant(t){// 결제가 승인된 거래 → 게임에 지급 → 끝내기(한 번만)
   const done=LS.get('app_granted',[]);
@@ -58,10 +58,12 @@
    if(pend[id]){pend[id]({ok:true,id});delete pend[id];}}
   t.finish();}
  function shopInit(){const S=window.CdvPurchase;if(!S||store)return;store=S.store;
-  store.register(CFG.products.map(p=>({id:p.id,platform:S.Platform.GOOGLE_PLAY,type:p.type==='consumable'?S.ProductType.CONSUMABLE:S.ProductType.NON_CONSUMABLE})));
+  // 아이폰은 앱스토어 결제, 안드로이드는 구글 플레이 결제
+  const PF=(C.getPlatform&&C.getPlatform()==='ios')?S.Platform.APPLE_APPSTORE:S.Platform.GOOGLE_PLAY;
+  store.register(CFG.products.map(p=>({id:p.id,platform:PF,type:p.type==='consumable'?S.ProductType.CONSUMABLE:S.ProductType.NON_CONSUMABLE})));
   store.when().approved(t=>grant(t)).productUpdated(p=>{if(p.id==='noads'&&p.owned)LS.set('app_noads',true);});
   store.error(e=>{for(const k in pend){pend[k]({ok:false,err:e&&e.message});delete pend[k];}});
-  store.initialize([S.Platform.GOOGLE_PLAY]).catch(()=>{});
+  store.initialize([PF]).catch(()=>{});
   store.ready(()=>{try{window.prodLoad86&&window.prodLoad86();}catch(e){}});}
  window.APP={
   version:1,

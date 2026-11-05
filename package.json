@@ -2,7 +2,7 @@
   "name": "pixel-adventure",
   "version": "1.0.0",
   "private": true,
-  "description": "픽셀 모험단 - 방치형 픽셀 RPG (Capacitor 앱)",
+  "description": "봉인 기사단 : 마계문 전쟁 (Capacitor 앱)",
   "scripts": {
     "build": "node scripts/build-www.js",
     "sync": "npm run build && npx cap sync"

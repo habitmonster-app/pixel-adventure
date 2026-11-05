@@ -624,7 +624,7 @@ let VW=384,VH=216,cam={x:0,y:0};
 let RS=2;const ZOOMS=[240,300,360,440,520,620,720];
 const zi=()=>{const i=DB.zi??3;return Math.max(0,Math.min(ZOOMS.length-1,i));};
 function setZoom(i){DB.zi=Math.max(0,Math.min(ZOOMS.length-1,i));saveDB();resize();if(typeof drawMenu==='function')drawMenu();}
-function resize(){const r=$('view').getBoundingClientRect();if(!r.width)return;VH=ZOOMS[zi()];VW=Math.round(VH*r.width/r.height);
+function resize(){const r=$('view').getBoundingClientRect();if(!r.width)return;if(r.height>r.width){VW=Math.round(ZOOMS[zi()]*.85);VH=Math.round(VW*r.height/r.width);}else{VH=ZOOMS[zi()];VW=Math.round(VH*r.width/r.height);}
  RS=Math.max(1,Math.min(typeof OPT!=='undefined'&&OPT&&OPT.gfx===1?1:2,Math.round(r.height*(window.devicePixelRatio||1)/VH)));C.width=VW*RS;C.height=VH*RS;X.setTransform(RS,0,0,RS,0,0);X.imageSmoothingEnabled=false;}
 addEventListener('resize',resize);
 const rnd=(a,b)=>a+Math.random()*(b-a),dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
@@ -1574,7 +1574,7 @@ function drinkMp(k){P.pot=P.pot||{};if(!(P.pot[k]>0)){toast(POT[k].n+'이 없어
 
 // ===== 화면이 작으면(폰) 버튼·지도·알림창을 같이 줄여서 안 겹치게 =====
 function hudScale(){const r=$('view').getBoundingClientRect();if(!r.width)return;
- const z=Math.max(.6,Math.min(1,r.height/390,r.width/844));document.documentElement.style.setProperty('--hz',z.toFixed(3));}
+ const z=r.height>r.width?Math.max(.7,Math.min(1,r.width/430)):Math.max(.6,Math.min(1,r.height/390,r.width/844));document.documentElement.style.setProperty('--hz',z.toFixed(3));}
 addEventListener('resize',hudScale);hudScale();setTimeout(hudScale,300);
 
 // ===== 공격 버튼 둘레 스킬: 칸 번호(1~4) + MP 모자라면 파랗게 흐림 =====
@@ -10327,3 +10327,91 @@ function drawMdex112(){if(!P)return;const all=mdList112(),K=P.mdex112||{},chs=[.
 
 openSelect();
 </script>
+<style id="portrait114">
+/* v114 세로 모드 (시험판 portrait-test 에서 옮김): 돌려 주세요 안내 끄고, 버튼을 세로 화면에 맞게 다시 놓기
+   (#qbar · .act 안 좌표는 둘 다 var(--hz) 배율 단위라 오른쪽·아래 기준으로 맞춤) */
+#rot{display:none!important}
+@media (orientation:portrait){
+ #money{display:none!important}
+ #toast{top:240px}
+ #joy{bottom:30px}
+ .act{bottom:6px}
+
+ /* 스킬 1~4: 조이스틱과 공격 버튼 사이 윗줄 */
+ #orbs .orb{width:42px!important;height:42px!important;top:178px!important}
+ #orbs .orb:nth-child(1){left:-15px!important}
+ #orbs .orb:nth-child(2){left:33px!important}
+ #orbs .orb:nth-child(3){left:81px!important}
+ #orbs .orb:nth-child(4){left:129px!important}
+ /* 아랫줄: 스킬 5 · 스킬 6 (단축칸에서 꺼냄) · AUTO */
+
+ /* 물약: 빨간·파란 물약을 네모 칸으로, 오른쪽 물약 7·8 칸과 한 판에 붙임 */
+ #pot,#potM{width:44px!important;height:44px!important;left:180px!important;border-radius:9px!important;border-width:1px!important;box-shadow:0 2px 6px rgba(0,0,0,.45)}
+ #pot{top:79px!important}
+ #potM{top:127px!important}
+
+ /* 단축칸: 화면 전체를 덮는 투명 판으로 바꾸고 칸마다 따로 놓기 */
+ #qbar{left:0;right:0;top:0;bottom:0;transform:none;background:none!important;border:none!important;box-shadow:none!important;
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding:0;display:block;pointer-events:none}
+ #qbar>*{position:absolute!important;pointer-events:auto;margin:0}
+ #qbar .sep{display:none}
+ #qbar .q{width:44px!important;height:44px!important;border-radius:9px;background:rgba(10,14,24,.72);border:1px solid rgba(224,184,102,.45);
+  box-shadow:0 2px 6px rgba(0,0,0,.45)}
+ /* 오른쪽 세로 줄: 위 판 = 달리기 · 구르기 · 대시, 아래 판 = 빨간·파란 물약 + 물약 7 · 8 (2×2) */
+ #qbar::before{content:"";position:absolute;right:4px;bottom:215px;width:52px;height:148px;border-radius:12px;
+  background:linear-gradient(rgba(26,32,48,.55),rgba(14,17,24,.7));border:1px solid rgba(224,184,102,.35);pointer-events:none}
+ #qbar::after{content:"";position:absolute;right:4px;bottom:111px;width:100px;height:98px;border-radius:12px;
+  background:linear-gradient(rgba(26,32,48,.55),rgba(14,17,24,.7));border:1px solid rgba(224,184,102,.35);pointer-events:none}
+ #qbar .q{right:8px}
+ #qbar .q.run{bottom:315px}
+ #qbar .q.roll{bottom:267px}
+ #qbar .q.dash{bottom:219px}
+ #qbar .q[data-q="6"]{bottom:163px}
+ #qbar .q[data-q="7"]{bottom:115px}
+ /* 스킬 5 · 6: 아랫줄, 스킬 1~4와 같은 동그라미 모양 */
+ #qbar .q.sk{width:42px!important;height:42px!important;bottom:18px;padding:0;border-radius:50%;background:radial-gradient(circle at 40% 35%,#3a3050,#120e1a);
+  border:2px solid #9a7ad0;overflow:hidden;box-shadow:0 0 8px rgba(150,110,220,.45);opacity:1}
+ #qbar .q.sk[data-s="4"]{right:253px}
+ #qbar .q.sk[data-s="5"]{right:205px}
+ #qbar .q.sk svg{left:0;top:0;width:100%;height:100%}
+ #qbar .q.sk .emo{inset:0;border-radius:50%;font-size:22px}
+ #qbar .q.sk em{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0;color:#8a80a0}
+ #qbar .q.sk em::after{content:"+";font-size:22px}
+ #qbar .q.sk i{left:2px;top:1px;z-index:2;font-size:10px;font-weight:800;color:#fff;background:#3a2a5acc;border:1px solid #b89aff;border-radius:7px;min-width:14px;height:14px;line-height:12px;text-align:center}
+ #qbar .q.sk b{inset:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(0,0,0,.55);border-radius:50%}
+ #autoB{left:81px!important;top:226px!important;width:42px!important;height:42px!important}
+
+ /* 공격 버튼: 조금 작게, 오른쪽 아래로 (스킬 4·물약 판과 안 겹치게) */
+ #atk{width:70px!important;height:70px!important;left:195px!important;top:193px!important}
+ #atk svg{width:38px;height:38px}
+
+ /* 쉬기 버튼: 물약 줄 위 */
+ #talk2,#talk{left:auto!important;right:60px!important;bottom:226px!important}
+ /* 대화창: 조이스틱 바로 위 가로 칸 */
+ #chatW{left:8px!important;right:calc(104px / var(--hz,1))!important;width:auto!important;bottom:calc(132px / var(--hz,1))!important;top:auto!important;transform:none!important}
+}
+
+/* 가로(낮은 화면) 메뉴 창: 칸 배치(한 줄 4칸)는 그대로, 크기만 작게 */
+@media (orientation:landscape) and (max-height:500px){
+ .mgrid{grid-template-columns:repeat(4,46px);gap:5px;padding:6px}
+ .mgrid .ib{width:46px;height:40px;font-size:8.5px;border-radius:7px}
+ .mgrid .ib svg{width:17px;height:17px}
+}
+
+/* 세로 캐릭터 창(장비): 위 반 = 장비, 아래 반 = 능력치. 기본·전투·생활·상세는 제목 줄로 */
+@media (orientation:portrait){
+ #pInv.tm[data-v=eq] .ph>span:first-child{display:none}
+ #pInv.tm[data-v=eq] #ivStatBtn{display:none}
+ #pInv.tm[data-v=eq] .ph{gap:4px;padding-left:8px;padding-right:6px}
+ #pInv.tm[data-v=eq] .iv-vt{margin:0}
+ #pInv.tm[data-v=eq] #ivST111{display:flex!important;margin-left:auto}
+ #pInv.tm[data-v=eq] #ivST111 button{min-width:0;padding:0 7px;font-size:12px}
+ #pInv.tm[data-v=eq] .iv-eq{height:50%;overflow:hidden;padding:6px 12px}
+ #pInv.tm[data-v=eq] .iv-col{justify-content:space-between}
+ #pInv.tm[data-v=eq] .iv-ic{width:44px;height:44px}
+ #pInv.tm[data-v=eq] .iv-slot.big .iv-ic{width:48px;height:48px}
+ #pInv.tm[data-v=eq] .iv-det{transform:none;top:50%;height:auto;max-height:none;border-radius:14px 14px 0 0}
+ #pInv.tm[data-v=eq]:not(.hasdet) .iv-det::before{display:none}
+}
+
+</style>

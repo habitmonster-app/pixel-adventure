@@ -2,7 +2,7 @@
 # android-test: 서명 없이 휴대폰에 바로 설치해 볼 수 있는 테스트용 APK를 만듭니다.
 workflows:
   android-test:
-    name: 픽셀 모험단 Android 테스트 APK
+    name: 봉인 기사단 Android 테스트 APK
     max_build_duration: 30
     instance_type: mac_mini_m2
     environment:
