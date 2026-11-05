@@ -9702,5 +9702,15 @@ const QLO98=0.70,QSRC98=['craft','drop','boss'];
 {const _cp=craftPrev83;craftPrev83=function(k){const h=_cp.apply(this,arguments);const g=GEAR[k];if(!g||POT[k]||!((g.atk|0)+(g.def|0)+(g.hp|0)))return h;
  return (h||'')+`<div class="iv-kv"><span>능력치 범위</span><b>만들 때 최대값의 ${Math.round(QLO98*100)}~100% 사이로 정해져요</b></div>`;};}
 
+/* ===== v99: 이야기 대화(이름만 있는 말)에도 얼굴 ===== */
+// 대화에 인물 그림 이름(k)이 없으면 말하는 사람 이름으로 찾아요: 같은 이름 → 이름 끝 낱말(예: '네리아')
+function faceKey99(name){if(!name)return null;const D=[];for(const a of ['N7','N8','N9','N10']){try{const v=eval(a);if(Array.isArray(v))for(const d of v)if(d&&d.n&&(d.img||d.k))D.push({n:d.n,k:IMG[d.k]?d.k:d.img});}catch(e){}}
+ const L=[...npcs,...NPC,...D].filter(x=>x&&x.k&&x.n&&IMG[x.k]);
+ let o=L.find(x=>x.n===name);if(o)return o.k;
+ const last=String(name).trim().split(/\s+/).pop();if(!last||last.length<2)return null;
+ o=L.find(x=>String(x.n).trim().split(/\s+/).pop()===last);return o?o.k:null;}
+{const _sl=showLine;showLine=function(){const r=_sl.apply(this,arguments);try{const m=$('msg');if(m.classList.contains('f94'))return r;const n=talk&&talk.n;
+ const k=n&&faceKey99(n.n),f=k&&faceOf94(k);if(f){m.classList.add('f94');m.querySelector('.fc94 img').src=f;}}catch(e){}return r;};}
+
 openSelect();
 </script>
