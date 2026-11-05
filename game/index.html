@@ -9739,5 +9739,83 @@ function faceFor100(name,line){line=String(line||'');name=String(name||'');
  const own=n.k&&faceOf94(n.k),pre=/^\(\s*[^:()"“]{1,14}?\s*:\s*["“']/.test(String(line||''));
  const f=(own&&!pre)?own:faceFor100(n.n,line);if(f){m.classList.add('f94');m.querySelector('.fc94 img').src=f;}else m.classList.remove('f94');}catch(e){}return r;};}
 
+/* ===== v101: 따라 하기 튜토리얼 ===== */
+// 버튼 둘레를 반짝이고 옆에 말풍선. 직접 해 보면 다음으로 넘어가요. 한 번 본 단계는 다시 안 나와요.
+// 저장: P.tut101 = {off:0/1, d:{단계 id:1}}  · 예전 캐릭터(레벨 2 이상이거나 첫 퀘스트를 지난)는 처음부터 꺼 둠
+// 메뉴 '튜토리얼' 버튼으로 다시 켜기
+const TUT={st:null,id:null,x0:0,y0:0,kills:0,atk:0,drank:0,equip:0,learned:0,shown:0};
+const tutOpen=id=>{const e=$(id);return !!(e&&e.offsetParent&&getComputedStyle(e).display!=='none');};
+const anyPan101=()=>['pChar','pInv','pStat','facM','pFac','pBag','pShop','pMap','pSkill','pCraft','pMenu','pQuest'].some(tutOpen);
+const hpPots101=()=>{const p=P&&P.pot||{};let n=0;for(const k in p)if(POT[k]&&!POT[k].mp&&!POT[k].spec&&!POT[k].cure&&!POT[k].sp)n+=p[k]|0;return n;};
+const bagGear101=()=>{if(!P||!P.bag)return 0;const eq=Object.values(P.eq||{});return Object.keys(P.bag).filter(k=>P.bag[k]>0&&GEAR[k]&&!eq.includes(k)&&INST81[k]&&INST81[k].src==='drop').length;};
+const mobNear101=()=>mobs.some(m=>m.st!=='dead'&&m.m&&!m.m.dummy&&Math.hypot(m.x-hero.x,m.y-hero.y)<150);
+const menuT101=(id)=>tutOpen('pMenu')?'#'+id:'#bMenu';
+// 단계: id · 언제 · 어디(선택자) · 글 · 끝났나
+const TSTEP101=[
+ {id:'move',when:()=>true,tg:()=>'#joy',tx:'왼쪽 동그라미를 끌어서 걸어 보세요.',done:()=>Math.hypot(hero.x-TUT.x0,hero.y-TUT.y0)>48},
+ {id:'quest',when:()=>1,tg:()=>'#qtrack',tx:'할 일은 여기 나와요. 누르면 가야 할 곳까지 알아서 걸어가요.',done:()=>TUT.qgo||!!talk||P.q.i>0||P.q.st!=='none'},
+ {id:'talk',when:()=>P.q&&P.q.i===0&&P.q.st==='none',tg:()=>'#talk',tx:'머리 위에 ! 가 있는 사람 곁에서 \'말걸기\'를 누르면 이야기를 나눠요.',done:()=>!!talk||P.q.i>0||P.q.st!=='none'},
+ {id:'gather',later:1,when:()=>{const q=qCur();return q&&q.goal&&q.goal.mats&&P.q.st==='go';},tg:()=>'#talk',tx:'풀이나 샘물 같은 채집 자리 곁에서 이 버튼을 누르면 재료를 모아요.',done:()=>typeof gath!=='undefined'&&!!gath},
+ {id:'craft',later:1,when:()=>{const q=qCur();return q&&q.goal&&q.goal.craft&&P.q.st==='go';},tg:()=>tutOpen('pCraft')?null:menuT101('mCraft'),tx:()=>tutOpen('pCraft')?'만들 것을 골라 \'만들기\'를 눌러요. 재료와 골드가 있으면 바로 만들어져요.':'메뉴 → 제작에서 물약과 장비를 만들 수 있어요.',done:()=>TUT.crafted},
+ {id:'attack',later:1,when:()=>mobNear101()&&!inTown(hero),tg:()=>'#atk',tx:'몬스터가 가까이 있어요! 칼 버튼을 누르면 공격해요.',done:()=>TUT.atk>0},
+ {id:'auto',later:1,when:()=>TUT.kills>=2,tg:()=>'#autoB',tx:'AUTO를 누르면 근처 몬스터를 알아서 사냥해요. 다시 누르면 멈춰요.',done:()=>typeof hunt!=='undefined'&&hunt},
+ {id:'potion',later:1,when:()=>hpPots101()>0,tg:()=>'#pot',tx:'물약이 생겼어요! 이 칸을 누르면 체력을 채워요.',ack:1,done:()=>TUT.drank>0},
+ {id:'skill',later:1,when:()=>typeof ptsLeft==='function'&&ptsLeft()>0&&!Object.keys(P.sk||{}).length,tg:()=>tutOpen('pSkill')?null:menuT101('mSkill'),tx:()=>tutOpen('pSkill')?'배울 스킬을 누르고 \'배우기\'를 눌러요.':'스킬 포인트가 생겼어요! 메뉴 → 스킬에서 배워 보세요.',done:()=>Object.keys(P.sk||{}).length>0},
+ {id:'slot',later:1,when:()=>Object.keys(P.sk||{}).some(id=>SKBY[id]&&SKBY[id].t!=='pas')&&!(P.qs||[]).some(Boolean),tg:()=>tutOpen('pSkill')?null:'#orbs',tx:()=>tutOpen('pSkill')?'스킬 창을 닫고, 오른쪽 + 칸을 눌러 배운 스킬을 넣어요.':'오른쪽 + 칸을 누르면 배운 스킬을 넣을 수 있어요. 넣은 뒤 누르면 스킬을 써요.',done:()=>(P.qs||[]).some(Boolean)},
+ {id:'bag',later:1,when:()=>bagGear101()>0,tg:()=>tutOpen('pInv')?null:menuT101('mBag'),tx:()=>tutOpen('pInv')?'장비를 누르면 정보가 나와요. \'장착\'을 누르면 바로 껴요.':'새 장비를 주웠어요! 메뉴 → 가방에서 장비를 누르고 \'장착\'해 보세요.',done:()=>TUT.equip>0},
+ {id:'enh',later:1,when:()=>(P.scroll|0)>0&&TUT.equip+Object.keys(P.eq||{}).length>0,tg:()=>tutOpen('pInv')?null:menuT101('mBag'),tx:()=>tutOpen('pInv')?'장비를 누르고 \'강화\'를 눌러요. 주문서 1장으로 강화해요. 실패해도 장비는 사라지지 않아요.':'강화주문서가 생겼어요! 메뉴 → 가방에서 장비를 강화할 수 있어요.',ack:1,done:()=>typeof IV!=='undefined'&&IV.mode==='enh'},
+ {id:'map',later:1,when:()=>P.q&&P.q.i>=6,tg:()=>tutOpen('pMap')?null:'#bMap',tx:()=>tutOpen('pMap')?'가 본 지역을 누르면 골드를 내고 순간이동해요.':'지도에서 다른 지역을 보고, 가 본 곳으로 순간이동할 수 있어요.',ack:1,done:()=>tutOpen('pMap')&&TUT.mapT>2}];
+{const st=document.createElement('style');st.textContent=`
+#tut101{position:absolute;inset:0;z-index:30;pointer-events:none;display:none}
+#tut101 .ring{position:absolute;border:3px solid #ffd34a;border-radius:14px;box-shadow:0 0 0 3px rgba(0,0,0,.35),0 0 18px #ffd34a;animation:tutP 1s ease-in-out infinite}
+@keyframes tutP{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.08);opacity:.65}}
+#tut101 .bub{position:absolute;max-width:260px;background:rgba(14,18,28,.97);border:2px solid #ffd34a;border-radius:10px;padding:8px 10px;font-size:13px;line-height:1.45;color:#f2ead0;pointer-events:auto;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+#tut101 .bub b{color:#ffd34a;font-size:11px;display:block;margin-bottom:2px}
+#tut101 .bub .bt{display:flex;gap:6px;margin-top:6px;justify-content:flex-end}
+#tut101 .bub button{font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid #7a6a3a;background:#2a2416;color:#e8d8a8}
+#tut101 .bub button.ok{background:#ffd34a;color:#2a1a00;border-color:#ffd34a;font-weight:700}`;document.head.appendChild(st);
+ const d=document.createElement('div');d.id='tut101';d.innerHTML='<div class="ring"></div><div class="bub"><b></b><div class="tx"></div><div class="bt"><button class="off">튜토리얼 끄기</button><button class="ok">알겠어요</button></div></div>';
+ ($('view')||document.body).appendChild(d);
+ d.querySelector('.ok').onclick=e=>{e.stopPropagation();tutDone101(TUT.id);};
+ d.querySelector('.off').onclick=e=>{e.stopPropagation();if(P){P.tut101=P.tut101||{d:{}};P.tut101.off=1;save();}TUT.id=null;d.style.display='none';toast('튜토리얼을 껐어요. 메뉴 → 튜토리얼에서 다시 켤 수 있어요.');};}
+function tut101(){if(!P)return null;if(!P.tut101){P.tut101={off:(P.lv>1||(P.q&&P.q.i>0))?1:0,d:{}};}return P.tut101;}
+function tutDone101(id){const t=tut101();if(!t||!id)return;t.d[id]=1;TUT.id=null;save();}
+function tutTick101(){const el=$('tut101');if(!el)return;const t=tut101();
+ if(t&&TUT.id){const s0=TSTEP101.find(s=>s.id===TUT.id);try{if(s0&&s0.done())tutDone101(s0.id);}catch(e){}}
+if(!t||t.off||!P||hero.st==='dead'||(typeof talk!=='undefined'&&talk&&TUT.id!=='talk')){el.style.display='none';return;}
+ // 지금 단계 고르기: 앞 기본 단계(순서대로)가 안 끝났으면 그것, 아니면 '열릴 때' 단계 중 조건 맞는 것
+ let S=TUT.id&&TSTEP101.find(s=>s.id===TUT.id);
+ if(S&&S.done()){tutDone101(S.id);S=null;}
+ if(!S){for(const s of TSTEP101){if(t.d[s.id])continue;if(!s.later){if(s.when()){S=s;break;}else{if(s.id==='talk'&&P.q&&P.q.i>0){t.d[s.id]=1;continue;}break;}}
+   else if(s.when()){S=s;break;}}
+  if(S&&S.id!==TUT.id){TUT.id=S.id;TUT.x0=hero.x;TUT.y0=hero.y;TUT.mapT=0;if(S.done()){tutDone101(S.id);el.style.display='none';return;}}}
+ if(!S){el.style.display='none';return;}
+ if(S.id==='map'&&tutOpen('pMap'))TUT.mapT=(TUT.mapT||0)+.3;
+ const sel=S.tg(),tg=sel&&document.querySelector(sel);const pan=anyPan101();
+ if(sel&&(!tg||!tg.offsetParent)){el.style.display='none';return;}
+ if(!sel&&!pan){el.style.display='none';return;}
+ if(sel&&pan&&!tg.closest('.pan')&&sel!=='#bMenu'){el.style.display='none';return;}
+ el.style.display='block';const V=el.parentElement.getBoundingClientRect(),ring=el.querySelector('.ring'),bub=el.querySelector('.bub');
+ bub.querySelector('b').textContent='안내';bub.querySelector('.tx').textContent=typeof S.tx==='function'?S.tx():S.tx;
+ bub.querySelector('.ok').textContent=S.ack?'알겠어요':'건너뛰기';
+ if(tg){const r=tg.getBoundingClientRect(),x=r.left-V.left,y=r.top-V.top;ring.style.display='block';ring.style.left=(x-5)+'px';ring.style.top=(y-5)+'px';ring.style.width=(r.width+10)+'px';ring.style.height=(r.height+10)+'px';
+  const bw=Math.min(260,V.width-24);bub.style.maxWidth=bw+'px';const bh=bub.offsetHeight||70;
+  let bx=x+r.width/2-bw/2,by=y-bh-14;if(by<8)by=y+r.height+14;if(by+bh>V.height-8){by=Math.max(8,y+r.height/2-bh/2);bx=x>V.width/2?x-bw-16:x+r.width+16;}
+  bx=Math.max(8,Math.min(V.width-bw-8,bx));bub.style.left=bx+'px';bub.style.top=by+'px';}
+ else{ring.style.display='none';const bw=Math.min(260,V.width-24);bub.style.left=(V.width-bw)/2+'px';bub.style.top='12px';}}
+setInterval(()=>{try{tutTick101();}catch(e){}},300);
+// 할 일 기록
+{const q=$('qtrack');if(q)q.addEventListener('pointerdown',()=>{TUT.qgo=1;});}
+{const _a=doAttack;doAttack=function(){TUT.atk++;return _a.apply(this,arguments);};}
+{const _k=onKill27;onKill27=function(m){TUT.kills++;return _k.apply(this,arguments);};}
+{const _d=drinkPot;drinkPot=function(){TUT.drank++;return _d.apply(this,arguments);};}
+{const _e=equip;equip=function(){TUT.equip++;return _e.apply(this,arguments);};}
+{const _c=craft;craft=function(){TUT.crafted=1;return _c.apply(this,arguments);};}
+// 메뉴: 튜토리얼 다시 켜기
+{const g=document.querySelector('#pMenu .mgrid');if(g&&!$('mTut')){const b=document.createElement('button');b.className='ib';b.id='mTut';
+ b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#e0b866" stroke-width="1.8"><circle cx="12" cy="12" r="9" fill="#2c3a5a"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17.2v.1"/></svg>튜토리얼';
+ b.onclick=()=>{if(!P)return;P.tut101={off:0,d:{}};TUT.id=null;save();closeAll&&closeAll();toast('튜토리얼을 다시 켰어요. 이미 지난 단계는 할 일이 생길 때 다시 안내해요.','g');};
+ const ref=$('mSave');if(ref&&ref.nextSibling)g.insertBefore(b,ref.nextSibling);else g.appendChild(b);}}
+
 openSelect();
 </script>
