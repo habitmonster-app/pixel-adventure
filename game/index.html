@@ -9523,5 +9523,11 @@ function drawCash88(){let e=$('cash88');if(!e){e=document.createElement('div');e
 #cash88 .it .tx{flex:1;display:flex;flex-direction:column}#cash88 .it .tx span{font-size:11px;color:#a9a28e}#cash88 .it button{min-width:88px;min-height:36px;font-weight:700;background:linear-gradient(#e8c470,#a87a2a);color:#1a1206}
 #cash88 .it button:disabled{background:#333;color:#888}#cash88 .ft{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}#cash88 .ft small{color:#9a917c;font-size:11px}`;document.head.appendChild(st);}
 
+
+/* ===== v89: 아이템 정보의 '강화' 버튼이 안 눌리던 문제 — 가방 목록의 '강화 전체' 고르기 칸과 이름(ivEnh)이 같아서 버튼 대신 고르기 칸에 연결되던 것 ===== */
+{const _dd=drawInvDet;drawInvDet=function(){_dd.apply(this,arguments);const D=$('ivDet');if(!D)return;
+ const b=D.querySelector('button#ivEnh');if(b)b.onclick=()=>{IV.mode='enh';IV.msg='';drawInv();};
+ document.querySelectorAll('select#ivEnh').forEach(s=>{s.onclick=null;});};}
+
 openSelect();
 </script>
