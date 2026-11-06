@@ -10375,6 +10375,28 @@ function soft118(IM){const go=()=>{if(IM._s118||!IM.naturalWidth)return;IM._s118
  if(IM.complete&&IM.naturalWidth)go();else IM.addEventListener('load',go);}
 [FX2,FX3,FX4].forEach(soft118);
 
+// ===================== v119: 장비 수치 손보기 (사용자 결정 2026-11-06) =====================
+// 1) 후반 일반 장비(Lv32·38·44·50): 같은 레벨 세트의 90% 이상 + 5레벨 아래 세트보다는 조금 강하게(×1.02). 목걸이는 공격도 붙어요.
+// 2·3) 무기: 같은 레벨 일반 무기는 모두 같은 공격력(그 레벨에서 가장 센 무기 기준). 후반 무기 줄도 모두 같은 선.
+// 4) 빈칸: 반지 Lv14·20·26, 방패 Lv26 추가 (몬스터 드롭으로 나와요).
+// 수치는 전부 레벨 고정 규칙 그대로(얻은 곳·레벨과 무관). 어떤 장비도 예전보다 낮아지지 않아요.
+{const _b=base97;base97=function(b,l){const o=_b.apply(this,arguments);if(!o)return o;const g=GEAR[b];if(!g)return o;
+ const s=g.s,ref=CUR97[s],mk=main97(s);if(!(ref&&ref[mk]&&ref[mk].some(p=>p[1]>0)))return o;const L=l||lvOf81(b);
+ if(g.lv107){for(const st of ST97){const has=o[st]>0||(s==='neck'&&st==='atk');if(!has||!ref[st])continue;
+   const t=Math.max(at97(ref[st],L)*.9,at97(ref[st],L-5)*1.02);if(t>0)o[st]=Math.max(o[st]|0,Math.round(t));}}
+ else if(s==='weapon'&&o.atk>0){o.atk=Math.max(o.atk,Math.round(at97(ref.atk,L)*NORM97*1.1));}
+ return o;};}
+for(const k in VIEW81)delete VIEW81[k];
+try{for(const k in GDMX112)delete GDMX112[k];}catch(e){}
+// 4) 새 장비
+(()=>{const raw=k=>{const d=Object.getOwnPropertyDescriptor(GEAR,k);return d&&d.value;};
+ const add=(k,src,o)=>{const g0=raw(src);if(!g0||GEAR[k])return;GEAR[k]=Object.assign({},g0,{src:g0.src||src},o);if(RANGED[src])RANGED[k]=RANGED[src];};
+ add('ring119_14','facial_earrings_stud',{n:'은 반지',s:'ring',t:3,z:[],def:1,hp:1,atk:0});
+ add('ring119_20','facial_earrings_emerald',{n:'에메랄드 반지',s:'ring',t:4,z:[],def:1,hp:1,atk:0});
+ add('ring119_26','facial_earrings_pear',{n:'황금 물방울 반지',s:'ring',t:5,z:[],def:1,hp:1,atk:0});
+ add('shield119_26','shield_spartan',{n:'황금 스파르타 방패',t:5,def:26});
+ try{GDL112=null;}catch(e){}})();
+
 openSelect();
 </script>
 <style id="portrait114">
