@@ -8,7 +8,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // 출시 빌드 번호: Codemagic이 BUILD_NUMBER를 넣어 줘요 (테스트 빌드는 1)
-        versionCode (System.getenv("BUILD_NUMBER") ?: "1").toInteger()
+        versionCode Integer.parseInt(System.getenv("BUILD_NUMBER") ?: "1")
         versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
