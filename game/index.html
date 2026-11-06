@@ -10329,7 +10329,7 @@ function drawMdex112(){if(!P)return;const all=mdList112(),K=P.mdex112||{},chs=[.
 // 광고 3번 = 장비 가방 +1칸 · 광고 1번 = 강화주문서 1장 · 광고 2번 = 강화주문서 3장 · 광고 1번 = 부활권 1장
 // 광고는 보상형(APP.ads.showRewarded, place 'dia_<id>'). 광고 제거를 산 사람은 광고 없이 바로 받아요.
 // 몇 번 봤는지는 캐릭터마다(P.ad116) 남아요. 하루 횟수 제한: ADLIM116 (비어 있으면 제한 없음 — 사용자 결정 대기)
-const ADLIM116={};
+const ADLIM116={bag1:3,sc1:5,sc3:3,rv1:3};
 const AD116=[
  {id:'bag1',n:'장비 가방 +1칸',d:'이 캐릭터 영구 · 최대 80칸',need:3,ico:'🎒',ok:()=>(P.bagx107|0)<BAGMAXX107||'가방은 80칸이 최대예요',go:()=>{P.bagx107=(P.bagx107|0)+1;return '장비 가방 '+bagCap107()+'칸';}},
  {id:'sc1',n:'강화주문서 1장',d:'바로 들어가요',need:1,ico:'📜',go:()=>{P.scroll=(P.scroll|0)+1;return '강화주문서 1장';}},
