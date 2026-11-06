@@ -14,6 +14,8 @@ Most characters, gear, monsters and tiles are combined or recolored from Liberat
 
 - 원 작가, 원본 주소, 라이선스는 `CREDITS/` 폴더와 게임 안 메뉴 → '그림 출처'에 있습니다.
   Authors, source links and licenses are listed in `CREDITS/` and in the game (Menu → Art Credits).
+- 부품별 전체 작가 목록: `CREDITS/ULPC_CREDITS.csv` (Universal LPC Spritesheet Character Generator 커밋 86160e75의 CREDITS.csv 원본)
+  Full per-part author list: `CREDITS/ULPC_CREDITS.csv` (original CREDITS.csv from Universal LPC Spritesheet Character Generator, commit 86160e75)
 - 여러 라이선스 중 고를 수 있는 그림은 OGA-BY 3.0, CC-BY 3.0, CC-BY-SA 3.0 중에서 썼고 GPL은 고르지 않았습니다.
   Where a choice was offered we use OGA-BY 3.0, CC-BY 3.0 or CC-BY-SA 3.0, not GPL.
 - **CC-BY-SA 3.0 그림을 고쳐 만든 그림(조합·색 바꿈 포함)은 같은 CC-BY-SA 3.0 라이선스로 공개합니다.**
