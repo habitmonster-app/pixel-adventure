@@ -2046,7 +2046,7 @@ fxSheet=row=>row>=200?[FX4,row-200]:row>=100?[FX3,row-100]:[FX2,row];
 const _need23=wpnNeed;wpnNeed=function(s){if(s&&s.cls==='warrior'&&s.t!=='pas')return s.b===0?'noshield':s.b===1?'shield':null;return _need23(s);};
 const _ok23=wpnOk;wpnOk=function(s){const n=wpnNeed(s);if((n==='shield'||n==='noshield')&&P&&P.cls==='warrior'){const sh=!!P.eq.shield;return n==='shield'?sh:!sh;}return _ok23(s);};
 const _msg23=wpnMsg;wpnMsg=function(s){const n=wpnNeed(s);if(n==='shield')return s.n+': 방패를 들어야 쓸 수 있어요';if(n==='noshield')return s.n+': 방패를 빼고 양손검으로 싸워야 쓸 수 있어요';return _msg23(s);};
-const WPN_TXT={bow:'🏹 활을 들었을 때만 쓸 수 있어요',melee:'🗡 근접 무기(단검·검)를 들었을 때만 쓸 수 있어요',shield:'🛡 방패를 들었을 때만 쓸 수 있어요',noshield:'⚔ 방패 없이 양손검일 때만 쓸 수 있어요'};
+const WPN_TXT={bow:'🏹 활을 들었을 때만 쓸 수 있어요',melee:'🗡 근접 무기(단검·검)를 들었을 때만 쓸 수 있어요',shield:'🛡 방패를 들었을 때만 쓸 수 있어요',noshield:'⚔ 방패가 없을 때만 쓸 수 있어요'};
 
 // ===================== v25: 겹치는 그림 나누기 (안 쓰던 그림으로) =====================
 Object.assign(ANIM_OF,{m_balls:[28,12],m_frost:[207],m_chain:[22],m_shield:[121],
@@ -10396,6 +10396,172 @@ try{for(const k in GDMX112)delete GDMX112[k];}catch(e){}
  add('ring119_26','facial_earrings_pear',{n:'황금 물방울 반지',s:'ring',t:5,z:[],def:1,hp:1,atk:0});
  add('shield119_26','shield_spartan',{n:'황금 스파르타 방패',t:5,def:26});
  try{GDL112=null;}catch(e){}})();
+
+/* v120: 도적 새총(돌 쏘기)도 원거리로 침 — 사격 스킬 됨, 단검술 스킬은 막힘 */
+{const _ok120=wpnOk;wpnOk=function(s){const n=wpnNeed(s);if(P&&P.cls==='rogue'&&(n==='bow'||n==='melee')){const r=!!RANGED[P.eq.weapon];return n==='bow'?r:!r;}return _ok120.apply(this,arguments);};}
+{const _m120=wpnMsg;wpnMsg=function(s){const n=wpnNeed(s);if(n==='bow')return s.n+': 활·석궁·새총을 들어야 쓸 수 있어요';if(n==='melee')return s.n+': 근접 무기(단검·레이피어 등)를 들어야 쓸 수 있어요';return _m120.apply(this,arguments);};}
+
+/* v121: 전사 검술 안내 문구에서 '양손검' 빼기(그림이 한 손 쥠) */
+{const _m121=wpnMsg;wpnMsg=function(s){if(wpnNeed(s)==='noshield')return s.n+': 방패를 빼야 쓸 수 있어요';return _m121.apply(this,arguments);};}
+
+/* v122: 도적·마법사가 못 채우던 칸 메우기 — 일부 전사 방어구를 모든 직업 공용으로 (사용자 요청) */
+{const L=['','_L32','_L38','_L44','_L50'];
+ const OPEN122=new Set([
+  // 보조·방패: 도적·마법사는 낄 방패가 하나도 없었음 → 방패 전부 공용
+  ...Object.keys(GEAR).filter(k=>GEAR[k]&&GEAR[k].s==='shield'),
+  // 어깨: 도적·마법사 8레벨까지만 있었음
+  'shoulders_legion','shoulders_pauldrons',...L.map(x=>'g_paul'+x),
+  // 장갑·신발: 26레벨까지만 있었음
+  'arms_armour',...L.map(x=>'g_arms'+x),'feet_armour',...L.map(x=>'g_feet'+x),
+  // 다리: 3레벨 다음이 32레벨이었음
+  'legs_skirts_legion','legs_armour',...L.map(x=>'g_legs'+x),
+  // 투구: 14·20·26레벨 빈칸 (마법사는 사슬 두건도 못 꼈음)
+  ...L.map(x=>'hat_helmet_mail'+x),'hat_helmet_bascinet','g_helm',
+  // 가죽 갑옷: 마법사도
+  ...L.map(x=>'torso_armour_leather'+x)]);
+ const _w=whoCan;whoCan=function(k){const b=typeof baseOf81==='function'?baseOf81(k):k;if(OPEN122.has(b)||OPEN122.has(k))return [];return _w.apply(this,arguments);};
+ window.OPEN122=OPEN122;}
+
+/* v123: 물가 칸 막기(물 위를 걷던 문제) + 나무 그루터기(반 잘린 나무)를 온전한 나무로 (사용자 요청) */
+// 물이 칸의 12% 넘게 덮인 걸을 수 있던 칸(샘빛 마을·여명초원 물가, 왕성 지하 수로 가장자리) 439칸 → 막힘. 여울·다리·부두는 그대로.
+const WET123='1:19-27,47-49,79,83;2:14-18,28-33,45-46,80,83;3:12-13,34-41,43-44,80,83;4:11,59-65,80,83;5:8-9,59,65,80,83;6:7,59,65,80,83;7:6,59-65,80,83;8:5-6,80,83;9:4,80,83,90-93;10:4,79,83,89,94;11:4,79,82,88,95;12:4,79,82,88,95;13:3,79,82,89,94;14:3,78,82,90-93;15:3,78,81;16:2,78,81;17:78,81;18:78,81;19:2,78,81;20:2,78,81;21:2,78,81;22:2,78,81;23:2,32-37,78,82;24:2,32,37,79,82,1798-1816,1822-1884,1890-1894;25:2,32,37,79,82,1821,1889;26:3,32,37,79,83,1821,1889;27:3,32-37,80-83,1821,1889;28:3,1821,1889;29:1821,1889;30:4,1821,1889;31:4;32:4,80-83;33:4,80,83;34:4,80,83;35:4,79,83;36:4,79,82;37:4,79,82;38:4,79,82;39:4,69-74,78,82,128-133;40:4,69,74,78,81,128,133;41:3,69,74,78,81,128,133;42:3,69,74,78,81,128-133;43:3,69-74,78,81;44:3,78,81,94-95;45:2,7-11,78,81,92-93,96-97;46:2,7,11,78,81,91,98;47:2,7,11,78,81,91,98;48:2,7,11,78,82,92-93,96-97;49:2,7-11,79,82,94-95;50:2,45-51,79,82;51:2,45,51,79,83;52:2,45,51,80,83;53:2,45,51,80,83;54:3,45-51,80,83;55:3,80,83;56:3,80,83;57:3,80,83;58:80,83';
+function wet123(){const S=MAP.solid;for(const part of WET123.split(';')){const [ys,xs]=part.split(':'),y=+ys;if(!S[y])continue;let row=S[y];
+  for(const r of xs.split(',')){const [a,b]=r.split('-').map(Number);for(let x=a;x<=(isNaN(b)?a:b);x++)if(row[x]==='0')row=row.slice(0,x)+'1'+row.slice(x+1);}S[y]=row;}}
+wet123();
+// 그루터기 → 가까운 나무와 같은 종류의 온전한 나무(밑동 자리 그대로라 막힌 칸도 같음)
+// 나무를 세우면 NPC·채집 자리·물건을 가리는 그루터기 8개는 그냥 치우고 그 칸을 걸을 수 있게
+const STRM123=new Set(['208,768','560,896','1520,896','592,1760','3056,480','2704,1440','3216,1568','6960,544']);
+function stump123(list,rect){if(!list||!rect)return list;const trees=list.filter(o=>/^tree_/.test(o[0])&&rect[o[0]]);if(!trees.length)return list;
+ list=list.filter(o=>{if(o[0]!=='stump'||!STRM123.has(o[1]+','+o[2]))return true;const tx=(o[1]+32)/TS|0,ty=(o[2]/TS|0)-1,S=MAP.solid;if(S[ty]&&S[ty][tx]==='1')S[ty]=S[ty].slice(0,tx)+'0'+S[ty].slice(tx+1);return false;});
+ return list.map(o=>{if(o[0]!=='stump')return o;let best=null,bd=1e18;for(const t of trees){const dd=(t[1]-o[1])**2+(t[2]-o[2])**2;if(dd<bd){bd=dd;best=t[0];}}
+  const sw=(rect.stump||[0,0,64])[2],tw=rect[best][2];return [best,Math.round(o[1]+sw/2-tw/2),o[2]].concat(o.slice(3));});}
+{const _ap=rgApply;rgApply=function(r,d){if(d&&d.obj&&!d.st123){d.obj=stump123(d.obj,d.rect);d.st123=1;}return _ap.apply(this,arguments);};}
+if(MAP.objAll&&MAP.objAll.some(o=>o[0]==='stump')){MAP.obj=stump123(MAP.objAll,MAP.rect);bake40();GCH.clear();miniBg=null;}
+
+/* v124: 보통 채집에도 동작 — 재료마다 도구 그림(낫·도끼·곡괭이·망치·칼·병)을 손에 붙여 움직이고 조각이 튐. 캐릭터·옷 그림은 그대로. */
+{const GK124={};const add=(t,ks)=>ks.forEach(k=>GK124[k]=t);
+ add('pick',['ore','silver','rareore','cstone','kshard','mfore','k10cry','rshard9','k10frag']);
+ add('axe',['wood','owood','twood','k10wood']);
+ add('sickle',['herb','flower','fherb','moss','pherb','rherb','tvine','tthorn','pmoss','k10herb']);
+ add('knife',['fshroom','rshroom','tshroom']);
+ add('hammer',['scrap','gscrap','gpart','powder']);
+ add('bottle',['water','sap']);
+ window.GK124=GK124;
+ const PC={pick:['#ffe08a','#ffffff','#a8a8b0'],axe:['#c8a070','#8a6a40','#e8c890'],sickle:['#6ac860','#a8e890','#3a9a40'],knife:['#e8dcc8','#c8a0e0','#a07850'],hammer:['#c0c4cc','#ffd08a','#8a8e9a'],bottle:['#8ad8ff','#ffffff','#5ab0f0']};
+ const wood='#5a3a1e',steel='#c8ccd8',dark='#8a8e9a',hi='#eef2fa';
+ function tool(type,k,liq){const R=(x,y,w,h,c)=>{X.fillStyle=c;X.fillRect(x,y,w,h);};
+  if(type==='pick'){R(-1.5,-22,3,24,wood);X.fillStyle=steel;X.beginPath();X.moveTo(-12,-22);X.quadraticCurveTo(0,-28,12,-22);X.lineTo(10,-19);X.quadraticCurveTo(0,-24,-10,-19);X.closePath();X.fill();R(-2,-24,4,4,dark);}
+  else if(type==='axe'){R(-1.5,-24,3,26,wood);X.fillStyle=steel;X.beginPath();X.moveTo(1,-25);X.lineTo(9,-28);X.quadraticCurveTo(14,-21,9,-13);X.lineTo(1,-17);X.closePath();X.fill();X.fillStyle=hi;X.fillRect(9,-26,2,11);R(-3,-26,4,10,dark);}
+  else if(type==='hammer'){R(-1.5,-20,3,22,wood);R(-7,-26,14,7,dark);R(-7,-26,14,2,steel);R(-8,-25,2,5,'#6a6e7a');R(6,-25,2,5,'#6a6e7a');}
+  else if(type==='sickle'){R(-1.5,-9,3,11,wood);X.strokeStyle=steel;X.lineWidth=2.6;X.beginPath();X.arc(5,-12,6.5,Math.PI*.95,Math.PI*2.15);X.stroke();X.strokeStyle=hi;X.lineWidth=1;X.beginPath();X.arc(5,-12,7.6,Math.PI*1.2,Math.PI*1.8);X.stroke();R(-2,-10,4,2,dark);}
+  else if(type==='knife'){R(-1.5,-6,3,8,wood);R(-2.5,-7,5,2,dark);X.fillStyle=steel;X.beginPath();X.moveTo(-1.5,-7);X.lineTo(1.8,-7);X.lineTo(.6,-17);X.lineTo(-1.5,-14);X.closePath();X.fill();}
+  else if(type==='bottle'){X.fillStyle='rgba(200,235,255,.8)';X.fillRect(-4.5,-12,9,12);X.fillRect(-2,-16,4,4);const h=Math.max(1,10*k);R(-3.5,-1-h,7,h,liq);R(-3.5,-11,2,9,'rgba(255,255,255,.55)');R(-2.5,-18,5,3,'#a07040');}}
+ const _dg=drawGather;drawGather=function(){const g=gath;if(!g||g.sp||g.mine6||g.cut||g.sp4||!g.n||!GK124[g.n.k])return _dg();
+  const type=GK124[g.n.k],n=g.n,sx=rp87(hero.x-cam.x),sy=rp87(hero.y-cam.y),t=now(),dir=hero.d===1?-1:1,k=Math.min(1,g.t/g.T),pc=PC[type];
+  let hx=sx+dir*8,hy=sy-34,a=0,hit=false,sw;
+  if(type==='pick'||type==='axe'||type==='hammer'){sw=(t*(type==='hammer'?4:3.2))%1;a=sw<.6?-1.6+sw/.6*2.4:.8-(sw-.6)/.4*2.4;hit=sw>.55&&sw<.62;}
+  else if(type==='sickle'||type==='knife'){sw=(t*2.6)%1;hx=sx+dir*10;hy=sy-26;a=sw<.5?-1.3+sw/.5*2.5:1.2-(sw-.5)/.5*2.5;hit=sw>.42&&sw<.5;}
+  else {sw=(t*5.5)%1;hx=sx+dir*13;hy=sy-18;a=.55+Math.sin(t*4)*.07;hit=sw<.08;}
+  X.save();X.translate(hx,hy);X.scale(dir,1);X.rotate(a);tool(type,k,g.n.k==='sap'?'#e0a040':'#4ab0ff');X.restore();
+  if(hit&&!g.sp124){g.sp124=1;const N=type==='bottle'?2:type==='sickle'||type==='knife'?5:6;
+   for(let i=0;i<N;i++)PART.push(type==='bottle'?{x:n.x+rnd(-6,6),y:n.y-6,vx:rnd(-8,8),vy:-rnd(30,60),g:-10,l:.5,l0:.5,c:pc[i%3],sz:2}
+    :{x:n.x+rnd(-8,8),y:n.y-(type==='sickle'?8:16),vx:rnd(-90,90),vy:-rnd(40,type==='sickle'?110:140),g:type==='sickle'||type==='knife'?160:300,l:type==='sickle'?.55:.35,l0:type==='sickle'?.55:.35,c:pc[i%3],sz:type==='sickle'?3:2});
+   if(type==='pick'||type==='axe'||type==='hammer')shake=Math.max(shake,1);}
+  if(!hit)g.sp124=0;
+  _dg();};}
+
+/* ===================== v125 (사용자 결정 2026-11-06) =====================
+ * 1) 체력 물약 자동 사용: 자동사냥이 꺼져 있어도 설정(체력 %) 아래로 내려가면 마셔요.
+ * 2) 35일 출석부 + 맹세 세트(Lv30 고정, 희귀). 첫 바퀴 7·14·21·28·35일째 세트 부위, 나머지 날 강화주문서 1장.
+ *    두 번째 바퀴부터는 매일 강화주문서 1장씩만. 캐릭터마다 따로, 하루 한 번(들어온 날만 셈, 연속 아님).
+ */
+// ---------- 1) 체력 물약 자동 ----------
+{let hpT125=0;const _u=update;update=function(dt){_u.apply(this,arguments);try{
+  if(!P||hunt||hero.st==='dead'||!(P.hp>0))return;const t=performance.now();if(t<hpT125)return;
+  if(OPT.hp>0&&P.hp<stats().hp*OPT.hp/100&&potN()>0){hpT125=t+700;drinkPot();}}catch(e){}};}
+
+// ---------- 2) 맹세 세트 ----------
+SETLV81.o30=30;
+{const _so=setOf81;setOf81=function(b){return /^o30_/.test(b||'')?'o30':_so.apply(this,arguments);};}
+(()=>{const raw=k=>{const d=Object.getOwnPropertyDescriptor(GEAR,k);return d&&d.value;};const TC=['o30',355,.5,.45];
+ const add=(k,src,o)=>{const g0=raw(src);if(!g0||GEAR[k])return;GEAR[k]=Object.assign({},g0,{tc:TC,d1:1,t:5,atk:0,def:0,hp:0,crit:0},o);if(RANGED[src])RANGED[k]=RANGED[src];};
+ add('o30_sword','m6_sword',{n:'맹세의 장검',atk:41,cls:['warrior']});
+ add('o30_dagger','m6_dagger',{n:'맹세의 단검',atk:41,cls:['rogue']});
+ add('o30_bow','m6_bow',{n:'맹세의 장궁',atk:41,cls:['rogue']});
+ add('o30_staff','m6_staff',{n:'맹세의 지팡이',atk:41,cls:['mage']});
+ add('o30_helm','m6_helm',{n:'맹세의 투구',def:16,hp:73,cls:[]});
+ add('o30_armor','m6_armor',{n:'맹세의 갑옷',def:35,hp:226,cls:[]});
+ add('o30_neck','m6_neck',{n:'맹세의 목걸이',hp:65,cls:[]});
+ add('o30_ring','m6_ring',{n:'맹세의 반지',def:6,hp:48,cls:[]});})();
+SET104.push({id:'o30',n:'맹세 세트',g:[['o30_sword','o30_dagger','o30_bow','o30_staff'],['o30_helm'],['o30_armor'],['o30_neck'],['o30_ring']],
+ b:[[2,{hp:4},'최대 체력 +4%'],[3,{def:4},'방어 +4%'],[5,{atk:5,xp:5},'공격 +5% · 경험치 +5%']]});
+// 장비 도감에는 안 나와요(출석 전용)
+{const _gd=gdList112;gdList112=function(){const L=_gd.apply(this,arguments);return Array.isArray(L)?L.filter(x=>!/^o30_/.test(x.k||'')):L;};try{GDL112=null;}catch(e){}}
+
+// ---------- 출석부 ----------
+const ATT125=[['weapon','무기','🗡️'],['o30_helm','투구','⛑️'],['o30_armor','갑옷','🛡️'],['o30_neck','목걸이','📿'],['o30_ring','반지','💍']];
+const att125=()=>{P.att125=P.att125||{n:0,last:''};return P.att125;};
+const today125=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+const attWpn125=()=>P.cls==='warrior'?'o30_sword':P.cls==='mage'?'o30_staff':(RANGED[P.eq&&P.eq.weapon]?'o30_bow':'o30_dagger');
+// n번째(1부터) 출석 보상
+function attRew125(n){const lap=Math.floor((n-1)/35),d=(n-1)%35+1;if(lap===0&&d%7===0){const a=ATT125[d/7-1];const k=a[0]==='weapon'?attWpn125():a[0];return {gear:k,n:GEAR[k].n,ic:a[2],lb:a[1]};}return {scroll:1,n:'강화주문서 1장',ic:'📜',lb:'주문서'};}
+function attClaim125(){if(!P)return;const A=att125(),t=today125();if(A.last===t){toast('오늘 출석 보상은 이미 받았어요','w');return;}
+ const n=A.n+1,r=attRew125(n);A.n=n;A.last=t;
+ if(r.gear){addGear81(r.gear,'event',{r:3});toast('출석 '+((n-1)%35+1)+'일째: '+r.n+' (맹세 세트)','g');}
+ else{P.scroll=(P.scroll|0)+1;toast('출석 '+((n-1)%35+1)+'일째: 강화주문서 1장','g');}
+ save();refreshSide();drawAtt125();}
+(function(){const st=document.createElement('style');st.textContent=`
+#pAtt{left:50%;transform:translateX(-50%);width:min(620px,calc(100% - 16px));max-height:calc(100% - 70px);top:56px;flex-direction:column}
+#pAtt .ab{overflow-y:auto;padding:6px 8px;display:flex;flex-direction:column;gap:5px}
+#pAtt .wk{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+#pAtt .dy{position:relative;background:rgba(28,36,54,.95);border:1px solid #2c3346;border-radius:6px;min-height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:#cfd3e0;text-align:center;line-height:1.15;padding:2px}
+#pAtt .dy .n{position:absolute;top:1px;left:4px;font-size:9px;color:#8a90a6}#pAtt .dy .ic{font-size:17px}
+#pAtt .dy.big{background:linear-gradient(180deg,#5a1f24,#33141a);border-color:#c0505a;color:#ffb0b0}
+#pAtt .dy.got{opacity:.42}#pAtt .dy.got::after{content:'✔';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;color:#7fe08a}
+#pAtt .dy.now{box-shadow:0 0 0 2px #e7c886 inset;opacity:1}
+#pAtt .af{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px 10px;flex-wrap:wrap;font-size:12px;color:#cfd3e0}
+#pAtt .af button{font:inherit;font-weight:700;font-size:13px;background:linear-gradient(180deg,#c9a35a,#8a6a2a);color:#1a1206;border:0;border-radius:7px;padding:7px 16px;cursor:pointer}
+#pAtt .af button:disabled{opacity:.45;cursor:default}
+#pAtt .sn{font-size:11px;color:#9aa0b8;padding:0 10px}#pAtt .sn b{color:#ff8a8a;font-weight:400}`;document.head.appendChild(st);
+ const d=document.createElement('div');d.id='pAtt';d.className='pan';
+ d.innerHTML='<div class="ph"><span>기사단 출석부 <small id="attCnt" style="font-weight:400;color:#9aa0b8"></small></span><button id="attX">✕</button></div><div class="ab" id="attB"></div><div class="sn" id="attS"></div><div class="af"><span id="attM"></span><button id="attGo">오늘 받기</button></div>';
+ $('view').appendChild(d);$('attX').onclick=()=>{d.style.display='none';};$('attGo').onclick=attClaim125;
+ const g=document.querySelector('#pMenu .mgrid');if(g&&!$('mAtt')){const b=document.createElement('button');b.className='ib';b.id='mAtt';
+  b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#e0b866" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2" fill="#2c3a5a"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M8.5 15l2.2 2.2 4.8-4.8" stroke="#7fe08a"/></svg>출석';
+  g.appendChild(b);b.onclick=()=>openAtt125();}})();
+function drawAtt125(){if(!P)return;const A=att125(),done=A.last===today125(),lap=Math.floor(A.n/35),inLap=A.n%35,base=lap*35;let h='';
+ for(let w=0;w<5;w++){h+='<div class="wk">';for(let i=1;i<=7;i++){const d=w*7+i,n=base+d,r=attRew125(n),c=['dy'];if(r.gear)c.push('big');if(d<=inLap)c.push('got');if(d===inLap+1&&!done)c.push('now');
+  h+=`<div class="${c.join(' ')}"><span class="n">${d}</span><span class="ic">${r.ic}</span><span>${r.gear?r.n.replace('맹세의 ',''):'주문서'}</span></div>`;}h+='</div>';}
+ $('attB').innerHTML=h;$('attCnt').textContent=`${inLap}/35일`+(lap?` · ${lap+1}바퀴째`:'');
+ $('attS').innerHTML=lap===0?'7·14·21·28·35일째에 <b>맹세 세트</b>(Lv30 희귀) 부위를 하나씩 받아요. 2세트 체력 +4% · 3세트 방어 +4% · 5세트 공격 +5%·경험치 +5%':'두 번째 바퀴부터는 매일 강화주문서 1장을 받아요.';
+ const nx=attRew125(A.n+1);$('attM').textContent=done?'오늘은 받았어요. 내일 또 와요!':'오늘 보상: '+nx.n;$('attGo').disabled=done;}
+function openAtt125(){if(!P)return;closeAll();['pDex'].forEach(x=>{const e=$(x);if(e)e.style.display='none';});$('pAtt').style.display='flex';drawAtt125();}
+{const _c=closeAll;closeAll=function(){_c.apply(this,arguments);const e=$('pAtt');if(e)e.style.display='none';};}
+// 하루 한 번 자동으로 열기 (게임 중이고 다른 창·대화가 없을 때)
+let ATTSEEN125='';
+setInterval(()=>{try{if(!P||!hero||hero.st==='dead')return;const t=today125();if(ATTSEEN125===(DB?DB.cur:0)+t)return;if(att125().last===t){ATTSEEN125=(DB?DB.cur:0)+t;return;}
+ if(typeof talk!=='undefined'&&talk)return;if(document.querySelector('.pan[style*="display: flex"]'))return;if($('sel')&&getComputedStyle($('sel')).display!=='none')return;
+ ATTSEEN125=(DB?DB.cur:0)+t;openAtt125();}catch(e){}},2500);
+
+/* v126: 메인 퀘스트 안내 한 줄(서브 퀘스트는 그대로) — '새 퀘스트'·'퀘스트 완료' 네모칸 아래에 지금 뭘 해야 하는지 짧게 보여 줘요. */
+const jo126=(w,a,b)=>{const c=(w||'').trim().slice(-1).charCodeAt(0);if(!(c>=0xAC00&&c<=0xD7A3))return w+a;return w+(((c-0xAC00)%28)?a:b);};
+const NM126={smith:'대장장이 도란',herb:'약초사 유나',bern:'수색대장 베른',mage:'기록관 리아',roan:'숲지기 로안',dor:'탐광꾼 도르',hagen:'노광부 하겐',k7capt:'성문 수비대장 브란'};
+const nm126=k=>{const n=npcName(k);return n&&!/^[a-z0-9_]+$/i.test(n)?n:(NM126[k]||'');};
+function hint126(q){if(!q)return '';const g=q.goal||{};try{
+ if(g.kill&&MOB[g.kill])return (g.n|0)<=1?jo126(MOB[g.kill].n,'을','를')+' 쓰러뜨려요':jo126(MOB[g.kill].n,'을','를')+' '+g.n+'마리 잡아요';
+ if(g.gather&&MAT[g.gather])return jo126(MAT[g.gather].n,'을','를')+' '+g.n+'개 모아요';
+ if(g.craft)return g.craft==='gear'?'대장간에서 장비를 만들어요':jo126((POT[g.craft]||{}).n||'물건','을','를')+' '+g.n+'개 만들어요';
+ if(g.talk){const nm=nm126(g.talk);if(nm&&!/^[a-z0-9_]+$/i.test(nm))return nm+'에게 가서 말을 걸어요';return '';}
+ if(g.lv)return '사냥해서 레벨 '+g.lv+'까지 올려요';
+ if(g.mats)return '재료를 모아요: '+Object.entries(g.mats).map(([m,n])=>MAT[m].n+' '+n+'개').join(', ');
+ let t=String(goalTxt(q,0)||'').replace(/\s*\(?\d+\s*\/\s*\d+\)?\s*$/,'').trim();if(!t)return '';
+ const parts=t.split(' · ').map(x=>x.trim()).filter(Boolean);if(parts.length>1){const nx=parts.find(x=>!x.startsWith('✔'))||parts[parts.length-1];return '할 일 '+parts.length+'가지 · 먼저: '+nx.replace(/^✔\s*/,'').replace(/\s*\(.*$/,'');}
+ return '할 일: '+t.replace(/^✔\s*/,'').replace(/\s*\(.*$/,'');}catch(e){return '';}}
+{const st=document.createElement('style');st.textContent='#toast .h126{display:block;margin-top:3px;padding-top:3px;border-top:1px solid rgba(231,200,134,.35);font-size:.92em;color:#ffe9b0;white-space:normal;max-width:min(78vw,420px)}';document.head.appendChild(st);}
+{const _t=toast;toast=function(m,c){const r=_t.apply(this,arguments);try{if(typeof m!=='string'||!P)return r;let h='';
+  if(m.startsWith('새 퀘스트: ')){const q=qCur();h=q&&q.n&&m.indexOf(q.n)>0?hint126(q):'';if(h)h='👉 '+h;}
+  else if(m.startsWith('퀘스트 완료!')){const q=qCur();const who=q&&P.q.st==='ready'&&!q.auto5&&nm126(q.to||q.from);if(who)h='👉 왼쪽 위 알림판을 누르면 '+who.split(' ').pop()+'에게 바로 걸어가요';}
+  if(h){const el=$('toast'),d=document.createElement('span');d.className='h126';d.textContent=h;el.appendChild(d);toastT=Math.max(toastT,4.5);}}catch(e){}return r;};}
 
 openSelect();
 </script>
