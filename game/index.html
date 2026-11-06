@@ -10325,6 +10325,40 @@ function drawMdex112(){if(!P)return;const all=mdList112(),K=P.mdex112||{},chs=[.
  <div class="dxs">${MDTH112.map((x,i)=>`<div class="${n>=x?'on':''}">${'★'.repeat(i+1)}<br>${x}개<br><span class="sc">주문서 1장</span></div>`).join('')}</div>
  <div class="note">채집하거나 몬스터에게서 얻으면 모은 수가 올라가요. 써도 모은 수는 줄지 않아요.</div>`;}
 
+// ===== v116: 다이아 상점 '광고' 탭 (사용자 2026-11-06) =====
+// 광고 3번 = 장비 가방 +1칸 · 광고 1번 = 강화주문서 1장 · 광고 2번 = 강화주문서 3장 · 광고 1번 = 부활권 1장
+// 광고는 보상형(APP.ads.showRewarded, place 'dia_<id>'). 광고 제거를 산 사람은 광고 없이 바로 받아요.
+// 몇 번 봤는지는 캐릭터마다(P.ad116) 남아요. 하루 횟수 제한: ADLIM116 (비어 있으면 제한 없음 — 사용자 결정 대기)
+const ADLIM116={};
+const AD116=[
+ {id:'bag1',n:'장비 가방 +1칸',d:'이 캐릭터 영구 · 최대 80칸',need:3,ico:'🎒',ok:()=>(P.bagx107|0)<BAGMAXX107||'가방은 80칸이 최대예요',go:()=>{P.bagx107=(P.bagx107|0)+1;return '장비 가방 '+bagCap107()+'칸';}},
+ {id:'sc1',n:'강화주문서 1장',d:'바로 들어가요',need:1,ico:'📜',go:()=>{P.scroll=(P.scroll|0)+1;return '강화주문서 1장';}},
+ {id:'sc3',n:'강화주문서 3장',d:'바로 들어가요',need:2,ico:'📜',go:()=>{P.scroll=(P.scroll|0)+3;return '강화주문서 3장';}},
+ {id:'rv1',n:'부활권 1장',d:'그 자리에서 일어나요',need:1,ico:'✨',go:()=>{P.rv86=(P.rv86|0)+1;return '부활권 1장';}}];
+function adDay116(){DB.adD116=DB.adD116&&DB.adD116.d===today86()?DB.adD116:{d:today86(),n:{}};return DB.adD116;}
+const adLeft116=id=>ADLIM116[id]?ADLIM116[id]-(adDay116().n[id]|0):99;
+function adGrant116(o){if(o.ok){const r=o.ok();if(r!==true){toast(r,'w');return;}}const t=o.go();P.ad116=P.ad116||{};P.ad116[o.id]=0;adDay116().n[o.id]=(adDay116().n[o.id]|0)+1;
+ save();saveDB();refreshSide();toast('📺 '+t+'을(를) 받았어요','g');if($('dia107'))drawDia107();}
+function adPress116(id){const o=AD116.find(x=>x.id===id);if(!o||!P)return;if(adLeft116(id)<1){toast('오늘은 다 받았어요. 밤 12시에 다시 채워져요','w');return;}
+ if(o.ok){const r=o.ok();if(r!==true){toast(r,'w');return;}}
+ if(adRemoved86()){adGrant116(o);return;}
+ showAd86('dia_'+id,()=>{P.ad116=P.ad116||{};const n=(P.ad116[id]|0)+1;if(n>=o.need){adGrant116(o);return;}P.ad116[id]=n;save();toast(`광고 ${n}/${o.need} — ${o.need-n}번 더 보면 ${o.n}`,'g');if($('dia107'))drawDia107();});}
+{const _d=drawDia107;drawDia107=function(){const ad=DTAB107==='ad';if(ad)DTAB107='item';_d.apply(this,arguments);if(ad)DTAB107='ad';const e=$('dia107');if(!e)return;
+ const tb=e.querySelector('.tb');if(tb&&!tb.querySelector('[data-t=ad]')){const b=document.createElement('button');b.dataset.t='ad';b.textContent='📺 광고';b.onclick=()=>{DTAB107='ad';DARM107=null;drawDia107();};tb.appendChild(b);}
+ if(!ad)return;tb.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t==='ad'));
+ const A=APP86(),rm=adRemoved86(),PR=(P&&P.ad116)||{};
+ e.querySelector('.gd').innerHTML=AD116.map(o=>{const k=PR[o.id]|0,left=adLeft116(o.id),full=o.ok&&o.ok()!==true;
+  const extra=o.id==='bag1'?`지금 ${gearCnt107()}/${bagCap107()}칸`:o.id==='rv1'?`가진 것 ${P.rv86|0}장`:`가진 것 ${P.scroll|0}장`;
+  const dots=o.need>1?`<div class="ad116">${Array.from({length:o.need},(_,i)=>`<i class="${i<k?'on':''}"></i>`).join('')}<span>${k}/${o.need}</span></div>`:'';
+  const lab=!A?'앱에서만':full?'최대예요':left<1?'오늘 끝':rm?'바로 받기':o.need>1?`📺 광고 보기 (${k}/${o.need})`:'📺 광고 보기';
+  return `<div class="cd">${ADLIM116[o.id]?`<div class="lim">매일 ${ADLIM116[o.id]-left}/${ADLIM116[o.id]}</div>`:''}<div class="rb a">광고 ${o.need}번</div><div class="art" style="filter:drop-shadow(0 0 8px rgba(255,200,90,.6))">${o.ico}</div><div class="nm">${o.n}</div><div class="ds">${o.d}<br>${extra}</div>${dots}<button data-ad="${o.id}" ${!A||full||left<1?'disabled':''}>${lab}</button></div>`;}).join('')+
+  `<div class="nt">광고를 끝까지 보면 보상을 받아요.${rm?' 광고 제거를 사셔서 광고 없이 바로 받아요.':''}${A?'':' (웹에서는 광고가 없어요 · 앱에서만)'}</div>`;
+ e.querySelectorAll('[data-ad]').forEach(b=>b.onclick=()=>adPress116(b.dataset.ad));};}
+{const st=document.createElement('style');st.textContent=`
+#dia107 .rb.a{background:#2f6fd0}
+#dia107 .ad116{display:flex;align-items:center;justify-content:center;gap:5px;margin:2px 0 4px}#dia107 .ad116 i{width:10px;height:10px;border-radius:50%;border:1px solid #6d86b8;background:#0d1424}#dia107 .ad116 i.on{background:#ffd34a;border-color:#ffd34a}#dia107 .ad116 span{font-size:11px;color:#9aa6c4;margin-left:3px}
+`;document.head.appendChild(st);}
+
 openSelect();
 </script>
 <style id="portrait114">
