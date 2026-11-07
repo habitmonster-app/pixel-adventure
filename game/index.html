@@ -726,6 +726,11 @@ const NPC=[
 
 
 // ===== 저장: 캐릭터 3칸 =====
+// v127: 게임이 저장을 읽기 전에 확인 — 깨진 저장은 '_broken'에, 이전 판 저장은 '_prev'에 한 벌 보관
+var EARLY127=(function(){const K='pxclassic2',o={broken:'',prev:0};try{const raw=localStorage.getItem(K);if(!raw)return o;let s=null;try{s=JSON.parse(raw);}catch(e){}
+ if(!(s&&Array.isArray(s.slots))){o.broken=raw;try{if(!localStorage.getItem(K+'_broken'))localStorage.setItem(K+'_broken',raw);}catch(e){}return o;}
+ if(s.gv!=='v127'){try{localStorage.setItem(K+'_prev',raw);o.prev=1;}catch(e){}}}catch(e){}return o;})();
+
 const SAVE='pxclassic2';
 let DB={slots:[null,null,null],cur:0};
 try{const s=JSON.parse(localStorage.getItem(SAVE)||'null');if(s&&s.slots)DB=s;}catch(e){}
@@ -10562,6 +10567,86 @@ function hint126(q){if(!q)return '';const g=q.goal||{};try{
   if(m.startsWith('새 퀘스트: ')){const q=qCur();h=q&&q.n&&m.indexOf(q.n)>0?hint126(q):'';if(h)h='👉 '+h;}
   else if(m.startsWith('퀘스트 완료!')){const q=qCur();const who=q&&P.q.st==='ready'&&!q.auto5&&nm126(q.to||q.from);if(who)h='👉 왼쪽 위 알림판을 누르면 '+who.split(' ').pop()+'에게 바로 걸어가요';}
   if(h){const el=$('toast'),d=document.createElement('span');d.className='h126';d.textContent=h;el.appendChild(d);toastT=Math.max(toastT,4.5);}}catch(e){}return r;};}
+
+/* v127: 자동사냥이 못 잡는 몬스터(도망·벽 너머·줄 못 맞춤)를 계속 쫓다가 멈춰 있던 문제
+   — 같은 몬스터를 8초 동안 쫓았는데 한 번도 피해를 못 줬으면 15초 동안 그 몬스터는 건너뛰고 다른 몬스터를 골라요.
+   (몬스터·전투 수치는 그대로, 고르는 순서만) */
+{const H127={t:null,since:0,hp:0,hit:0};
+ const _pt=pickTarget;pickTarget=function(){const t=now(),keep=mobs;mobs=keep.filter(m=>!(m._skip127>t));try{return _pt.apply(this,arguments);}finally{mobs=keep;}};
+ const _hs=huntStep;huntStep=function(dt){const r=_hs.apply(this,arguments);try{const t=now();
+   if(hT!==H127.t){H127.t=hT;H127.since=t;H127.hp=hT?hT.hp:0;H127.hit=t;}
+   else if(hT){if(hT.hp<H127.hp){H127.hp=hT.hp;H127.hit=t;}
+    else if(t-H127.hit>8&&!hT.angry){hT._skip127=t+15;hT=null;hPath=null;H127.t=null;}
+    else if(t-H127.hit>12){hT._skip127=t+10;hT=null;hPath=null;H127.t=null;}}}catch(e){}return r;};}
+
+/* ===================== v127: 출시 전 최종 점검 수정 (2026-11-07) =====================
+   새 기능 없음. 점검에서 실제로 확인된 문제만 고쳐요. 숫자·규칙(강화·드롭·직업)은 그대로. */
+
+// ---------- 1) 시험용 버튼: 일반 사용자 설정 창에서 켜는 길을 없앰 ----------
+// 예전: 설정 → '시험용 버튼 보이기'를 누르면 누구나 모든 장비·스킬·주문서 20장을 받을 수 있었어요.
+// 이제: 주소에 ?dev=bongin 을 붙인 시험 링크에서만 켜져요. 앱(폰 설치판)에서는 켤 방법이 없어요.
+const DEV127=(()=>{try{return /[?&#]dev=bongin\b/.test(location.href);}catch(e){return false;}})();
+if(!DEV127){OPT.dev=0;try{saveOpt();}catch(e){}document.body.classList.remove('dev82');
+ allGear81=function(){};
+ {const _d=drawOpt78;drawOpt78=function(){const r=_d.apply(this,arguments);const x=$('dev82');if(x)x.remove();return r;};}}
+
+// ---------- 2) 저장 지키기 ----------
+// (가) 저장을 읽지 못하면(파일 깨짐) 빈 저장으로 덮어쓰지 않게 원래 글을 따로 보관하고 알려 줘요.
+// (나) 저장 구조 번호(sv)와 게임 판(gv)을 저장에 적어요. 게임이 바뀐 뒤 처음 저장하기 전에 원래 저장을 '_prev'로 한 벌 남겨요.
+const SAVEV127=1,GAMEV127='v127';
+const SAVE127={broken:EARLY127.broken?1:0,raw:EARLY127.broken||''};
+DB.sv=SAVEV127;DB.gv=GAMEV127;
+// 저장 파일로 내보내기: 폰(앱)은 공유 창, 웹은 내려받기
+function exportText127(name,text){try{const f=new File([text],name,{type:'application/json'});
+  if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:name}).catch(()=>{});return;}}catch(e){}
+ try{const b=new Blob([text],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);}catch(e){toast('내보내지 못했어요','w');}}
+if(SAVE127.broken){const o=document.createElement('div');o.id='save127';o.style.cssText='position:fixed;left:50%;top:8px;transform:translateX(-50%);z-index:9500;max-width:92vw;background:#3a1c22;color:#fff;border:2px solid #ffb4a7;border-radius:10px;padding:10px 12px;font:13px system-ui;text-align:center;line-height:1.5';
+ o.innerHTML='<b>저장을 읽지 못했어요.</b><br>원래 저장은 지우지 않고 따로 보관했어요. 아래 버튼으로 파일을 꺼내 두고, 문의할 때 보내 주세요.<br><button type="button" id="save127x" style="margin:6px 4px 0">원래 저장 파일 꺼내기</button><button type="button" id="save127c" style="margin:6px 4px 0">닫기</button>';
+ document.body.appendChild(o);$('save127x').onclick=()=>exportText127('bongin-save-broken.json',SAVE127.raw);$('save127c').onclick=()=>o.remove();}
+// 저장 실패 알림의 '내보내기'도 폰에서 되게 (공유 창)
+{const b=$('save77export');if(b)b.onclick=()=>{try{exportText127('bongin-save-backup.json',JSON.stringify(PixelSave77.snapshot(),null,1));}catch(e){toast('내보내기에도 실패했어요','w');}};}
+
+// ---------- 3) 하루 횟수·출석: 기기 날짜를 되돌려 다시 받던 길 막기 ----------
+// 기기에서 본 가장 늦은 날짜(DB.dmax127)를 기억해요. 날짜를 되돌리면 하루 횟수는 그대로 이어지고 출석은 못 받아요.
+// (서버가 없어서 날짜를 '앞으로' 돌리는 것까지 완전히 막을 수는 없어요)
+const dkey127=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+function back127(){const t=dkey127();if(!DB.dmax127||t>DB.dmax127){DB.dmax127=t;return false;}return t<DB.dmax127;}
+function keep127(o){if(o&&back127())o.d=today86();}
+{const _a=adLeft86;adLeft86=function(){keep127(DB.ad86);return _a.apply(this,arguments);};}
+{const _a=adDay116;adDay116=function(){keep127(DB.adD116);return _a.apply(this,arguments);};}
+{const _a=dayLeft107;dayLeft107=function(){keep127(DB.dbox107);return _a.apply(this,arguments);};}
+{const _c=attClaim125;attClaim125=function(){if(!P)return;const A=att125(),t=today125();
+ if(back127()||(A.last&&t<A.last)){toast('기기 날짜가 마지막 출석 날짜보다 빨라요. 날짜를 확인해 주세요','w');return;}return _c.apply(this,arguments);};}
+
+// ---------- 4) 캐릭터를 지운 뒤 앱을 내리면 지운 캐릭터가 되살아나던 문제 ----------
+document.addEventListener('click',e=>{const t=e.target&&e.target.closest&&e.target.closest('#csDel');if(!t)return;
+ setTimeout(()=>{if(P&&!playing&&!DB.slots[DB.cur])P=null;},0);},true);
+
+// ---------- 5) 퀘스트 칸·게시판에 NPC 이름 대신 내부 이름(k7capt)이 보이던 문제 ----------
+const NMX127={k7capt:'성문 수비대장 브란'};
+const fixNm127=el=>{if(!el)return;for(const k in NMX127)if(el.innerHTML.includes(k))el.innerHTML=el.innerHTML.split(k).join(NMX127[k]);};
+{const _q=drawQT;drawQT=function(){const r=_q.apply(this,arguments);fixNm127($('qtrack'));return r;};}
+{const _b=drawBoard;drawBoard=function(){const r=_b.apply(this,arguments);fixNm127($('pfB'));return r;};}
+
+// ---------- 6) 장비 창: 캐릭터 옆에는 핵심 능력치만, 나머지는 '능력치 자세히' ----------
+{const _dd=drawInvDet;drawInvDet=function(){const r=_dd.apply(this,arguments);try{if(IV.sel||IV.v!=='eq'||(IV.mode&&IV.mode!=='info'))return r;const D=$('ivDet');const sum=D&&D.querySelector('.iv-sum');if(!sum)return r;
+ const s=stats();sum.innerHTML=[['공격력',s.atk],['방어력',s.def],['최대 체력',Math.ceil(P.hp)+' / '+s.hp],['치명타',(s.crit|0)+'%'],['전투력',combatPower(P).toLocaleString()]].map(([a,b],i)=>`<div${i===4?' class="cp127"':''}><span>${a}</span><b>${b}</b></div>`).join('')+
+  '<button type="button" class="iv-b" id="ivMore127" style="margin-top:6px">능력치 자세히 ▶</button>';
+ $('ivMore127').onclick=()=>{ST.tab='det';openStat();};}catch(e){}return r;};}
+{const st=document.createElement('style');st.textContent='#ivDet .iv-sum .cp127 b{color:#ffd34a;font-size:15px}#ivMore127{width:100%}';document.head.appendChild(st);}
+
+// ---------- 7) 가방: 정렬 칸과 겹치던 '⇅ 부위별 정렬' 단추 빼기 (정렬 칸 '부위 순'과 같아요) ----------
+{const st=document.createElement('style');st.textContent='#ivSort88{display:none!important}';document.head.appendChild(st);}
+
+// ---------- 8) 생활 숙련도: 지금 효과 · 다음 단계 혜택을 줄로 나눠 한눈에 ----------
+lifeFx83=function(k){const lv=lifeOf83(k);
+ const row=(a,b)=>`<br><span style="color:#9fe07a">지금</span> ${a}${b?`<br><span style="color:#ffd34a">다음</span> ${b}`:'<br><span style="color:#8a8270">다음</span> 최고 단계예요'}`;
+ if(k==='gather'||k==='mine'||k==='wood'){const c=GCNT83(lv),rd=GRED83(lv);
+  const nc=lv<3?3:lv<6?6:0,nr=lv<10?10:lv<15?15:lv<20?20:0,nx=[nc,nr].filter(Boolean).sort((a,b)=>a-b)[0];
+  const nb=nx?`Lv.${nx} → `+(nx===nc?`1번에 ${GCNT83(nc)}개`:'')+(nx===nc&&nx===nr?' · ':'')+(nx===nr?`채집 시간 -${GRED83(nr)}%`:''):'';
+  return row(`1번에 ${c}개 · 채집 시간 ${rd?'-'+rd+'%':'그대로'}`+(k==='mine'?' (버려진 광산 안은 따로 계산)':''),nb);}
+ if(k==='smith'){const g=profMax83(),nx=[2,3,4,5].find(r=>UNL83[r]>lv);return row(`직접 제작 ${GRADE[g].n}까지 · 실패 없음 · 대성공 1%`,nx?`Lv.${UNL83[nx]} → ${GRADE[nx].n} 제작`:'');}
+ return '<br><span style="color:#8a8270">이 숙련도는 아직 효과가 없어요 (만드는 데는 지장 없어요)</span>';};
 
 openSelect();
 </script>

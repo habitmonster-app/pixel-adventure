@@ -48,7 +48,8 @@
  let store=null;const pend={};
  function grant(t){// 결제가 승인된 거래 → 게임에 지급 → 끝내기(한 번만)
   const done=LS.get('app_granted',[]);
-  for(const pr of t.products||[]){const id=pr.id,key=(t.transactionId||'')+':'+id;
+  for(const pr of t.products||[]){const id=pr.id,tid=t.transactionId||t.purchaseId||(t.nativePurchase&&t.nativePurchase.purchaseToken)||'';
+   const key=(tid||('t'+Date.now()))+':'+id;// 거래 번호가 비어도 같은 상품을 다시 살 수 있게
    if(done.includes(key)){continue;}
    let ok=false;
    if(id==='noads'){LS.set('app_noads',true);ok=true;}
