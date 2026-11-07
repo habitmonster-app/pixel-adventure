@@ -729,7 +729,7 @@ const NPC=[
 // v127: 게임이 저장을 읽기 전에 확인 — 깨진 저장은 '_broken'에, 이전 판 저장은 '_prev'에 한 벌 보관
 var EARLY127=(function(){const K='pxclassic2',o={broken:'',prev:0};try{const raw=localStorage.getItem(K);if(!raw)return o;let s=null;try{s=JSON.parse(raw);}catch(e){}
  if(!(s&&Array.isArray(s.slots))){o.broken=raw;try{if(!localStorage.getItem(K+'_broken'))localStorage.setItem(K+'_broken',raw);}catch(e){}return o;}
- if(s.gv!=='v127'){try{localStorage.setItem(K+'_prev',raw);o.prev=1;}catch(e){}}}catch(e){}return o;})();
+ if(s.gv!=='v128'){try{localStorage.setItem(K+'_prev',raw);o.prev=1;}catch(e){}}}catch(e){}return o;})();
 
 const SAVE='pxclassic2';
 let DB={slots:[null,null,null],cur:0};
@@ -6650,7 +6650,7 @@ function rewake8(){if(BS8.e||BS8.cd>0)return;S8.rematch=1;bsSpawn8();toast('수�
 function lect8(){const f=f8();if(f.lect)return;say8('(혼잣말)',['(봉인 기록 보관대에 고대 봉인 기록이 놓여 있어요)','\'봉인실의 수호병기는 문을 지키는 자를 돕도록 만들어졌다.\'','\'첫 봉인의 계약자 가운데 하나, 문지기 일족 — 그 이름은 지워져 있다.\'','\'일곱 문 가운데 첫째 문은 균열의 경계 너머에 있다.\'','(기록 끝에 새 잉크로 덧쓴 글씨: \'첫째 문의 열쇠는 사람의 왕국 안에 있다. — K\')','(K… 카르벤? 아니면 다른 누구일까요. 카이렌에게 알려야 해요)'],
  ()=>{f.lect=1;if(!(matN('k8arch')>0))addMat('k8arch',1);toast('이야기 물건: 고대 봉인 기록 — 지하 1층 입구의 카이렌에게 보고해요','g');qCheck();save();refreshSide();});}
 const _hurt52=hurt;hurt=function(m,dmg){const id=m.m&&m.m.id;
- if(id==='guard8'){if(BS8.end||!BS8.lock){_hurt52(m,0);m.kbv=0;return;}if(BS8.shield){dmg=Math.max(1,Math.round(dmg*.1));if(Math.random()<.3)pop(m.x,m.y-120,'보호막','#a8d8ff');}else if(BS8.big&&BS8.vent>0)dmg=Math.round(dmg*1.5);
+ if(id==='guard8'){if(BS8.end||!BS8.lock){_hurt52(m,0);m.kbv=0;return;}if(BS8.shield){dmg=Math.max(1,Math.round(dmg*.25));if(Math.random()<.3)pop(m.x,m.y-120,'보호막','#a8d8ff');}else if(BS8.big&&BS8.vent>0)dmg=Math.round(dmg*1.5);
   if(m.hp-dmg<=1){dmg=Math.max(0,m.hp-1);_hurt52(m,dmg);m.hp=Math.max(1,m.hp);m.kbv=0;bsShut8();return;}_hurt52(m,dmg);m.kbv=0;return;}
  if(id==='wknight'&&m.gd>0&&front8(m)){dmg=Math.round(dmg*.3);if(Math.random()<.35)pop(m.x,m.y-70,'막음!','#c8d8ff');}
  if(id==='warden8'&&!(m.rec8>0)&&front8(m,1.0)){dmg=Math.round(dmg*.3);if(Math.random()<.25)pop(m.x,m.y-90,'방패!','#c8d8ff');}
@@ -10593,7 +10593,7 @@ if(!DEV127){OPT.dev=0;try{saveOpt();}catch(e){}document.body.classList.remove('d
 // ---------- 2) 저장 지키기 ----------
 // (가) 저장을 읽지 못하면(파일 깨짐) 빈 저장으로 덮어쓰지 않게 원래 글을 따로 보관하고 알려 줘요.
 // (나) 저장 구조 번호(sv)와 게임 판(gv)을 저장에 적어요. 게임이 바뀐 뒤 처음 저장하기 전에 원래 저장을 '_prev'로 한 벌 남겨요.
-const SAVEV127=1,GAMEV127='v127';
+const SAVEV127=1,GAMEV127='v128';
 const SAVE127={broken:EARLY127.broken?1:0,raw:EARLY127.broken||''};
 DB.sv=SAVEV127;DB.gv=GAMEV127;
 // 저장 파일로 내보내기: 폰(앱)은 공유 창, 웹은 내려받기
@@ -10647,6 +10647,14 @@ lifeFx83=function(k){const lv=lifeOf83(k);
   return row(`1번에 ${c}개 · 채집 시간 ${rd?'-'+rd+'%':'그대로'}`+(k==='mine'?' (버려진 광산 안은 따로 계산)':''),nb);}
  if(k==='smith'){const g=profMax83(),nx=[2,3,4,5].find(r=>UNL83[r]>lv);return row(`직접 제작 ${GRADE[g].n}까지 · 실패 없음 · 대성공 1%`,nx?`Lv.${UNL83[nx]} → ${GRADE[nx].n} 제작`:'');}
  return '<br><span style="color:#8a8270">이 숙련도는 아직 효과가 없어요 (만드는 데는 지장 없어요)</span>';};
+
+/* ===================== v128: 보스 난이도 조정 (2026-11-07, 사용자 결정) =====================
+   8장 봉인실 수호병기는 조금 쉽게, 10장 베르샤르(최종 보스)는 시즌 1에서 가장 어렵게. 다른 보스는 그대로. */
+{const G=MOB.guard8,V=MOB.versh;
+ // 수호병기: 체력 26000→23000, 공격 -10%
+ G.hp=23000;G.atk=Math.round(G.atk*.9);
+ // 베르샤르: 체력 42000→52000, 공격 +8% (분신도 같은 공격)
+ V.hp=52000;V.atk=Math.round(V.atk*1.08);if(MOB.versh_c)MOB.versh_c.atk=V.atk;}
 
 openSelect();
 </script>
