@@ -5,5 +5,5 @@
     <string name="package_name">com.habitmonster.pixeladventure</string>
     <string name="custom_url_scheme">com.habitmonster.pixeladventure</string>
     <!-- AdMob 앱 ID: 지금은 구글 시험용 ID. AdMob에 앱을 등록하면 진짜 ID로 바꿔요 -->
-    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="admob_app_id">ca-app-pub-6540694097552852~6542157264</string>
 </resources>
