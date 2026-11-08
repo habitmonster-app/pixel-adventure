@@ -5,9 +5,9 @@
  // ----- 설정 (AdMob에 앱을 등록하면 진짜 ID로 바꿔요) -----
  const IOS=!!(C.getPlatform&&C.getPlatform()==='ios');
  const CFG={
-  // 안드로이드: 진짜 AdMob(봉인 기사단 Android, 2026-11-08 등록). 아이폰: AdMob에 iOS 앱을 아직 안 만들어서 시험 광고 그대로
-  testing:IOS,
-  rewardedId:IOS?'ca-app-pub-3940256099942544/1712485313':'ca-app-pub-6540694097552852/7448044827', // 아이폰은 구글 시험용
+  // 진짜 AdMob 보상형 광고 (2026-11-08 등록: 봉인 기사단 Android / iOS)
+  testing:false,
+  rewardedId:IOS?'ca-app-pub-6540694097552852/1559237981':'ca-app-pub-6540694097552852/7448044827',
   // 스토어 상품: 광고 제거 + 다이아 묶음 5개(소모성, 다이아 100개=9,900원 기준). scroll_10·scroll_30·revive_3은 옛 상품(이제 다이아로 사요)
   // → 스토어에 안 만들어도 돼요. 예전에 결제가 끝나지 않은 거래를 마저 지급하려고 등록만 남겨 둬요.
   products:[{id:'noads',type:'non consumable'},
