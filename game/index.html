@@ -817,7 +817,7 @@ const NPC=[
 // v127: 게임이 저장을 읽기 전에 확인 — 깨진 저장은 '_broken'에, 이전 판 저장은 '_prev'에 한 벌 보관
 var EARLY127=(function(){const K='pxclassic2',o={broken:'',prev:0};try{const raw=localStorage.getItem(K);if(!raw)return o;let s=null;try{s=JSON.parse(raw);}catch(e){}
  if(!(s&&Array.isArray(s.slots))){o.broken=raw;try{if(!localStorage.getItem(K+'_broken'))localStorage.setItem(K+'_broken',raw);}catch(e){}return o;}
- if(s.gv!=='v130'){try{localStorage.setItem(K+'_prev',raw);o.prev=1;}catch(e){}}}catch(e){}return o;})();
+ if(s.gv!=='v131'){try{localStorage.setItem(K+'_prev',raw);o.prev=1;}catch(e){}}}catch(e){}return o;})();
 
 const SAVE='pxclassic2';
 let DB={slots:[null,null,null],cur:0};
@@ -3157,7 +3157,7 @@ function creDraw(e,im,meta,sx,sy){const fw=meta.fw,fh=meta.fh,s=meta.s||1,T=perf
  if(e.st==='walk')col=W4[Math.floor(e.ft*.7)%4];
  else if(e.st==='idle')col=meta.fly?W4[Math.floor(T*7)%4]:(meta.fw>=46?W4[Math.floor(T*3)%4]:0);
  else if(e.st==='atk'){const P=[0,3,8,12,7,2],C=[0,1,2,2,1,0],f=Math.min(5,e.f|0),v=[[0,-1],[-1,0],[0,1],[1,0]][e.d]||[0,1];
-  col=C[f];px=v[0]*P[f];py=v[1]*P[f];}
+  col=(meta.ac&&(f===2||f===3))?3:C[f];px=v[0]*P[f];py=v[1]*P[f];}
  else if(e.st==='dead'){col=0;sq=Math.max(.25,1-(e.f||0)*.14);}
  const yo=meta.fly&&!meta.nosh?-8-Math.sin(T*5)*2:0,dw=fw*s,dh=fh*s*sq;
  X.drawImage(im,col*fw,(e.d|0)*fh,fw,fh,Math.round(sx-dw/2+px),Math.round(sy-dh+yo+py+2),Math.round(dw),Math.round(dh));}
@@ -10681,7 +10681,7 @@ if(!DEV127){OPT.dev=0;try{saveOpt();}catch(e){}document.body.classList.remove('d
 // ---------- 2) 저장 지키기 ----------
 // (가) 저장을 읽지 못하면(파일 깨짐) 빈 저장으로 덮어쓰지 않게 원래 글을 따로 보관하고 알려 줘요.
 // (나) 저장 구조 번호(sv)와 게임 판(gv)을 저장에 적어요. 게임이 바뀐 뒤 처음 저장하기 전에 원래 저장을 '_prev'로 한 벌 남겨요.
-const SAVEV127=1,GAMEV127='v130';
+const SAVEV127=1,GAMEV127='v131';
 const SAVE127={broken:EARLY127.broken?1:0,raw:EARLY127.broken||''};
 DB.sv=SAVEV127;DB.gv=GAMEV127;
 // 저장 파일로 내보내기: 폰(앱)은 공유 창, 웹은 내려받기
@@ -10743,6 +10743,9 @@ lifeFx83=function(k){const lv=lifeOf83(k);
  G.hp=23000;G.atk=Math.round(G.atk*.9);
  // 베르샤르: 체력 42000→52000, 공격 +8% (분신도 같은 공격)
  V.hp=52000;V.atk=Math.round(V.atk*1.08);if(MOB.versh_c)MOB.versh_c.atk=V.atk;}
+
+// v131: 직접 그린 몬스터는 4번째 칸이 공격 그림 (달려들 때 보임)
+for(const k of ['cre_bat','cre_mbat','cre_bee','cre_small_worm','cre_snake','cre_big_worm','cre_cworm','cre_eyeball','cre_ghost','cre_man_eater_flower','cre_pumpking'])if(SMETA[k])SMETA[k].ac=1;
 
 openSelect();
 </script>
