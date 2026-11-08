@@ -24,8 +24,8 @@ Most characters, gear, monsters and tiles are combined or recolored from Liberat
 
 ## 직접 그린 몬스터 그림 (v130~) / Original monster art (v130+)
 
-아래 15장은 LPC 그림을 쓰지 않고 이 게임을 위해 직접 그린 그림입니다. **CC-BY-SA가 아닙니다** (habitmonster-app 저작물, All rights reserved). 목록: `CREDITS/CREDITS_v131.md`
-These 15 files were drawn from scratch for this game and are **not** CC-BY-SA (owned by habitmonster-app, all rights reserved). List: `CREDITS/CREDITS_v131.md`
+아래 15장은 LPC 그림을 쓰지 않고 이 게임을 위해 직접 그린 그림입니다. **CC-BY-SA가 아닙니다** (habitmonster-app 저작물, All rights reserved). 목록: `CREDITS/CREDITS_v132.md`
+These 15 files were drawn from scratch for this game and are **not** CC-BY-SA (owned by habitmonster-app, all rights reserved). List: `CREDITS/CREDITS_v132.md`
 
 `game/m/` cre_bat, cre_mbat, cre_bee, cre_small_worm, cre_snake, cre_big_worm, cre_cworm, cre_eyeball, cre_ghost, cre_man_eater_flower, cre_pumpking, slime, mon_rslime, mon_swolf, mon_hound9 (.png)
 

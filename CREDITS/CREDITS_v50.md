@@ -1,7 +1,7 @@
 # 6장 버려진 광산 그림 출처
 
-> **v130부터:** LPC 기본 몬스터(박쥐·벌·지렁이·뱀·눈·유령·식인꽃·호박·슬라임)와 그림자 늑대·혼돈 사냥개 그림 15장은 직접 그린 그림으로 바뀌었어요(CC-BY-SA 아님). 이 파일의 해당 줄은 예전 기록이에요. 목록: CREDITS_v131.md
-> From v130 these 15 monster sprites are original art (not CC-BY-SA); see CREDITS_v131.md.
+> **v130부터:** LPC 기본 몬스터(박쥐·벌·지렁이·뱀·눈·유령·식인꽃·호박·슬라임)와 그림자 늑대·혼돈 사냥개 그림 15장은 직접 그린 그림으로 바뀌었어요(CC-BY-SA 아님). 이 파일의 해당 줄은 예전 기록이에요. 목록: CREDITS_v132.md
+> From v130 these 15 monster sprites are original art (not CC-BY-SA); see CREDITS_v132.md.
 
 - 동굴 바닥·물·횃불·상자·통·자루: LPC 타일 모음 조각 (Lanea Zimmerman(Sharm) 외, LPC_Final_Attribution.txt 참고), 색만 광산용으로 바꿈. CC-BY 3.0 / CC-BY-SA 3.0 / OGA-BY 3.0
 - 광산 박쥐: LPC 박쥐 cre_bat (Charles Sanchez / CharlesGabriel) 색 바꿈
