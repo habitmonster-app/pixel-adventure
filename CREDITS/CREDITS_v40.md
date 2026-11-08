@@ -1,5 +1,9 @@
 # v40 안개숲 그림 출처
 
+> **v130부터:** LPC 기본 몬스터(박쥐·벌·지렁이·뱀·눈·유령·식인꽃·호박·슬라임)와 그림자 늑대·혼돈 사냥개 그림 15장은 직접 그린 그림으로 바뀌었어요(CC-BY-SA 아님). 이 파일의 해당 줄은 예전 기록이에요. 목록: CREDITS_v130.md
+> From v130 these 15 monster sprites are original art (not CC-BY-SA); see CREDITS_v130.md.
+
+
 | 그림 | 어디서 | 작가 | 라이선스 |
 |---|---|---|---|
 | 그림자 늑대 머리 (m/mon_swolf.png) | Universal LPC `head/heads/wolf/male` | bluecarrot16, Sander Frenken (castelonia), Benjamin K. Smith (BenCreating), William.Thompsonj, Stephen Challener (Redshrike) | CC-BY-SA 3.0 / GPL 3.0 |

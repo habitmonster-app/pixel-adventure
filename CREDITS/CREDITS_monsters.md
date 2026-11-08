@@ -1,5 +1,9 @@
 # 픽셀 원정대 v34 몬스터 그림 출처
 
+> **v130부터:** LPC 기본 몬스터(박쥐·벌·지렁이·뱀·눈·유령·식인꽃·호박·슬라임)와 그림자 늑대·혼돈 사냥개 그림 15장은 직접 그린 그림으로 바뀌었어요(CC-BY-SA 아님). 이 파일의 해당 줄은 예전 기록이에요. 목록: CREDITS_v130.md
+> From v130 these 15 monster sprites are original art (not CC-BY-SA); see CREDITS_v130.md.
+
+
 모든 그림은 LPC(Liberated Pixel Cup) 무료 자료예요. 게임에 넣을 때 아래 작가 이름과 라이선스를 함께 표시해야 해요(게임 안 메뉴 → 그림 출처에 넣어 둠).
 
 - LPC 기본 몬스터 원본: Liberated Pixel Cup base assets (https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles), AUTHORS 파일 Monsters 항목 = Charles Sanchez (CharlesGabriel)

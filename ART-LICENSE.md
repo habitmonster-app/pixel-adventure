@@ -22,6 +22,16 @@ Most characters, gear, monsters and tiles are combined or recolored from Liberat
   Derivatives of CC-BY-SA 3.0 art in this repository are released under CC-BY-SA 3.0:
   https://creativecommons.org/licenses/by-sa/3.0/
 
+## 직접 그린 몬스터 그림 (v130) / Original monster art (v130)
+
+아래 15장은 LPC 그림을 쓰지 않고 이 게임을 위해 직접 그린 그림입니다. **CC-BY-SA가 아닙니다** (habitmonster-app 저작물, All rights reserved). 목록: `CREDITS/CREDITS_v130.md`
+These 15 files were drawn from scratch for this game and are **not** CC-BY-SA (owned by habitmonster-app, all rights reserved). List: `CREDITS/CREDITS_v130.md`
+
+`game/m/` cre_bat, cre_mbat, cre_bee, cre_small_worm, cre_snake, cre_big_worm, cre_cworm, cre_eyeball, cre_ghost, cre_man_eater_flower, cre_pumpking, slime, mon_rslime, mon_swolf, mon_hound9 (.png)
+
+땅·집·나무·성 타일 등 나머지 LPC 그림은 위 LPC 항목의 라이선스(CC-BY-SA 3.0 포함)를 그대로 따릅니다.
+Tiles and other LPC-based art keep the licenses described in the LPC section above (including CC-BY-SA 3.0).
+
 ## 그 밖의 그림과 글꼴
 
 - LPC가 아닌 그림(일부 보스 그림, 아이콘 등)은 habitmonster-app의 저작물입니다. All rights reserved.
