@@ -50,13 +50,13 @@ workflows:
       - android/app/build/outputs/bundle/release/*.aab
 
   # 앱 스토어용: TestFlight까지 올려요 (Codemagic > Integrations > App Store Connect API 키 연결 필요,
-  # 아래 이름을 습관괴물 때 만든 키 이름으로 바꾸세요)
+  # 키 이름 HabitMonster = 습관괴물 때 만든 키)
   ios-release:
     name: 봉인 기사단 iOS 출시
     max_build_duration: 60
     instance_type: mac_mini_m2
     integrations:
-      app_store_connect: APP_STORE_CONNECT_KEY_NAME
+      app_store_connect: HabitMonster
     environment:
       node: 22
       xcode: latest
