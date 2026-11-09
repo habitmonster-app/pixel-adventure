@@ -79,9 +79,9 @@ workflows:
       - name: 패키지 받기
         script: |
           cd ios/App
-          for i in 1 2 3; do
+          for i in 1 2 3 4 5; do
             xcodebuild -resolvePackageDependencies -project App.xcodeproj -scheme App && break
-            echo "다시 시도 $i"; sleep 10
+            echo "다시 시도 $i"; sleep 30
           done
           xcodebuild -project App.xcodeproj -scheme App -showBuildSettings > /dev/null
       - name: IPA 빌드
