@@ -76,6 +76,14 @@ workflows:
         script: |
           cd ios/App
           agvtool new-version -all $BUILD_NUMBER
+      - name: 패키지 받기
+        script: |
+          cd ios/App
+          for i in 1 2 3; do
+            xcodebuild -resolvePackageDependencies -project App.xcodeproj -scheme App && break
+            echo "다시 시도 $i"; sleep 10
+          done
+          xcodebuild -project App.xcodeproj -scheme App -showBuildSettings > /dev/null
       - name: IPA 빌드
         script: xcode-project build-ipa --project ios/App/App.xcodeproj --scheme App
     artifacts:
