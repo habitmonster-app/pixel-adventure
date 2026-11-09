@@ -7,12 +7,8 @@
  const CFG={
   // 진짜 AdMob 보상형 광고 (2026-11-08 등록: 봉인 기사단 Android / iOS)
   testing:false,
-  rewardedId:IOS?'ca-app-pub-6540694097552852/1559237981':'ca-app-pub-6540694097552852/7448044827',
-  // 스토어 상품: 광고 제거 + 다이아 묶음 5개(소모성, 다이아 100개=9,900원 기준). scroll_10·scroll_30·revive_3은 옛 상품(이제 다이아로 사요)
-  // → 스토어에 안 만들어도 돼요. 예전에 결제가 끝나지 않은 거래를 마저 지급하려고 등록만 남겨 둬요.
-  products:[{id:'noads',type:'non consumable'},
-   {id:'dia_3300',type:'consumable'},{id:'dia_5500',type:'consumable'},{id:'dia_9900',type:'consumable'},{id:'dia_33000',type:'consumable'},{id:'dia_99000',type:'consumable'},
-   {id:'scroll_10',type:'consumable'},{id:'scroll_30',type:'consumable'},{id:'revive_3',type:'consumable'}]
+  rewardedId:IOS?'ca-app-pub-6540694097552852/1559237981':'ca-app-pub-6540694097552852/7448044827'
+  // 스토어 상품: 없음 (광고로만)
  };
  const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
  const P=()=>C.Plugins||{};
@@ -46,41 +42,13 @@
   }catch(e){}
   hs.forEach(h=>{try{h.remove();}catch(e){}});adBusy=false;// 다음 광고는 미리 받지 않아요(게임 중 뒤에서 일하지 않게) → 필요할 때 받기
   return {ok:got,place};}
- // ----- 결제 (구글 플레이 / 앱스토어) -----
- let store=null;const pend={};
- function grant(t){// 결제가 승인된 거래 → 게임에 지급 → 끝내기(한 번만)
-  const done=LS.get('app_granted',[]);
-  for(const pr of t.products||[]){const id=pr.id,tid=t.transactionId||t.purchaseId||(t.nativePurchase&&t.nativePurchase.purchaseToken)||'';
-   const key=(tid||('t'+Date.now()))+':'+id;// 거래 번호가 비어도 같은 상품을 다시 살 수 있게
-   if(done.includes(key)){continue;}
-   let ok=false;
-   if(id==='noads'){LS.set('app_noads',true);ok=true;}
-   else{try{ok=!!(window.GAME_GRANT&&window.GAME_GRANT(id));}catch(e){ok=false;}}
-   if(!ok)return;// 게임이 아직 못 받으면 끝내지 않음 → 다음에 다시
-   done.push(key);LS.set('app_granted',done.slice(-200));
-   if(pend[id]){pend[id]({ok:true,id});delete pend[id];}}
-  t.finish();}
- function shopInit(){const S=window.CdvPurchase;if(!S||store)return;store=S.store;
-  // 아이폰은 앱스토어 결제, 안드로이드는 구글 플레이 결제
-  const PF=(C.getPlatform&&C.getPlatform()==='ios')?S.Platform.APPLE_APPSTORE:S.Platform.GOOGLE_PLAY;
-  store.register(CFG.products.map(p=>({id:p.id,platform:PF,type:p.type==='consumable'?S.ProductType.CONSUMABLE:S.ProductType.NON_CONSUMABLE})));
-  store.when().approved(t=>grant(t)).productUpdated(p=>{if(p.id==='noads'&&p.owned)LS.set('app_noads',true);});
-  store.error(e=>{for(const k in pend){pend[k]({ok:false,err:e&&e.message});delete pend[k];}});
-  store.initialize([PF]).catch(()=>{});
-  store.ready(()=>{try{window.prodLoad86&&window.prodLoad86();}catch(e){}});}
+ // ----- 결제: 없음 (2026-11-09 사용자 결정: 광고로만) -----
  window.APP={
   version:1,
   isBackground:()=>bg,
-  ads:{removed:()=>!!LS.get('app_noads',false),showRewarded},
-  shop:{
-   products:async()=>{shopInit();if(!store)return [];try{await Promise.race([new Promise(r=>store.ready(r)),new Promise(r=>setTimeout(r,6000))]);}catch(e){}
-    return (store.products||[]).map(p=>({id:p.id,title:p.title||p.id,price:(p.pricing&&p.pricing.price)||''}));},
-   buy:id=>new Promise(res=>{shopInit();const p=store&&store.get(id);const o=p&&p.getOffer&&p.getOffer();
-    if(!o){res({ok:false,err:'noproduct'});return;}pend[id]=res;o.order().then(r=>{if(r&&r.isError){delete pend[id];res({ok:false,err:r.message});}});}),
-   restore:()=>{shopInit();return store?store.restorePurchases():Promise.resolve();}
-  }
+  ads:{removed:()=>false,showRewarded},
+  shop:{products:async()=>[],buy:async()=>({ok:false,err:'noshop'})},// 게임이 상점을 그리려면 이 칸이 있어야 해요(빈 상점)
   // cloud: 클라우드 저장은 다음 단계에서 넣어요 (없으면 게임이 버튼을 숨겨요)
  };
- document.addEventListener('deviceready',shopInit);
- setTimeout(()=>{shopInit();},1500);// 광고는 처음 '광고 보기'를 누를 때 켜요
+ // 광고는 처음 '광고 보기'를 누를 때 켜요
 })();

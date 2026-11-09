@@ -10842,6 +10842,32 @@ openSelect();
 @media (orientation:portrait){#view{top:env(safe-area-inset-top,0px);bottom:env(safe-area-inset-bottom,0px)}}
 </style>
 <script>
+// ===================== v133: 광고로만 (사용자 2026-11-09) =====================
+// 현금 결제를 모두 없앴어요. 💎 다이아 탭 = 광고 1번 보면 다이아 5개, 하루 10번 (밤 12시에 다시 채워져요).
+// 광고 제거 상품·구매 복원 버튼도 없앴어요. 상자·아이템 탭은 그대로 다이아로 사요. 광고 탭도 그대로.
+const ADDIA133={n:5,lim:10};
+const T133=(k,e)=>window.LANG==='en'?e:k;
+function adDiaDay133(){DB.adDia133=DB.adDia133&&DB.adDia133.d===today86()?DB.adDia133:{d:today86(),n:0};return DB.adDia133;}
+const adDiaLeft133=()=>ADDIA133.lim-(adDiaDay133().n|0);
+function adDiaPress133(){if(adDiaLeft133()<1){toast(T133('오늘은 다 받았어요. 밤 12시에 다시 채워져요','All done for today. Resets at midnight.'),'w');return;}
+ showAd86('dia_free',()=>{adDiaDay133().n=(adDiaDay133().n|0)+1;DB.dia107=diaN107()+ADDIA133.n;saveDB();try{refreshSide();}catch(e){}
+  toast(T133('💎 다이아 '+ADDIA133.n+'개를 받았어요','💎 You got '+ADDIA133.n+' Diamonds'),'g');if($('dia107'))drawDia107();});}
+{const _d=drawDia107;drawDia107=function(){const buy=DTAB107==='buy';_d.apply(this,arguments);const e=$('dia107');if(!e)return;
+ e.querySelectorAll('[data-a=rs]').forEach(b=>b.remove());
+ const tbb=e.querySelector('.tb [data-t=buy]');if(tbb){tbb.setAttribute('data-noi18n','1');tbb.textContent='💎 '+T133('다이아 받기','Free Diamonds');}
+ if(!buy)return;
+ const A=APP86(),l=adDiaLeft133(),L=ADDIA133.lim;
+ const g=e.querySelector('.gd');g.setAttribute('data-noi18n','1');
+ g.innerHTML=`<div class="cd"><div class="lim">${T133('매일','Daily')} ${L-l}/${L}</div><div class="rb a">${T133('광고 1번','1 Ad')}</div><div class="art">${gems107(ADDIA133.n*7)}</div>`+
+  `<div class="nm">💎 ${ADDIA133.n} ${T133('다이아','Diamonds')}</div><div class="ds">${T133('광고를 끝까지 보면 받아요','Watch a full ad to get them')}<br>${T133('가진 다이아','You have')} 💎 ${fmt107(diaN107())}</div>`+
+  `<button data-ad133="1" ${!A||l<1?'disabled':''}>${!A?T133('앱에서만','App only'):l<1?T133('오늘 끝','Done today'):'📺 '+T133('광고 보기','Watch Ad')}</button></div>`+
+  `<div class="nt">${T133('다이아는 이 기기의 모든 캐릭터가 같이 써요. 광고는 하루 '+L+'번까지 볼 수 있어요 (밤 12시에 다시 채워져요). 모은 다이아로 상자·아이템을 사요.','Diamonds are shared by all characters on this device. Up to '+L+' ads a day (resets at midnight). Spend them on boxes and items.')}</div>`;
+ const b=g.querySelector('[data-ad133]');if(b)b.onclick=adDiaPress133;};}
+// 설정 창의 '광고 제거' 버튼 없애기
+{const _o=drawOpt78;drawOpt78=function(){_o.apply(this,arguments);const o=$('opt78');if(!o)return;
+ o.querySelectorAll('[data-a=noads]').forEach(b=>{const r=b.closest('.row86');if(r)r.remove();else b.remove();});};}
+</script>
+<script>
 /* 언어 바꾸기 버튼: 메뉴(설정 칸) + 첫 화면 위쪽 */
 (function(){
  var en=window.LANG==='en',lab=en?'한국어':'English';
