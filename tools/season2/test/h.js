@@ -7,7 +7,7 @@ module.exports=async function(fn,opt={}){
  if(opt.save)await pg.addInitScript(s=>{localStorage.setItem('pxclassic2',s);},opt.save);
  await pg.goto('http://localhost:8765/index.html');await pg.waitForTimeout(2500);
  await pg.evaluate(()=>{if(!DB.slots[0]){SEL.slot=0;SEL.name='시험';}else SEL.slot=0;startGame();});
- await pg.waitForTimeout(800);await pg.evaluate(()=>{document.querySelector('#tut101 .off')?.click();});
+ await pg.waitForTimeout(800);await pg.evaluate(()=>{document.querySelector('#tut101 .off')?.click();});await pg.waitForTimeout(1500);await pg.evaluate(()=>{try{closeAll();}catch(e){}document.querySelectorAll('.panel,.pan').forEach(p=>{});});
  try{await fn(pg,errs);}catch(e){console.log('TEST THROW',e.message.slice(0,600));}
  console.log('--- errors',errs.length);for(const e of [...new Set(errs)].slice(0,15))console.log(e);
  await b.close();};

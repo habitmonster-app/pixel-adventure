@@ -55,7 +55,7 @@ function bsTick2(dt){const B=S2.bs;if(!B||!B.e)return;const e=B.e,b=BOSS2[B.id],
  if(Math.hypot(e.x-ax,e.y-ay)>R){e.x+=(ax-e.x)*.05;e.y+=(ay-e.y)*.05;}
  e.angry=1;if(B.id==='serka')return serkaTick2(dt,B,e,r,A);
  B.cd-=dt;if(B.cd>0)return;const ph=e.hp/e.m.hp<.5?.8:1;B.cd=rnd(b.cd[0],b.cd[1])*ph;
- const x=e.x,y=e.y,a=Math.atan2(hero.y-y,hero.x-x),k=b.pat[Math.random()*b.pat.length|0];e.d=dirTo(e,hero);e.hold=Math.max(e.hold||0,.9);
+ const x=e.x,y=e.y,a=Math.atan2(hero.y-y,hero.x-x),k=b.pat[Math.random()*b.pat.length|0];e.d=dirTo(e,hero);gaSet2(e,k);e.hold=Math.max(e.hold||0,.9);
  if(k==='fan'){pop(x,y-70,'크게 휘둘러요!','#ffd0a0');tg2({k:'f',x,y,a,r:135,arc:1.7,T:1.0,dmg:Math.round(A*1.25),c:'255,160,120'});}
  if(k==='line'){pop(x,y-70,'돌진!','#ffd0a0');tg2({k:'l',x,y,a,len:440,w:30,T:1.1,dmg:Math.round(A*1.45),c:'255,150,110',on:()=>{const nx=x+Math.cos(a)*200,ny=y+Math.sin(a)*200;if(e.st!=='dead'&&!blocked(e,nx,ny)){e.x=nx;e.y=ny;}}});}
  if(k==='charge'){pop(x,y-70,'뿔을 낮춰요! 옆으로 피해요','#ffd0a0');e.hold=1.6;tg2({k:'l',x,y,a,len:480,w:34,T:1.3,dmg:Math.round(A*1.5),c:'255,150,110',label:'돌진',on:()=>{for(let s=260;s>0;s-=20){const nx=x+Math.cos(a)*s,ny=y+Math.sin(a)*s;if(e.st!=='dead'&&!blocked(e,nx,ny)){e.x=nx;e.y=ny;break;}}}});}
@@ -70,7 +70,7 @@ function bsTick2(dt){const B=S2.bs;if(!B||!B.e)return;const e=B.e,b=BOSS2[B.id],
 // 2단계(66~34%): 빙월 거울 2개(광선) · 분신 2명 · 진짜는 발밑에 초승달
 // 3단계(33~0%): 보호막 + 화로 3개 꺼짐 → 화로를 다시 켜면 보호막이 깨지고 기절 · 강한 창 뒤 긴 빈틈
 // 체력이 바닥나면 쓰러지지 않고 '제압' → 가운데 제단에서 봉인구 사용
-function sAtk2(k,e,A){const x=e.x,y=e.y,a=Math.atan2(hero.y-y,hero.x-x);e.d=dirTo(e,hero);
+function sAtk2(k,e,A){const x=e.x,y=e.y,a=Math.atan2(hero.y-y,hero.x-x);e.d=dirTo(e,hero);gaSet2(e,k);
  if(k==='thrust'){pop(x,y-74,'창 찌르기!','#d0c8ff');e.hold=Math.max(e.hold||0,1.1);tg2({k:'l',x,y,a,len:420,w:24,T:1.0,dmg:Math.round(A*1.4),c:'190,180,255'});}
  if(k==='sweep'){pop(x,y-74,'창을 넓게 휘둘러요!','#d0c8ff');e.hold=Math.max(e.hold||0,1.1);tg2({k:'f',x,y,a,r:150,arc:2.6,T:1.05,dmg:Math.round(A*1.2),c:'190,180,255'});}
  if(k==='wave'){pop(x,y-74,'얼음 파도!','#bfefff');e.hold=Math.max(e.hold||0,1.2);for(let i=0;i<7;i++){const d=60+i*56;tg2({k:'c',x:x+Math.cos(a)*d,y:y+Math.sin(a)*d,r:44,T:.9+i*.14,dmg:Math.round(A*1.0),cold:1,c:'150,220,255'});}}
@@ -81,7 +81,7 @@ function serkaTick2(dt,B,e,r,A){const k=S2.sk||(S2.sk={ph:1,brz:[1,1,1],sh:0,ope
  if(k.ph===1&&hp<=.66){k.ph=2;S2.tg.length=0;burst(e.x,e.y-40,'#c0b0ff',30,170,2,50);sayAs('빙월사도 세르카',['빙월이여, 나를 비춰라.','(얼음 거울 두 개가 솟고, 세르카가 셋으로 나뉘어요. 진짜는 발밑에 초승달이 빛나요)']);
   const ps=[[-5,-3],[5,-3]];for(const [dx,dy] of ps){const m=Object.assign({},MOB.serka,{n:'세르카의 분신',atk:Math.round(MOB.serka.atk*.45),boss:0}),x=e.x+dx*TS,y=e.y+dy*TS;
    const d=ent({k:m.spr,m,x,y,hp:999999,hx:x,hy:y,wt:0,cd:2});d.dec2=1;d.angry=1;mobs.push(d);k.dec.push(d);}sync2();return;}
- if(k.ph===2&&hp<=.33){k.ph=3;clearDec2();k.dec=[];S2.tg.length=0;k.sh=1;k.brz=[0,0,0];burst(e.x,e.y-40,'#a0e0ff',36,190,2,60);
+ if(k.ph===2&&hp<=.33){k.ph=3;clearDec2();k.dec=[];S2.tg.length=0;k.sh=1;k.brz=[0,0,0];gaSet2(e,'shield');burst(e.x,e.y-40,'#a0e0ff',36,190,2,60);
   sayAs('빙월사도 세르카',['…얼어붙어라. 불도, 맹세도.','(세르카가 얼음 보호막을 둘렀어요. 제단 둘레 화로 세 개가 꺼졌어요. 화로를 다시 켜면 보호막이 깨져요!)']);sync2();return;}
  if(k.ph===2){k.swapT-=dt;if(k.swapT<=0&&k.dec.length){k.swapT=7;const L=[e,...k.dec.filter(d=>mobs.includes(d))],P0=L.map(m=>[m.x,m.y]);for(let i=P0.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[P0[i],P0[j]]=[P0[j],P0[i]];}
    L.forEach((m,i)=>{burst(m.x,m.y-40,'#c0b0ff',10,90,2,20);m.x=P0[i][0];m.y=P0[i][1];});pop(e.x,e.y-90,'자리를 바꿨어요!','#d0c8ff');}
