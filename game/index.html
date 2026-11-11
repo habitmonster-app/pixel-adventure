@@ -11422,7 +11422,7 @@ const _drawEntB2=drawEnt;drawEnt=function(e){const meta=e&&e!==hero&&SMETA[e.k];
  X.fillStyle='rgba(0,0,0,.25)';X.beginPath();X.ellipse(sx,sy-2,meta.hs*.32,meta.hs*.08,0,0,7);X.fill();
  let row=e.d|0,f=0;const now=performance.now();
  if(e.ga2&&e.st!=='dead'){const p=(now-e.ga2.t0)/1000/e.ga2.d;if(p<1){row=4+e.ga2.r;f=Math.min(7,Math.floor(p*8));}else e.ga2=null;}
- if(row<4){if(meta.npc2){row=2;f=Math.floor(now/180+(e.hx||0)*.01)%8;}else if(e.st==='walk'||e.st==='atk')f=((e.f|0)+7)%8;else f=0;}
+ if(row<4){if(meta.npc2){const dx=e.x-(e._px??e.x),dy=e.y-(e._py??e.y);e._px=e.x;e._py=e.y;if(Math.abs(dx)+Math.abs(dy)>.05){e._mv=now;e._d2=Math.abs(dx)>Math.abs(dy)?(dx<0?1:3):(dy<0?0:2);e._wf=(e._wf||0)+Math.hypot(dx,dy);}const mv=meta.dir4&&e._mv&&now-e._mv<150;if(mv){row=e._d2;f=Math.floor(e._wf/9)%8;}else if(!meta.dir4||(e._d2??2)===2){row=2;f=Math.floor(now/180+(e.hx||0)*.01)%8;}else{row=e._d2;f=0;}}else if(e.st==='walk'||e.st==='atk')f=((e.f|0)+7)%8;else f=0;}
  if(e.st==='dead'&&e.fade!=null)X.globalAlpha=Math.max(0,Math.min(1,e.fade));
  const sm=X.imageSmoothingEnabled;X.imageSmoothingEnabled=true;
  const dr=()=>X.drawImage(im,f*W,row*H,W,H,sx-W*k/2,sy-(H-meta.bl)*k,W*k,H*k);dr();
@@ -11446,7 +11446,7 @@ function fxDraw2(){if(!FXL2.length)return;const now=performance.now();X.save();X
 const _drawSfxFx2=drawSfx;drawSfx=function(){_drawSfxFx2();if(P&&in2())fxDraw2();};
 // ----- 새 NPC 5명 그림 (정면 8칸 숨쉬기) -----
 const NPCART2={k2eil:'s2n2_eil',k2noah:'s2n2_noah',k2broom:'s2n2_broom',k2sena:'s2n2_sena',k2lum:'s2n2_lum'};
-for(const k in NPCART2){const s=NPCART2[k];IMG[s]=new Image();IMG[s].src='m/'+s+'.png';SMETA[s]={g2:1,npc2:1,W:256,H:200,bl:8,hw:150,hs:58,na:0,a:null,n:0,c:64};}
+for(const k in NPCART2){const s=NPCART2[k];IMG[s]=new Image();IMG[s].src='m/'+s+'.png';SMETA[s]={g2:1,npc2:1,dir4:s!=='s2n2_lum',W:256,H:200,bl:8,hw:150,hs:58,na:0,a:null,n:0,c:64};}
 
 </script>
 <style id="portrait114">
