@@ -34,11 +34,11 @@ function altar2(){const f=f2();facMenu({n:'빙월 제단'},'두 번째 마계문
 // 왕성(D72): 리아(얼어붙은 편지) · 네리아(마계 쪽 소식)
 npc7('D72','k2ria0','n10ria','왕실 기록관 리아',1262,40,{d:2,cond:()=>s2Open()&&!(P.f2&&P.f2.in151)});
 npc7('D72','k2ner0','n10ner','문양 해독자 네리아',1267,40,{d:2,cond:()=>s2Open()});
-const N2=[{r:'D111',k:'k2kai',img:'mon_kairen',n:'기사단장 카이렌',kx:'kai'},{r:'D111',k:'k2eil',img:'s2n_eil',n:'북부 정찰대장 에일린',kx:'eil'},
- {r:'D121',k:'k2noah',img:'s2n_noah',n:'등대지기 노아',kx:'noah'},{r:'D121',k:'k2sena',img:'s2n_sena',n:'북부 치료사 세나',kx:'sena'},{r:'D121',k:'k2eil',img:'s2n_eil',n:'북부 정찰대장 에일린',kx:'eil'},{r:'D121',k:'k2broom',img:'s2n_broom',n:'북부 대장장이 브룸',kx:'broom'},
- {r:'D131',k:'k2lum',img:'s2n_lum',n:'마족 문양 해독자 루미아',kx:'lum'},{r:'D131',k:'k2eil',img:'s2n_eil',n:'북부 정찰대장 에일린',kx:'eil'},{r:'D131',k:'k2sena',img:'s2n_sena',n:'북부 치료사 세나',kx:'sena'},{r:'D131',k:'k2noah',img:'s2n_noah',n:'등대지기 노아',kx:'noah'},
- {r:'D141',k:'k2kai',img:'mon_kairen',n:'기사단장 카이렌',kx:'kai'},{r:'D141',k:'k2eil',img:'s2n_eil',n:'북부 정찰대장 에일린',kx:'eil'},{r:'D141',k:'k2sena',img:'s2n_sena',n:'북부 치료사 세나',kx:'sena'},{r:'D141',k:'k2broom',img:'s2n_broom',n:'북부 대장장이 브룸',kx:'broom'},
- {r:'D151',k:'k2kai',img:'mon_kairen',n:'기사단장 카이렌',kx:'kai'},{r:'D151',k:'k2ria',img:'n10ria',n:'왕실 기록관 리아',kx:'ria'},{r:'D151',k:'k2lum',img:'s2n_lum',n:'마족 문양 해독자 루미아',kx:'lum'},{r:'D151',k:'k2eil',img:'s2n_eil',n:'북부 정찰대장 에일린',kx:'eil'}];
+const N2=[{r:'D111',k:'k2kai',img:'mon_kairen',n:'기사단장 카이렌',kx:'kai'},{r:'D111',k:'k2eil',img:'s2n2_eil',n:'북부 정찰대장 에일린',kx:'eil'},
+ {r:'D121',k:'k2noah',img:'s2n2_noah',n:'등대지기 노아',kx:'noah'},{r:'D121',k:'k2sena',img:'s2n2_sena',n:'북부 치료사 세나',kx:'sena'},{r:'D121',k:'k2eil',img:'s2n2_eil',n:'북부 정찰대장 에일린',kx:'eil'},{r:'D121',k:'k2broom',img:'s2n2_broom',n:'북부 대장장이 브룸',kx:'broom'},
+ {r:'D131',k:'k2lum',img:'s2n2_lum',n:'마족 문양 해독자 루미아',kx:'lum'},{r:'D131',k:'k2eil',img:'s2n2_eil',n:'북부 정찰대장 에일린',kx:'eil'},{r:'D131',k:'k2sena',img:'s2n2_sena',n:'북부 치료사 세나',kx:'sena'},{r:'D131',k:'k2noah',img:'s2n2_noah',n:'등대지기 노아',kx:'noah'},
+ {r:'D141',k:'k2kai',img:'mon_kairen',n:'기사단장 카이렌',kx:'kai'},{r:'D141',k:'k2eil',img:'s2n2_eil',n:'북부 정찰대장 에일린',kx:'eil'},{r:'D141',k:'k2sena',img:'s2n2_sena',n:'북부 치료사 세나',kx:'sena'},{r:'D141',k:'k2broom',img:'s2n2_broom',n:'북부 대장장이 브룸',kx:'broom'},
+ {r:'D151',k:'k2kai',img:'mon_kairen',n:'기사단장 카이렌',kx:'kai'},{r:'D151',k:'k2ria',img:'n10ria',n:'왕실 기록관 리아',kx:'ria'},{r:'D151',k:'k2lum',img:'s2n2_lum',n:'마족 문양 해독자 루미아',kx:'lum'},{r:'D151',k:'k2eil',img:'s2n2_eil',n:'북부 정찰대장 에일린',kx:'eil'}];
 function spawnN2(){for(let i=npcs.length-1;i>=0;i--)if(npcs[i].c2)npcs.splice(i,1);for(let i=NPC.length-1;i>=0;i--)if(NPC[i].c2)NPC.splice(i,1);
  if(!in2()||!P)return;const reg=R2(RGN.cur);for(const d of N2){if(d.r!==RGN.cur)continue;if(!IMG[d.img])continue;IMG[d.k]=IMG[d.img];SMETA[d.k]=SMETA[d.img];const p=reg[d.kx];if(!p)continue;const x=tx5(p[0]),y=ty5(p[1]);
   const nd={k:d.k,n:d.n,x,y,d:2,say:['…'],c2:1};NPC.push(nd);const e=ent({...nd,hx:x,hy:y,wt:rnd(1,4)});e.c2=1;npcs.push(e);}}

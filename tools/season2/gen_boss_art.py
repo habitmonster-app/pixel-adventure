@@ -8,7 +8,8 @@ SRC='/home/user/s2/art_src/'
 OUT=sys.argv[1] if len(sys.argv)>1 else '/home/user/pixel-adventure/game/m/'
 W,H,BL,HW=256,200,8,150
 SETS={'s2horn':['horn',['a']],'s2brak':['brak',['a']],'s2arbos':['arbos',['a']],'s2leorn':['leorn',['a']],
-      'serka':['serka',['a1','a2','a3']],'s2shadow':['shadow',[]]}
+      'serka':['serka',['a1','a2','a3']],'s2shadow':['shadow',[]],
+      'n_eil':['npc/eil',[]],'n_noah':['npc/noah',[]],'n_broom':['npc/broom',[]],'n_sena':['npc/sena',[]],'n_lum':['npc/lum',[]]}
 def load(p):
     a=np.array(Image.open(p).convert('RGBA'))
     a[...,3]=np.where(a[...,3]>=200,255,0).astype(np.uint8)
@@ -40,9 +41,12 @@ def frames(a):
 meta={}
 for mid,(nm,atks) in SETS.items():
     rows={}
-    for d in ['u','l','d']:rows[d]=frames(load(SRC+nm+'_'+d+'.png'))
+    rows['d']=frames(load(SRC+nm+'_d.png'))
+    for d in ['u','l']:
+        try:rows[d]=frames(load(SRC+nm+'_'+d+'.png'))
+        except FileNotFoundError:rows[d]=rows['d']  # NPC: 정면 하나뿐
     try:rows['r']=frames(load(SRC+nm+'_r.png'))
-    except FileNotFoundError:rows['r']=None
+    except FileNotFoundError:rows['r']=rows['d'] if rows['l'] is rows['d'] else None
     A=[frames(load(SRC+nm+'_'+k+'.png')) for k in atks]
     hmax=max(f['y1']-f['y0'] for d in 'uld' for f in rows[d] if f)
     s=HW/hmax
@@ -64,7 +68,7 @@ for mid,(nm,atks) in SETS.items():
     if rows['r']:put(rows['r'],3)
     else:put(rows['l'][::1],3,flip=True)
     for k,fr in enumerate(A):put(fr,4+k)
-    key='s2b_'+mid.replace('s2','')
+    key=('s2n2_'+mid[2:]) if mid.startswith('n_') else 's2b_'+mid.replace('s2','')
     sheet.quantize(256,method=Image.Quantize.FASTOCTREE).save(OUT+key+'.png',optimize=True)
     meta[mid]=dict(k=key,W=W,H=H,bl=BL,hw=HW,na=len(A))
     print(mid,key,'scale %.3f'%s,sheet.size)
