@@ -11629,3 +11629,133 @@ function adDiaPress133(){if(adDiaLeft133()<1){toast(T133('오늘은 다 받았�
 })();
 
 </script>
+<script>
+/* v136: 폰을 가로↔세로로 돌릴 때 아이폰이 바뀐 크기를 늦게 알려 줘서 게임 화면이 늘어나거나 줄어든 채로 남던 문제.
+   게임 화면(#view) 크기가 실제로 바뀌면 그때 다시 크기를 계산해요 (돌린 직후 몇 번 더 확인). */
+(function(){let lw=0,lh=0,busy=0;
+ function chk(){const v=document.getElementById('view');if(!v)return;const r=v.getBoundingClientRect(),w=Math.round(r.width),h=Math.round(r.height);if(!w||!h)return;
+  if(w!==lw||h!==lh){lw=w;lh=h;busy=1;try{dispatchEvent(new Event('resize'));}catch(e){}busy=0;}}
+ const later=()=>{[50,200,450,900,1500].forEach(t=>setTimeout(chk,t));};
+ addEventListener('orientationchange',later);addEventListener('resize',()=>{if(!busy)later();});
+ if(window.visualViewport)visualViewport.addEventListener('resize',later);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)later();});
+ try{if(window.ResizeObserver){const v=document.getElementById('view');if(v)new ResizeObserver(()=>chk()).observe(v);}}catch(e){}
+ setInterval(chk,800);later();})();
+</script>
+<script>
+/* ===================== 시작 화면 + 다이아 묶음 (사용자 2026-11-12) =====================
+   1) 앱을 켜면 바로 캐릭터 선택창이 나오던 것 → 먼저 시작 화면(밤의 왕성·열린 마계문 배경, 큰 로고, 세 직업, '시작하기')을 보여 줘요.
+      배경은 캐릭터 선택창과 같은 그림(#selbg)을 그대로 쓰고, 선택창의 버튼·칸만 가려요. '시작하기'를 누르면 선택창으로.
+   2) 다이아 상점에 '묶음' 탭: 광고로 모은 다이아로 사는 묶음 3개 (💎100·200·300). 현금 결제 없음.
+      묶음 안은 원래 상점에 있는 것(강화주문서·부활권·장비 상자)만 넣고, 따로 사는 것보다 싸게. 저장 키는 그대로(pxclassic2). */
+(function(){
+const EN=()=>window.LANG==='en',TX=(k,e)=>EN()?e:k;
+const setH=(el,h)=>{if(window.rawHTML)rawHTML(el,h);else el.innerHTML=h;};
+
+// ---------- 1) 시작 화면 ----------
+const st=document.createElement('style');st.textContent=`
+body.ttx #sel>*:not(#selbg){visibility:hidden}
+#ttx{position:fixed;inset:0;z-index:9;display:flex;flex-direction:column;align-items:center;justify-content:space-between;box-sizing:border-box;
+ padding:max(10px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));
+ color:#f3e6c4;transition:opacity .45s;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+#ttx.out{opacity:0;pointer-events:none}
+#ttx .tt-plate{margin-top:2vh;padding:10px 34px 9px;text-align:center;line-height:1;background:linear-gradient(rgba(14,10,24,.82),rgba(8,6,16,.88));
+ border:2px solid #c9a45c;border-radius:6px;box-shadow:0 0 0 3px rgba(20,12,4,.9),0 0 0 4px #7a5a26,0 8px 24px rgba(0,0,0,.6),0 0 30px rgba(255,60,40,.18);position:relative}
+#ttx .tt-plate::before,#ttx .tt-plate::after{content:'';position:absolute;top:50%;width:10px;height:10px;background:#f3d58a;transform:translateY(-50%) rotate(45deg);box-shadow:0 0 6px rgba(255,200,90,.6)}
+#ttx .tt-plate::before{left:-7px}#ttx .tt-plate::after{right:-7px}
+#ttx .tt-plate b{display:block;font-size:clamp(30px,7.2vmin,58px);font-weight:900;letter-spacing:.14em;padding-left:.14em;background:linear-gradient(#fff4c8,#f3d58a 45%,#b8862e 55%,#f0c870);
+ -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 #3a2208) drop-shadow(0 0 10px rgba(255,200,90,.35))}
+#ttx .tt-plate small{display:block;margin-top:7px;font-size:clamp(12px,2.6vmin,19px);font-weight:800;letter-spacing:.7em;padding-left:.7em;color:#ff7a5a;text-shadow:0 0 8px rgba(255,60,40,.7)}
+#ttx .tt-tag{margin-top:9px;font-size:clamp(11px,2.2vmin,14px);color:#d8cdb0;letter-spacing:.08em;text-shadow:0 1px 2px #000}
+#ttx canvas{flex:1 1 auto;min-height:60px;width:100%;image-rendering:pixelated;pointer-events:none}
+#ttx .tt-bt{display:flex;flex-direction:column;align-items:center;gap:8px}
+#ttx .tt-go{font-family:inherit;min-width:min(300px,70vw);padding:12px 26px;font-size:clamp(17px,3.6vmin,22px);font-weight:900;letter-spacing:.3em;padding-left:calc(26px + .3em);color:#2a1606;cursor:pointer;
+ background:linear-gradient(#fff0b8,#f0c860 45%,#c8902a 55%,#e8b850);border:2px solid #fff3c8;border-radius:10px;box-shadow:0 0 0 3px #5a3a10,0 6px 0 #3a2208,0 0 22px rgba(255,200,90,.45);animation:ttxP 1.8s ease-in-out infinite}
+#ttx .tt-go:active{transform:translateY(3px);box-shadow:0 0 0 3px #5a3a10,0 3px 0 #3a2208}
+@keyframes ttxP{50%{box-shadow:0 0 0 3px #5a3a10,0 6px 0 #3a2208,0 0 34px rgba(255,210,110,.75)}}
+#ttx .tt-row{display:flex;gap:8px}
+#ttx .tt-sm{font-family:inherit;font-size:12px;padding:5px 14px;background:rgba(10,13,20,.75);border:1px solid #b08a4a;border-radius:14px;color:#e0b866;cursor:pointer}
+#ttx .tt-ft{font-size:10.5px;color:rgba(230,220,200,.55);letter-spacing:.05em}
+@media (orientation:landscape) and (max-height:430px){#ttx .tt-plate{margin-top:0;padding:8px 28px 7px}#ttx .tt-tag{margin-top:6px}#ttx .tt-go{padding-top:9px;padding-bottom:9px}#ttx .tt-bt{gap:6px}}
+`;document.head.appendChild(st);
+
+const T={on:0,hero:[],raf:0,t0:performance.now()};
+// 세 직업 (가운데 전사): 처음 장비 그대로, 외형만 조금씩 다르게
+const TROOP=[['rogue',{hs:2,hc:1,sk:1,bd:0}],['warrior',{hs:0,hc:0,sk:0,bd:0}],['mage',{hs:4,hc:4,sk:2,bd:0}]];
+async function ttxSheets(){for(let i=0;i<TROOP.length;i++){const [c,lk]=TROOP[i];try{const r=await buildSheet({...lk},CLASS[c].eq);T.hero[i]=r.sheet;}catch(e){try{const r=await buildSheet({hs:0,hc:0,sk:0,bd:0},CLASS[c].eq);T.hero[i]=r.sheet;}catch(e2){}}}}
+function ttxDraw(){if(!T.on)return;T.raf=requestAnimationFrame(ttxDraw);const cv=document.querySelector('#ttx canvas');if(!cv)return;
+ const r=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1),W=Math.round(r.width*dpr),H=Math.round(r.height*dpr);if(!W||!H)return;
+ if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H;}const g=cv.getContext('2d');g.clearRect(0,0,W,H);g.imageSmoothingEnabled=false;
+ const t=(performance.now()-T.t0)/1000;
+ // 캐릭터 크기: 칸 높이에 맞춰 정수 배율 (픽셀이 깨지지 않게)
+ const k=Math.max(1,Math.min(dpr*(H>W?2.2:1.5),Math.floor(H/105*2)/2)),gap=Math.min(W/3.2,96*k),fy=H-6*dpr;
+ [0,1,2].forEach(i=>{const sh=T.hero[i],cx=W/2+(i-1)*gap,kk=i===1?k:k*.9,y=fy-(i===1?0:4*dpr);
+  g.fillStyle='rgba(0,0,0,.45)';g.beginPath();g.ellipse(cx,y,14*kk,4*kk,0,0,7);g.fill();if(!sh)return;
+  const ph=(t+i*.55)%1.6,bob=ph<.8?0:1,d=i===0?3:i===2?1:2;// 양옆은 가운데를 보게
+  g.drawImage(sh,0,d*128,128,128,Math.round(cx-64*kk),Math.round(y-(94-bob)*kk),Math.round(128*kk),Math.round(128*kk));});}
+function ttxGo(){if(!T.on)return;T.on=0;const e=document.getElementById('ttx');if(e){e.classList.add('out');setTimeout(()=>e.remove(),480);}
+ document.body.classList.remove('ttx');cancelAnimationFrame(T.raf);try{if(typeof drawSelect==='function')drawSelect();}catch(e){}}
+function ttxShow(){if(document.getElementById('ttx')||playing)return;T.on=1;document.body.classList.add('ttx');
+ const e=document.createElement('div');e.id='ttx';e.setAttribute('data-noi18n','1');
+ const has=(DB.slots||[]).some(Boolean);
+ setH(e,`<div class="tt-plate"><b>${TX('봉인 기사단','SEAL KNIGHTS')}</b><small>${TX('마계문 전쟁','DEMON GATE WAR')}</small></div>
+ <div class="tt-tag">${TX('열린 마계문을 닫아라','Close the open Demon Gates')}</div>
+ <canvas></canvas>
+ <div class="tt-bt"><button class="tt-go">${has?TX('이어하기','CONTINUE'):TX('시작하기','START')}</button>
+ <div class="tt-row"><button class="tt-sm" data-l="1">🌐 ${EN()?'한국어':'English'}</button></div>
+ <div class="tt-ft">${TX('도트 오픈월드 RPG','Pixel open-world RPG')}</div></div>`);
+ document.body.appendChild(e);
+ e.querySelector('.tt-go').onclick=ttxGo;
+ e.querySelector('[data-l]').onclick=ev=>{ev.stopPropagation();if(window.setLang)window.setLang(EN()?'ko':'en');};
+ ttxSheets();ttxDraw();}
+// 게임 안 메뉴의 '캐릭터 선택'으로 돌아올 때는 시작 화면 없이 바로 선택창
+window.TTX={show:ttxShow,go:ttxGo};
+ttxShow();
+
+// ---------- 2) 다이아 묶음 ----------
+// 따로 사면: 주문서 1장 💎10 · 부활권 6장 💎50(1장 10) · 장비 상자 💎40
+const PKX=[
+ {id:'pk100',c:100,n:['견습 기사 묶음','Squire Bundle'],sc:5,rv:3,bx:1,was:120},
+ {id:'pk200',c:200,n:['정예 기사 묶음','Elite Knight Bundle'],sc:12,rv:6,bx:2,was:250,tag:['인기','Popular']},
+ {id:'pk300',c:300,n:['봉인 기사 묶음','Seal Knight Bundle'],sc:20,rv:10,bx:3,was:405,tag:['가장 이득','Best Value']}];
+const pct=o=>Math.round((1-o.c/o.was)*100);
+let ARM=null;
+function pkFree(o){return bagCap107()-gearCnt107()>=o.bx;}
+function pkBuy(id){const o=PKX.find(x=>x.id===id);if(!o||!P)return;
+ if(diaN107()<o.c){toast(TX('다이아가 모자라요 (💎'+o.c+' 필요)','Not enough Diamonds (need 💎'+o.c+')'),'w');return;}
+ if(!pkFree(o)){toast(TX('장비 가방 빈칸이 '+o.bx+'칸 필요해요','Need '+o.bx+' free gear bag slots'),'w');return;}
+ DB.dia107=diaN107()-o.c;P.scroll=(P.scroll|0)+o.sc;P.rv86=(P.rv86|0)+o.rv;const gear=[];
+ for(let i=0;i<o.bx;i++){try{gear.push(DITEM107.box_gear.go());}catch(e){}}
+ save();saveDB();try{refreshSide();}catch(e){}
+ const msg=TX(o.n[0]+' → 강화주문서 '+o.sc+'장 · 부활권 '+o.rv+'장 · '+gear.join(', '),o.n[1]+' → '+o.sc+' Scrolls · '+o.rv+' Revives · '+gear.join(', '));
+ toast(TX(o.n[0]+'을 샀어요','Bought '+o.n[1]),'g');log(TX('다이아 상점: ','Diamond Shop: ')+msg,'g');}
+const ic=(e,n)=>`<span class="pi"><i>${e}</i><b>×${n}</b></span>`;
+{const _d=drawDia107;drawDia107=function(){const pk=DTAB107==='pack';if(pk)DTAB107='item';_d.apply(this,arguments);if(pk)DTAB107='pack';const e=$('dia107');if(!e)return;
+ const tb=e.querySelector('.tb');if(tb&&!tb.querySelector('[data-t=pack]')){const b=document.createElement('button');b.dataset.t='pack';b.setAttribute('data-noi18n','1');b.textContent='🎒 '+TX('묶음','Bundles');
+  b.onclick=()=>{DTAB107='pack';ARM=null;drawDia107();};const after=tb.querySelector('[data-t=buy]');if(after&&after.nextSibling)tb.insertBefore(b,after.nextSibling);else tb.appendChild(b);}
+ if(!pk)return;tb.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t==='pack'));
+ const g=e.querySelector('.gd');g.setAttribute('data-noi18n','1');g.classList.add('pkx');
+ setH(g,PKX.map(o=>{const a=ARM===o.id,no=diaN107()<o.c,full=!pkFree(o);
+  return `<div class="cd pk${o.c}">${o.tag?`<div class="rb${o.c===300?'':' g'}">${TX(o.tag[0],o.tag[1])}</div>`:''}<div class="lim">-${pct(o)}%</div>
+   <div class="nm">${TX(o.n[0],o.n[1])}</div>
+   <div class="pg">${ic('📜',o.sc)}${ic('✨',o.rv)}${ic('⚔️',o.bx)}</div>
+   <div class="ds">${TX('강화주문서 '+o.sc+' · 부활권 '+o.rv+'<br>장비 상자 '+o.bx+'개','Scroll ×'+o.sc+' · Revive ×'+o.rv+'<br>Gear Box ×'+o.bx)}<br><s>💎 ${o.was}</s></div>
+   <button data-pk="${o.id}" class="${a?'arm':''}" ${full?'disabled':''}>${full?TX('가방 빈칸 부족','Bag is full'):a?TX('한 번 더 누르면 사요','Tap again to buy'):'💎 '+fmt107(o.c)}</button></div>`;}).join('')+
+  `<div class="nt">${TX('묶음은 광고로 모은 다이아로 사요. 따로 사는 것보다 싸요. 장비 상자는 내 레벨 장비 1개 (고급 60 · 희귀 31 · 영웅 8 · 전설 1%). 산 것은 지금 캐릭터에게 바로 들어가요.','Bundles are bought with Diamonds from ads, cheaper than buying each item. Gear Box = 1 gear for your level (Fine 60 · Rare 31 · Epic 8 · Legendary 1%). Items go to your current character.')}</div>`);
+ g.querySelectorAll('[data-pk]').forEach(b=>b.onclick=()=>{const id=b.dataset.pk;
+  if(ARM!==id){ARM=id;drawDia107();setTimeout(()=>{if(ARM===id){ARM=null;if($('dia107'))drawDia107();}},2500);return;}
+  ARM=null;pkBuy(id);drawDia107();});};}
+const s2=document.createElement('style');s2.textContent=`
+#dia107 .gd.pkx{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+#dia107 .gd.pkx .cd{background:radial-gradient(circle at 50% 30%,#3a3050,#151022 72%);border-color:rgba(220,180,100,.45)}
+#dia107 .gd.pkx .cd.pk300{background:radial-gradient(circle at 50% 30%,#5a3428,#1e0f12 72%);border-color:#ffd34a;box-shadow:0 0 12px rgba(255,200,90,.35) inset}
+#dia107 .gd.pkx .nm{margin-top:14px;font-size:14px;color:#ffe7a8}
+#dia107 .pg{display:flex;gap:6px;justify-content:center;margin:8px 0 4px}
+#dia107 .pg .pi{display:flex;flex-direction:column;align-items:center;min-width:40px;padding:4px 2px 3px;border-radius:7px;background:rgba(0,0,0,.35);border:1px solid rgba(255,220,150,.2)}
+#dia107 .pg .pi i{font-style:normal;font-size:24px;line-height:28px;filter:drop-shadow(0 0 5px rgba(255,200,90,.5))}
+#dia107 .pg .pi b{font-size:12px;color:#fff}
+#dia107 .gd.pkx s{color:#8f8aa0}
+#dia107 .gd.pkx .lim{color:#7affa0}
+`;document.head.appendChild(s2);
+})();
+</script>
