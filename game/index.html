@@ -11764,14 +11764,18 @@ const s2=document.createElement('style');s2.textContent=`
 </script>
 <script>
 // ===== 맞는 느낌: 주인공이 몬스터에게 맞을 때 (숫자만 바꾸면 돼요) =====
+// 맞은 뒤 남은 체력으로 세기를 골라요: 70% 이상 약하게, 40~69% 보통, 39% 이하 강하게.
 // 밀림: 뒤로 밀려나는 힘(0이면 안 밀림) · 빨강: 몸이 빨갛게 번쩍이는 시간(초) · 화면: 화면 가장자리 빨간빛 세기(0~1) · 흔들: 화면 흔들림(0이면 없음)
-// 큰 공격(최대 체력의 12% 이상)은 1.5배로 세게 느껴져요.
-const 맞는느낌={밀림:110,빨강:.18,화면:.45,흔들:1.2};
+const 맞는느낌={
+ 약하게:{밀림:60,빨강:.15,화면:.3,흔들:0},
+ 보통:{밀림:110,빨강:.18,화면:.45,흔들:1.2},
+ 강하게:{밀림:180,빨강:.22,화면:.65,흔들:2.5},
+ 기준:{약하게:70,보통:40}};
 (function(){
  const HF={kx:0,ky:0,kv:0,red:0,redT:.18,vig:0,vigA:0};
  const tc=document.createElement('canvas');tc.width=tc.height=128;const tx=tc.getContext('2d');tx.imageSmoothingEnabled=false;
  const _hd=heroDamage;heroDamage=function(d){const h0=P?P.hp:0;const r=_hd.apply(this,arguments);
-  try{if(!P||!(P.hp<h0))return r;const S=맞는느낌,mx=stats().hp||1,big=(h0-P.hp)>=mx*.12?1.5:1;
+  try{if(!P||!(P.hp<h0))return r;const mx=stats().hp||1,pct=Math.max(0,P.hp)/mx*100,G=맞는느낌,lv=pct>=G.기준.약하게?'약하게':pct>=G.기준.보통?'보통':'강하게',S=G[lv],big=1;HF.lv=lv;
    if(S.밀림>0&&!DASH&&!(S6&&S6.ride)&&hero.st!=='dead'){let src=null,best=150;for(const m of mobs){if(m.st==='dead'||(m.m&&m.m.dummy))continue;const q=Math.hypot(m.x-hero.x,m.y-hero.y);if(q<best){best=q;src=m;}}
     let dx,dy;if(src){dx=hero.x-src.x;dy=hero.y-src.y;}else{const v=DV[hero.d]||[0,1];dx=-v[0];dy=-v[1];}
     const l=Math.hypot(dx,dy)||1;HF.kx=dx/l;HF.ky=dy/l;HF.kv=S.밀림*big*(src&&src.m&&src.m.boss?.8:1);}
