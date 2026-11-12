@@ -31,12 +31,15 @@
   // 유럽 등 동의가 필요한 나라: 구글 동의 창(UMP). AdMob '개인정보 보호 및 메시지'에 메시지를 만들어 두어야 떠요. 없거나 실패하면 그냥 넘어가요.
   try{if(A.requestConsentInfo){const ci=await Promise.race([A.requestConsentInfo(),new Promise(r=>setTimeout(()=>r(null),8000))]);
    if(ci&&ci.isConsentFormAvailable&&ci.status==='REQUIRED'&&A.showConsentForm)await A.showConsentForm();}}catch(e){}}
- async function adLoad(){const A=P().AdMob;if(!A||adReady)return;try{await A.prepareRewardVideoAd({adId:CFG.rewardedId,isTesting:CFG.testing});adReady=true;}catch(e){adReady=false;}}
+ let adErr='';// 마지막으로 광고를 못 받은 까닭 (AdMob 코드: 3=보여 줄 광고 없음, 2=인터넷, 1=요청 잘못, 0=AdMob 안쪽 문제)
+ async function adLoad(){const A=P().AdMob;if(!A||adReady)return;
+  for(let i=0;i<2&&!adReady;i++){try{await A.prepareRewardVideoAd({adId:CFG.rewardedId,isTesting:CFG.testing});adReady=true;adErr='';}
+   catch(e){adReady=false;const c=e&&(e.code!=null?e.code:(e.data&&e.data.code));adErr=((c!=null?c+' ':'')+((e&&(e.message||e.errorMessage))||'')).trim().slice(0,80);if(i===0)await new Promise(r=>setTimeout(r,1500));}}}
  async function showRewarded(place){
   if(APP.ads.removed())return {ok:true,noads:true};
   const A=P().AdMob;if(!A)return {ok:false,err:'noplugin'};if(adBusy)return {ok:false,err:'busy'};
   adBusy=true;await adInit();if(!adReady)await adLoad();
-  if(!adReady){adBusy=false;return {ok:false,err:'noad'};}
+  if(!adReady){adBusy=false;return {ok:false,err:'noad',detail:adErr};}
   let got=false;const hs=[];
   try{
    hs.push(await A.addListener('onRewardedVideoAdReward',()=>{got=true;}));

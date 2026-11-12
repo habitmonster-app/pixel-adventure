@@ -9477,7 +9477,7 @@ function adWait135(on){let e=$('adWait135');if(!on){if(e)e.remove();return;}if(e
  e.innerHTML='<div style="padding:14px 22px;border-radius:12px;border:1px solid #c9a45c;background:rgba(14,16,28,.96)">'+(typeof tr==='function'?tr('광고를 불러오는 중…'):'광고를 불러오는 중…')+'</div>';document.body.appendChild(e);}
 function showAd86(place,onOk){const A=APP86();if(!A||ADBUSY86)return;ADBUSY86=1;adWait135(1);
  let p;try{p=Promise.resolve(A.ads.showRewarded(place));}catch(e){p=Promise.reject(e);}
- p.then(r=>{ADBUSY86=0;adWait135(0);if(r&&r.ok)onOk();else if(r&&(r.err==='noad'||r.err==='noplugin'))toast('지금은 볼 수 있는 광고가 없어요. 잠시 뒤 다시 해 주세요','w');else if(r&&r.err==='busy');else toast('광고를 끝까지 봐야 보상을 받아요','w');}).catch(()=>{ADBUSY86=0;adWait135(0);toast('지금은 광고를 불러올 수 없어요. 잠시 뒤 다시 해 주세요','w');});}
+ p.then(r=>{ADBUSY86=0;adWait135(0);if(r&&r.ok)onOk();else if(r&&(r.err==='noad'||r.err==='noplugin')){toast('지금은 볼 수 있는 광고가 없어요. 잠시 뒤 다시 해 주세요','w');if(r.detail)setTimeout(()=>toast('AdMob: '+r.detail,'w'),1600);}else if(r&&r.err==='busy');else toast('광고를 끝까지 봐야 보상을 받아요','w');}).catch(()=>{ADBUSY86=0;adWait135(0);toast('지금은 광고를 불러올 수 없어요. 잠시 뒤 다시 해 주세요','w');});}
 // 유료 구매: 결제가 끝나면 앱이 GAME_GRANT를 불러 지급해요 (여기서는 화면만 새로 그려요)
 function buy86(id,after){const A=APP86();if(!A||ADBUSY86)return;ADBUSY86=1;
  let p;try{p=Promise.resolve(A.shop.buy(id));}catch(e){p=Promise.reject(e);}
