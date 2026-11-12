@@ -11711,6 +11711,8 @@ function ttxShow(){if(document.getElementById('ttx')||playing)return;T.on=1;docu
 // 게임 안 메뉴의 '캐릭터 선택'으로 돌아올 때는 시작 화면 없이 바로 선택창
 window.TTX={show:ttxShow,go:ttxGo};
 ttxShow();
+// 게임이 어떤 길로든 시작되면 시작 화면은 닫아요 (시작 화면이 게임 위에 남아 있지 않게)
+{const _sg=startGame;startGame=function(){try{if(T.on)ttxGo();}catch(e){}return _sg.apply(this,arguments);};}
 
 // ---------- 2) 다이아 묶음 ----------
 // 따로 사면: 주문서 1장 💎10 · 부활권 6장 💎50(1장 10) · 장비 상자 💎40
