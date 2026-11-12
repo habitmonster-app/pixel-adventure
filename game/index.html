@@ -9874,8 +9874,8 @@ const menuT101=(id)=>tutOpen('pMenu')?'#'+id:'#bMenu';
 const TSTEP101=[
  {id:'move',when:()=>true,tg:()=>'#joy',tx:'왼쪽 동그라미를 끌어서 걸어 보세요.',done:()=>Math.hypot(hero.x-TUT.x0,hero.y-TUT.y0)>48},
  {id:'quest',when:()=>1,tg:()=>'#qtrack',tx:'할 일은 여기 나와요. 누르면 가야 할 곳까지 알아서 걸어가요.',done:()=>TUT.qgo||!!talk||P.q.i>0||P.q.st!=='none'},
- {id:'talk',when:()=>P.q&&P.q.i===0&&P.q.st==='none',tg:()=>'#talk',tx:'머리 위에 ! 가 있는 사람 곁에서 \'말걸기\'를 누르면 이야기를 나눠요.',done:()=>!!talk||P.q.i>0||P.q.st!=='none'},
- {id:'gather',later:1,when:()=>{const q=qCur();return q&&q.goal&&q.goal.mats&&P.q.st==='go';},tg:()=>'#talk',tx:'풀이나 샘물 같은 채집 자리 곁에서 이 버튼을 누르면 재료를 모아요.',done:()=>typeof gath!=='undefined'&&!!gath},
+ {id:'talk',when:()=>P.q&&P.q.i===0&&P.q.st==='none',tg:()=>nearNpc()?'#talk':'#tutNone101',tx:'머리 위에 ! 가 있는 사람 곁에서 \'말걸기\'를 누르면 이야기를 나눠요.',done:()=>!!talk||P.q.i>0||P.q.st!=='none'},
+ {id:'gather',later:1,when:()=>{const q=qCur();return q&&q.goal&&q.goal.mats&&P.q.st==='go';},tg:()=>!nearNpc()&&nearNode()?'#talk':'#tutNone101',tx:'풀이나 샘물 같은 채집 자리 곁에서 이 버튼을 누르면 재료를 모아요.',done:()=>typeof gath!=='undefined'&&!!gath},
  {id:'craft',later:1,when:()=>{const q=qCur();return q&&q.goal&&q.goal.craft&&P.q.st==='go';},tg:()=>tutOpen('pCraft')?null:menuT101('mCraft'),tx:()=>tutOpen('pCraft')?'만들 것을 골라 \'만들기\'를 눌러요. 재료와 골드가 있으면 바로 만들어져요.':'메뉴 → 제작에서 물약과 장비를 만들 수 있어요.',done:()=>TUT.crafted},
  {id:'attack',later:1,when:()=>mobNear101()&&!inTown(hero),tg:()=>'#atk',tx:'몬스터가 가까이 있어요! 칼 버튼을 누르면 공격해요.',done:()=>TUT.atk>0},
  {id:'auto',later:1,when:()=>TUT.kills>=2,tg:()=>'#autoB',tx:'AUTO를 누르면 근처 몬스터를 알아서 사냥해요. 다시 누르면 멈춰요.',done:()=>typeof hunt!=='undefined'&&hunt},
