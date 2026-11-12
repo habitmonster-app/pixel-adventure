@@ -889,9 +889,9 @@ const dirTo=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;return Math.abs(dx)>Math.abs(dy)
 const DV=[[0,-1],[-1,0],[0,1],[1,0]];
 function doAttack(){if(talk||hero.st==='atk'||hero.st==='dead')return;auto=null;hero.st='atk';hero.f=0;hero.ft=0;hero.done=0;}
 function heroHit(){const s=stats(),[fx_,fy_]=DV[hero.d];let any=0;
- const rk=RANGED[P.eq.weapon];if(rk){shots.push({x:hero.x+fx_*10,y:hero.y-26+fy_*6,vx:fx_*220,vy:fy_*220,l:.8,mine:1,kind:rk,dmg:s.atk,bm:P.cls==='mage'&&rk==='magic'?1:0,br:P.cls==='rogue'&&rk==='arrow'?1:0});return 1;}
+ const rk=RANGED[P.eq.weapon];if(rk){shots.push({x:hero.x+fx_*10,y:hero.y-26+fy_*6,vx:fx_*220,vy:fy_*220,l:.8,mine:1,kind:rk,dmg:s.atk,bm:0,br:P.cls==='rogue'&&rk==='arrow'?1:0});return 1;}
  for(const m of mobs){if(m.st==='dead')continue;const dx=m.x-hero.x,dy=m.y-hero.y,l=Math.hypot(dx,dy);
-  if(l<38&&(l<10||(dx*fx_+dy*fy_)/l>0.25)){heroDmg(m,1);any=1;if(typeof animSfx==='function'){if(P.cls==='rogue')animSfx(107,m.x,m.y-14,22,.35);else if(P.cls==='warrior')animSfx(220,m.x,m.y-14,24,.35);}}}
+  if(l<38&&(l<10||(dx*fx_+dy*fy_)/l>0.25)){heroDmg(m,1);any=1;if(typeof animSfx==='function'){if(P.cls==='rogue')animSfx(107,m.x,m.y-14,22,.35);}}}
  return any;}
 let HS=0,CRIT=0;
 // 타격감 세기(숫자만 바꾸면 돼요): 멈칫 초, 밀려나는 힘, 번쩍 시간
