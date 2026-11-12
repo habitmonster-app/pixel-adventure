@@ -10914,3 +10914,16 @@ function adDiaPress133(){if(adDiaLeft133()<1){toast(T133('오늘은 다 받았�
 })();
 
 </script>
+<script>
+/* v136: 폰을 가로↔세로로 돌릴 때 아이폰이 바뀐 크기를 늦게 알려 줘서 게임 화면이 늘어나거나 줄어든 채로 남던 문제.
+   게임 화면(#view) 크기가 실제로 바뀌면 그때 다시 크기를 계산해요 (돌린 직후 몇 번 더 확인). */
+(function(){let lw=0,lh=0,busy=0;
+ function chk(){const v=document.getElementById('view');if(!v)return;const r=v.getBoundingClientRect(),w=Math.round(r.width),h=Math.round(r.height);if(!w||!h)return;
+  if(w!==lw||h!==lh){lw=w;lh=h;busy=1;try{dispatchEvent(new Event('resize'));}catch(e){}busy=0;}}
+ const later=()=>{[50,200,450,900,1500].forEach(t=>setTimeout(chk,t));};
+ addEventListener('orientationchange',later);addEventListener('resize',()=>{if(!busy)later();});
+ if(window.visualViewport)visualViewport.addEventListener('resize',later);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)later();});
+ try{if(window.ResizeObserver){const v=document.getElementById('view');if(v)new ResizeObserver(()=>chk()).observe(v);}}catch(e){}
+ setInterval(chk,800);later();})();
+</script>
