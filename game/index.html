@@ -779,6 +779,33 @@ async function buildSheet(look,eq){const w=eq.weapon?GEAR[eq.weapon]:null,a=w?w.
   for(let r=0;r<4;r++)for(let i=0;i<n;i++)g.drawImage(l.im,i*64,y0+(ROWA[a]+r)*64,64,64,i*128+32,576+r*128+32,64,64);
   {const ry=l.nl*17*64+l.j*256;if(l.im.height>=ry+256)for(let r=0;r<4;r++)for(let i=0;i<8;i++)g.drawImage(l.im,i*64,ry+r*64,64,64,i*128+32,1088+r*128+32,64,64);}}
  return {sheet:cv,meta:{a,n}};}
+// 긴 무기 휘두르기: 이 무기들은 원래 그림이 192칸이라 128칸에 넣으면 칼끝·궤적이 잘려요 → 공격 동작만 192칸으로 따로 만들어요
+// 그림: g/<무기>_atk.png (위 768 = 몸 뒤 층, 아래 768 = 몸 앞 층, 6칸 × 4방향 × 192)
+const BIGW={w_longsword:1,w_glowsword:1,w_redglow:1,w_rapier:1};
+let HA192=null;
+async function tintAs(k,k2,c){const im=await gimg(k2);if(!im)return null;if(!c||c[1]==null)return im;const base=await gimg(k);if(!base)return null;
+ const m=(img)=>{const cv=document.createElement('canvas');cv.width=img.width;cv.height=img.height;const g=cv.getContext('2d');g.drawImage(img,0,0);return [cv,g,g.getImageData(0,0,cv.width,cv.height)];};
+ const [,,bd]=m(base),bp=bd.data;let sum=0,n=0;for(let i=0;i<bp.length;i+=4)if(bp[i+3]){sum+=(Math.max(bp[i],bp[i+1],bp[i+2])+Math.min(bp[i],bp[i+1],bp[i+2]))/510;n++;}
+ const mean=sum/(n||1),[,h,s,l]=c,[cv,g,d]=m(im),p=d.data;
+ const f=(t,q,pp)=>{if(t<0)t+=1;if(t>1)t-=1;return t<1/6?pp+(q-pp)*6*t:t<1/2?q:t<2/3?pp+(q-pp)*(2/3-t)*6:pp;};
+ for(let i=0;i<p.length;i+=4)if(p[i+3]){let L=(Math.max(p[i],p[i+1],p[i+2])+Math.min(p[i],p[i+1],p[i+2]))/510/mean*l;L=Math.min(1,Math.max(0,L));
+  const q=L<.5?L*(1+s):L+s-L*s,pp=2*L-q,hh=h/360;p[i]=f(hh+1/3,q,pp)*255;p[i+1]=f(hh,q,pp)*255;p[i+2]=f(hh-1/3,q,pp)*255;}
+ g.putImageData(d,0,0);return cv;}
+async function buildAtk192(look,eq){const w=eq.weapon?GEAR[eq.weapon]:null;if(!w||!BIGW[w.src||eq.weapon]||w.a!=='slash')return null;const a='slash',n=w.n2||6;
+ const hc=HAIRC[look.hc]||HAIRC[0],sk=SKIN[look.sk]||SKIN[0],hair=LOOK.hair[look.hs]||LOOK.hair[0],beard=look.bd>0?LOOK.beard[look.bd-1]:null;
+ const L=[['_body',[10],sk],['_head',[100],sk],['_eyes',[105]]];
+ if(!hideHair((GEAR[eq.head]&&GEAR[eq.head].src)||eq.head||''))L.push([hair[0],hair[2],hc]);
+ if(beard)L.push([beard[0],beard[2],hc]);
+ for(const s in eq){const g=GEAR[eq[s]];if(g)L.push([g.src||eq[s],g.z,g.tc,s==='weapon']);}
+ const ims=await Promise.all(L.map(l=>l[3]?tintAs(l[0],l[0]+'_atk',l[2]):tinted(l[0],l[2])));if(ims[L.findIndex(l=>l[3])]==null)return null;
+ const lay=[];L.forEach(([k,zs,,big],i)=>{if(ims[i])zs.forEach((z,j)=>lay.push({im:ims[i],z,j,nl:zs.length,wp:k.startsWith('w_'),big}));});
+ lay.sort((p,q)=>p.z-q.z);
+ const cv=document.createElement('canvas');cv.width=n*192;cv.height=4*192;const g=cv.getContext('2d');
+ for(const l of lay){
+  if(l.big){g.drawImage(l.im,0,l.j*768,n*192,768,0,0,n*192,768);continue;}
+  if(l.wp){for(let r=0;r<4;r++)for(let i=0;i<n;i++)g.drawImage(l.im,i*128,l.j*1024+512+r*128,128,128,i*192+32,r*192+32,128,128);continue;}
+  const y0=l.j*17*64;for(let r=0;r<4;r++)for(let i=0;i<n;i++)g.drawImage(l.im,i*64,y0+(ROWA[a]+r)*64,64,64,i*192+64,r*192+64,64,64);}
+ return cv;}
 // 작은 그림판에 캐릭터 그리기(걷기/공격)
 function drawFig(c,sh,meta,d,t,atk){const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.clearRect(0,0,c.width,c.height);if(!sh)return;
  const s=c.width/96;
@@ -843,7 +870,8 @@ const needExp=lv=>Math.round(20*Math.pow(lv,1.6)*(lv>=50?4:1));
 
 // ===== 주인공 =====
 let heroSheet=null,heroMeta={a:'slash',n:6},heroVer=0;
-async function buildHero(){const v=++heroVer,r=await buildSheet(P.look,P.eq);if(v!==heroVer)return;heroSheet=r.sheet;heroMeta=r.meta;refreshSide();}
+async function buildHero(){const v=++heroVer,r=await buildSheet(P.look,P.eq);if(v!==heroVer)return;heroSheet=r.sheet;heroMeta=r.meta;HA192=null;refreshSide();
+ try{const big=await buildAtk192(P.look,P.eq);if(v===heroVer)HA192=big;}catch(e){}}
 const ent=(o)=>Object.assign({d:2,f:0,ft:0,st:'idle',vx:0,vy:0,at:0,hit:0},o);
 const hero=ent({k:'hero',x:PLAZA.x,y:PLAZA.y});
 const npcs=NPC.map(n=>ent({...n,d:n.d??2,hx:n.x,hy:n.y,wt:rnd(1,4)}));
@@ -987,7 +1015,7 @@ function drawHero(e){if(!heroSheet)return;const sx=rp87(e.x-cam.x),sy=rp87(e.y-c
  X.fillStyle='rgba(0,0,0,.25)';X.beginPath();X.ellipse(sx,sy-2,11,4,0,0,7);X.fill();
  if(e.hit>0&&((e.hit*30|0)%2))X.globalAlpha=0.45;
  drawGhosts();if(ROLL){const p=1-ROLL.t/(ROLL.t0||.24);X.save();X.translate(sx,sy-30);X.rotate(p*6.283*(e.d===1?-1:1));X.translate(-sx,-(sy-30));X.drawImage(heroSheet,((e.f+7)%8)*128,1088+e.d*128,128,128,sx-64,sy-94,128,128);X.restore();X.globalAlpha=1;return;}
- if(e.st==='atk')X.drawImage(heroSheet,e.f*128,576+e.d*128,128,128,sx-64,sy-94,128,128);
+ if(e.st==='atk'){if(HA192)X.drawImage(HA192,e.f*192,e.d*192,192,192,sx-96,sy-126,192,192);else X.drawImage(heroSheet,e.f*128,576+e.d*128,128,128,sx-64,sy-94,128,128);}
  else if(e.st==='dead')X.drawImage(heroSheet,e.f*64,512,64,64,sx-32,sy-62,64,64);
  else if(e.run&&e.st==='walk')X.drawImage(heroSheet,((e.f+7)%8)*128,1088+e.d*128,128,128,sx-64,sy-94,128,128);
  else X.drawImage(heroSheet,e.f*128,e.d*128,128,128,sx-64,sy-94,128,128);
@@ -11773,7 +11801,7 @@ const 맞는느낌={
  기준:{약하게:70,보통:40}};
 (function(){
  const HF={kx:0,ky:0,kv:0,red:0,redT:.18,vig:0,vigA:0};
- const tc=document.createElement('canvas');tc.width=tc.height=128;const tx=tc.getContext('2d');tx.imageSmoothingEnabled=false;
+ const tc=document.createElement('canvas');tc.width=tc.height=192;const tx=tc.getContext('2d');tx.imageSmoothingEnabled=false;
  const _hd=heroDamage;heroDamage=function(d){const h0=P?P.hp:0;const r=_hd.apply(this,arguments);
   try{if(!P||!(P.hp<h0))return r;const mx=stats().hp||1,pct=Math.max(0,P.hp)/mx*100,G=맞는느낌,lv=pct>=G.기준.약하게?'약하게':pct>=G.기준.보통?'보통':'강하게',S=G[lv],big=1;HF.lv=lv;
    if(S.밀림>0&&!DASH&&!(S6&&S6.ride)&&hero.st!=='dead'){let src=null,best=150;for(const m of mobs){if(m.st==='dead'||(m.m&&m.m.dummy))continue;const q=Math.hypot(m.x-hero.x,m.y-hero.y);if(q<best){best=q;src=m;}}
@@ -11789,11 +11817,11 @@ const 맞는느낌={
    const nx=hero.x+HF.kx*HF.kv*dt,ny=hero.y+HF.ky*HF.kv*dt;if(!blocked(hero,nx,hero.y))hero.x=nx;if(!blocked(hero,hero.x,ny))hero.y=ny;HF.kv*=Math.pow(.0005,dt);}};
  // 주인공 몸 빨갛게 번쩍
  const _dh=drawHero;drawHero=function(e){_dh(e);if(e!==hero||HF.red<=0||!heroSheet||e.st==='dead'||ROLL)return;
-  const sx=rp87(e.x-cam.x),sy=rp87(e.y-cam.y);let a;
-  if(e.st==='atk')a=[e.f*128,576+e.d*128];else if(e.run&&e.st==='walk')a=[((e.f+7)%8)*128,1088+e.d*128];else a=[e.f*128,e.d*128];
-  tx.globalCompositeOperation='source-over';tx.clearRect(0,0,128,128);tx.drawImage(heroSheet,a[0],a[1],128,128,0,0,128,128);
-  tx.globalCompositeOperation='source-atop';tx.fillStyle='#ff2a1a';tx.fillRect(0,0,128,128);
-  X.save();X.globalAlpha=Math.min(1,HF.red/HF.redT)*.7;X.drawImage(tc,sx-64,sy-94);X.restore();};
+  const sx=rp87(e.x-cam.x),sy=rp87(e.y-cam.y),big=e.st==='atk'&&HA192,Z=big?192:128;let a,src=heroSheet;
+  if(big){a=[e.f*192,e.d*192];src=HA192;}else if(e.st==='atk')a=[e.f*128,576+e.d*128];else if(e.run&&e.st==='walk')a=[((e.f+7)%8)*128,1088+e.d*128];else a=[e.f*128,e.d*128];
+  tx.globalCompositeOperation='source-over';tx.clearRect(0,0,192,192);tx.drawImage(src,a[0],a[1],Z,Z,0,0,Z,Z);
+  tx.globalCompositeOperation='source-atop';tx.fillStyle='#ff2a1a';tx.fillRect(0,0,Z,Z);
+  X.save();X.globalAlpha=Math.min(1,HF.red/HF.redT)*.7;X.drawImage(tc,0,0,Z,Z,sx-Z/2,sy-94-(Z-128)/2,Z,Z);X.restore();};
  // 화면 가장자리 빨간빛
  const _dr=draw;draw=function(){_dr.apply(this,arguments);if(HF.vig<=0||!HF.vigA)return;
   const k=Math.min(1,HF.vig/.35),W=VW,H=VH,g=X.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.hypot(W,H)*.58);
