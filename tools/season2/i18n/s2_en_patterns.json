@@ -1,0 +1,122 @@
+[
+[
+"(.+)\\(으\\)로 걸어가기",
+"Walk to $1"
+],
+[
+"최고 레벨 (\\d+)에 닿았어요! 제작·강화·숙련도·보스 다시 잡기는 계속할 수 있어요",
+"Max level $1 reached! You can still craft, enhance, train proficiency, and re-fight bosses"
+],
+[
+"방어전 (\\d+)/(\\d+)",
+"Defense wave $1/$2"
+],
+[
+"마른 장작이 (\\d+)개 필요해요 \\(지금 (\\d+)개\\) · 서리길 곳곳에 쌓여 있어요",
+"Need $1 dry firewood (have $2) · Piled up all over the Frost Road"
+],
+[
+"먼저 중앙 홀의 빙정 병사를 쓰러뜨려요 \\((\\d+)/8\\)",
+"First defeat the Icecrystal Soldiers in the Central Hall ($1/8)"
+],
+[
+"감옥 열쇠 3개가 필요해요 \\(지금 (\\d+)개\\) · 빙정 병사와 서리 궁수가 갖고 있어요",
+"Need 3 prison keys (have $1) · Icecrystal Soldiers and Frost Archers carry them"
+],
+[
+"수정 톱니 5개가 필요해요 \\(지금 (\\d+)개\\) · 얼음 골렘과 룬 감시구가 갖고 있어요",
+"Need 5 crystal gears (have $1) · Ice Golems and Rune Sentries carry them"
+],
+[
+"화로를 다시 켰어요 \\((\\d+)/3\\)",
+"Brazier relit ($1/3)"
+],
+[
+"(.+)에 불이 붙었어요 \\((\\d+)/(\\d+)\\) · 불 곁에서는 얼어붙지 않아요",
+"$1 is lit ($2/$3) · You won't freeze near the fire"
+],
+[
+"실종 정찰병을 찾았어요 \\((\\d+)/3\\)",
+"Found a missing scout ($1/3)"
+],
+[
+"주민을 구했어요 \\((\\d+)/3\\)",
+"Rescued a villager ($1/3)"
+],
+[
+"보급 상자를 되찾았어요 \\((\\d+)/3\\) · 빙철광 1",
+"Recovered a supply crate ($1/3) · Ice Iron Ore 1"
+],
+[
+"길잡이 깃발을 세웠어요 \\((\\d+)/4\\) · 깃발 등불 곁은 얼어붙지 않아요",
+"Planted a guide flag ($1/4) · You won't freeze near a flag lantern"
+],
+[
+"흰사슴을 풀어 줬어요 \\((\\d+)/3\\)",
+"Freed a white stag ($1/3)"
+],
+[
+"옛 봉인 비석을 살펴봤어요 \\((\\d+)/3\\)",
+"Examined an old seal stele ($1/3)"
+],
+[
+"빙결 대포를 부쉈어요 \\((\\d+)/3\\)",
+"Destroyed a frost cannon ($1/3)"
+],
+[
+"포로를 구했어요 \\((\\d+)/4\\)",
+"Rescued a prisoner ($1/4)"
+],
+[
+"룬 기둥이 깨어났어요 \\((\\d+)/3\\) · 기사장의 문이 열렸어요",
+"Rune pillar awakened ($1/3) · The Knight Captain's Gate is open"
+],
+[
+"룬 기둥이 깨어났어요 \\((\\d+)/3\\)",
+"Rune pillar awakened ($1/3)"
+],
+[
+"서리 봉인석의 문양을 다시 이었어요 \\((\\d+)/3\\)",
+"Reconnected a frost seal stone's glyphs ($1/3)"
+],
+[
+"지금은 '(.+)'이에요\\. 퀘스트 창의 '목적지로 가기'를 누르면 내가 길을 알려 줄게요\\.",
+"Right now it's '$1'. Tap 'Go to destination' in the quest window and I'll show you the way."
+],
+[
+"(\\d+)/4 얼음 감옥 · 주민 (\\d+)/3 구출",
+"$1/4 ice prisons · $2/3 villagers rescued"
+],
+[
+"(1[1-5])장 '(.+)'을 끝냈어요!",
+"You finished Ch.$1 '$2'!"
+],
+[
+"(.+) · 불 곁",
+"$1 · By the fire"
+],
+[
+"(.+) · 안전",
+"$1 · Safe"
+],
+[
+"잠김 · (\\d+)장 보스를 쓰러뜨리면 열려요",
+"Locked · Opens after you defeat the Ch.$1 boss"
+],
+[
+"(\\d+)장 '(.+)'의 보스를 쓰러뜨리면 길이 열려요\\.",
+"Defeat the boss of Ch.$1 '$2' to open the road."
+],
+[
+"왕성 북서쪽 뒷길 \\((.+) 쪽\\)",
+"Castle northwest back alley (toward $1)"
+],
+[
+"(.+) (\\d+)마리를 모두 쓰러뜨렸어요!",
+"All $2 $1 defeated!"
+],
+[
+"(1[1-5])장 · (.+)",
+"Ch.$1 · $2"
+]
+]
