@@ -1,0 +1,94 @@
+# 픽셀 모험단 앱 빌드 (Codemagic)
+# android-test: 서명 없이 휴대폰에 바로 설치해 볼 수 있는 테스트용 APK를 만듭니다.
+workflows:
+  android-test:
+    name: 봉인 기사단 Android 테스트 APK
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    environment:
+      node: 22
+      java: 21
+    scripts:
+      - name: 의존성 설치
+        script: npm ci
+      - name: 게임 파일 복사
+        script: npm run build
+      - name: Capacitor 동기화
+        script: npx cap sync android
+      - name: APK 빌드
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+    artifacts:
+      - android/app/build/outputs/apk/debug/*.apk
+
+  # 플레이 스토어용: 서명된 AAB (Codemagic > Team/Personal settings > Code signing identities > Android keystores 에
+  # 'bongin_upload' 이름으로 업로드 키를 올려 두면 돼요)
+  android-release:
+    name: 봉인 기사단 Android 출시 AAB
+    max_build_duration: 40
+    instance_type: mac_mini_m2
+    environment:
+      node: 22
+      java: 21
+      android_signing:
+        - bongin_upload
+    scripts:
+      - name: 의존성 설치
+        script: npm ci
+      - name: 게임 파일 복사
+        script: npm run build
+      - name: Capacitor 동기화
+        script: npx cap sync android
+      - name: AAB 빌드
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew bundleRelease
+    artifacts:
+      - android/app/build/outputs/bundle/release/*.aab
+
+  # 앱 스토어용: TestFlight까지 올려요 (Codemagic > Integrations > App Store Connect API 키 연결 필요,
+  # 키 이름 HabitMonster = 습관괴물 때 만든 키)
+  ios-release:
+    name: 봉인 기사단 iOS 출시
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: HabitMonster
+    environment:
+      node: 22
+      xcode: latest
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.habitmonster.pixeladventure
+    scripts:
+      - name: 의존성 설치
+        script: npm ci
+      - name: 게임 파일 복사
+        script: npm run build
+      - name: Capacitor 동기화
+        script: npx cap sync ios
+      - name: 서명 설정
+        script: xcode-project use-profiles
+      - name: 빌드 번호
+        script: |
+          cd ios/App
+          agvtool new-version -all $BUILD_NUMBER
+      - name: 패키지 받기
+        script: |
+          cd ios/App
+          for i in 1 2 3 4 5; do
+            xcodebuild -resolvePackageDependencies -project App.xcodeproj -scheme App && break
+            echo "다시 시도 $i"; sleep 30
+          done
+          xcodebuild -project App.xcodeproj -scheme App -showBuildSettings > /dev/null
+      - name: IPA 빌드
+        script: xcode-project build-ipa --project ios/App/App.xcodeproj --scheme App
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

@@ -1,0 +1,348 @@
+{
+ "mouse": {
+  "n": "들쥐",
+  "kind": "ULPC 부위 조합",
+  "how": "색 없음(원본 색), 무기 없음 — 맨손",
+  "parts": [
+   {
+    "file": "body/bodies/male/",
+    "authors": "bluecarrot16,JaidynReiman,Benjamin K. Smith (BenCreating),Evert,Eliza Wyatt (ElizaWy),TheraHedwig,MuffinElZangano,Durrani,Johannes Sjölund (wulax),Stephen Challener (Redshrike)",
+    "licenses": "OGA-BY 3.0,CC-BY-SA 3.0,GPL 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles,https://opengameart.org/content/lpc-medieval-fantasy-character-sprites,https://opengameart.org/content/lpc-male-jumping-animation-by-durrani,https://opengameart.org/content/lpc-runcycle-and-diagonal-walkcycle,https://opengameart.org/content/lpc-revised-character-basics,https://opengameart.org/content/lpc-be-seated,https://opengameart.org/content/lpc-runcycle-for-male-muscular-and-pregnant-character-bases-with-modular-heads,https://opengameart.org/content/lpc-jump-expanded,https://opengameart.org/content/lpc-character-bases",
+    "notes": "see details at https://opengameart.org/content/lpc-character-bases; 'Thick' Male Revised Run/Climb by JaidynReiman (based on ElizaWy's LPC Revised)",
+    "part": "body"
+   },
+   {
+    "file": "head/heads/mouse/adult/",
+    "authors": "bluecarrot16,Stephen Challener (Redshrike),Napsio (Vitruvian Studio),JaidynReiman",
+    "licenses": "OGA-BY 3.0,CC-BY 3.0,CC-BY-SA 3.0",
+    "urls": "https://opengameart.org/content/bunny-rabbit-lpc-style-for-pixelfarm,http://opengameart.org/content/lpc-folk",
+    "notes": "original rabbit by Redshrike, adapted to modular head by bluecarrot16, modified to mouse head by bluecarrot16, color reduction by napsio (Vitruvian Studio) and JaidynReiman",
+    "part": "h_mouse"
+   },
+   {
+    "file": "legs/shorts/shorts/male/",
+    "authors": "JaidynReiman,ElizaWy,Bluecarrot16,Johannes Sjölund (wulax),Stephen Challener (Redshrike)",
+    "licenses": "OGA-BY 3.0,GPL 3.0",
+    "urls": "https://github.com/ElizaWy/LPC/tree/main/Characters/Clothing,https://opengameart.org/content/lpc-expanded-pants",
+    "notes": "Original bases by Redshrike, thrust/shoot bases by Wulax, original overalls and shorts by ElizaWy, base animations adapted from v3 overalls by bluecarrot16, shorts by JaidynReiman",
+    "part": "lShorts"
+   }
+  ]
+ },
+ "gobclub": {
+  "n": "꼬마 고블린",
+  "kind": "ULPC 부위 조합",
+  "how": "몸 피부색을 고블린 머리색에 맞춤, 몽둥이",
+  "parts": [
+   {
+    "file": "body/bodies/male/",
+    "authors": "bluecarrot16,JaidynReiman,Benjamin K. Smith (BenCreating),Evert,Eliza Wyatt (ElizaWy),TheraHedwig,MuffinElZangano,Durrani,Johannes Sjölund (wulax),Stephen Challener (Redshrike)",
+    "licenses": "OGA-BY 3.0,CC-BY-SA 3.0,GPL 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles,https://opengameart.org/content/lpc-medieval-fantasy-character-sprites,https://opengameart.org/content/lpc-male-jumping-animation-by-durrani,https://opengameart.org/content/lpc-runcycle-and-diagonal-walkcycle,https://opengameart.org/content/lpc-revised-character-basics,https://opengameart.org/content/lpc-be-seated,https://opengameart.org/content/lpc-runcycle-for-male-muscular-and-pregnant-character-bases-with-modular-heads,https://opengameart.org/content/lpc-jump-expanded,https://opengameart.org/content/lpc-character-bases",
+    "notes": "see details at https://opengameart.org/content/lpc-character-bases; 'Thick' Male Revised Run/Climb by JaidynReiman (based on ElizaWy's LPC Revised)",
+    "part": "mb_goblin"
+   },
+   {
+    "file": "head/heads/goblin/adult/",
+    "authors": "bluecarrot16,Stephen Challener (Redshrike),William.Thomsponj",
+    "licenses": "OGA-BY 3.0,CC-BY 4.0,GPL 2.0,GPL 3.0",
+    "urls": "https://opengameart.org/content/lpc-goblin,https://opengameart.org/content/lpc-folk",
+    "notes": "original goblin by Redshrike, commisioned by William.Thomsponj; modular head extracted and enlarged by bluecarrot16",
+    "part": "h_goblin"
+   },
+   {
+    "file": "legs/shorts/shorts/male/",
+    "authors": "JaidynReiman,ElizaWy,Bluecarrot16,Johannes Sjölund (wulax),Stephen Challener (Redshrike)",
+    "licenses": "OGA-BY 3.0,GPL 3.0",
+    "urls": "https://github.com/ElizaWy/LPC/tree/main/Characters/Clothing,https://opengameart.org/content/lpc-expanded-pants",
+    "notes": "Original bases by Redshrike, thrust/shoot bases by Wulax, original overalls and shorts by ElizaWy, base animations adapted from v3 overalls by bluecarrot16, shorts by JaidynReiman",
+    "part": "lShorts"
+   },
+   {
+    "file": "weapon/blunt/club/",
+    "authors": "bluecarrot16",
+    "licenses": "OGA-BY 3.0+,GPL 3.0,CC-BY 4.0",
+    "urls": "https://opengameart.org/content/lpc-more-weapons",
+    "notes": "",
+    "part": "무기 club"
+   }
+  ]
+ },
+ "gobsling": {
+  "n": "고블린 투석꾼",
+  "kind": "ULPC 부위 조합",
+  "how": "몸 피부색을 고블린 머리색에 맞춤, 새총",
+  "parts": [
+   {
+    "file": "body/bodies/male/",
+    "authors": "bluecarrot16,JaidynReiman,Benjamin K. Smith (BenCreating),Evert,Eliza Wyatt (ElizaWy),TheraHedwig,MuffinElZangano,Durrani,Johannes Sjölund (wulax),Stephen Challener (Redshrike)",
+    "licenses": "OGA-BY 3.0,CC-BY-SA 3.0,GPL 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles,https://opengameart.org/content/lpc-medieval-fantasy-character-sprites,https://opengameart.org/content/lpc-male-jumping-animation-by-durrani,https://opengameart.org/content/lpc-runcycle-and-diagonal-walkcycle,https://opengameart.org/content/lpc-revised-character-basics,https://opengameart.org/content/lpc-be-seated,https://opengameart.org/content/lpc-runcycle-for-male-muscular-and-pregnant-character-bases-with-modular-heads,https://opengameart.org/content/lpc-jump-expanded,https://opengameart.org/content/lpc-character-bases",
+    "notes": "see details at https://opengameart.org/content/lpc-character-bases; 'Thick' Male Revised Run/Climb by JaidynReiman (based on ElizaWy's LPC Revised)",
+    "part": "mb_goblin"
+   },
+   {
+    "file": "head/heads/goblin/adult/",
+    "authors": "bluecarrot16,Stephen Challener (Redshrike),William.Thomsponj",
+    "licenses": "OGA-BY 3.0,CC-BY 4.0,GPL 2.0,GPL 3.0",
+    "urls": "https://opengameart.org/content/lpc-goblin,https://opengameart.org/content/lpc-folk",
+    "notes": "original goblin by Redshrike, commisioned by William.Thomsponj; modular head extracted and enlarged by bluecarrot16",
+    "part": "h_goblin"
+   },
+   {
+    "file": "legs/pants/male/",
+    "authors": "bluecarrot16,JaidynReiman,ElizaWy,Matthew Krohn (makrohn),Johannes Sjölund (wulax),Stephen Challener (Redshrike)",
+    "licenses": "OGA-BY 3.0,GPL 3.0,CC-BY-SA 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles,https://opengameart.org/content/lpc-medieval-fantasy-character-sprites,https://opengameart.org/content/lpc-expanded-pants",
+    "notes": "original male pants by wulax, recolors and edits to v3 base by bluecarrot16, climb/jump/run/sit/emotes/revised combat by JaidynReiman based on ElizaWy's LPC Revised",
+    "part": "pantsB"
+   },
+   {
+    "file": "torso/armour/leather/male/",
+    "authors": "Johannes Sjölund (wulax),bluecarrot16,JaidynReiman",
+    "licenses": "OGA-BY 3.0,CC-BY-SA 3.0,GPL 3.0",
+    "urls": "https://opengameart.org/content/lpc-medieval-fantasy-character-sprites,https://opengameart.org/content/lpc-clothing-updates,https://opengameart.org/content/lpc-expanded-armor",
+    "notes": "adapted to v3 bases by bluecarrot16, reduced colors and climb/emote/jump by JaidynReiman",
+    "part": "leather"
+   },
+   {
+    "file": "weapon/ranged/slingshot/",
+    "authors": "bluecarrot16",
+    "licenses": "OGA-BY 3.0+,GPL 3.0,CC-BY 4.0",
+    "urls": "https://opengameart.org/content/lpc-more-weapons",
+    "notes": "",
+    "part": "무기 sling"
+   }
+  ]
+ },
+ "troll": {
+  "n": "숲 트롤",
+  "kind": "ULPC 부위 조합",
+  "how": "몸 피부색을 트롤 머리색에 맞춤, 몽둥이",
+  "parts": [
+   {
+    "file": "body/bodies/male/",
+    "authors": "bluecarrot16,JaidynReiman,Benjamin K. Smith (BenCreating),Evert,Eliza Wyatt (ElizaWy),TheraHedwig,MuffinElZangano,Durrani,Johannes Sjölund (wulax),Stephen Challener (Redshrike)",
+    "licenses": "OGA-BY 3.0,CC-BY-SA 3.0,GPL 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles,https://opengameart.org/content/lpc-medieval-fantasy-character-sprites,https://opengameart.org/content/lpc-male-jumping-animation-by-durrani,https://opengameart.org/content/lpc-runcycle-and-diagonal-walkcycle,https://opengameart.org/content/lpc-revised-character-basics,https://opengameart.org/content/lpc-be-seated,https://opengameart.org/content/lpc-runcycle-for-male-muscular-and-pregnant-character-bases-with-modular-heads,https://opengameart.org/content/lpc-jump-expanded,https://opengameart.org/content/lpc-character-bases",
+    "notes": "see details at https://opengameart.org/content/lpc-character-bases; 'Thick' Male Revised Run/Climb by JaidynReiman (based on ElizaWy's LPC Revised)",
+    "part": "mb_troll"
+   },
+   {
+    "file": "head/heads/troll/adult/",
+    "authors": "bluecarrot16,AntumDeluge,Tuomo Untinen (reemax)",
+    "licenses": "CC-BY 3.0",
+    "urls": "https://opengameart.org/content/musclemanogreminotaur,https://opengameart.org/content/trolls-0,https://opengameart.org/content/lpc-folk",
+    "notes": "original **Muscleman/Ogre/Minotaur** by Reemax, modified to **Troll** by AntumDeluge, edited to LPC style and converted to modular head by bluecarrot16",
+    "part": "h_troll"
+   },
+   {
+    "file": "legs/pants/male/",
+    "authors": "bluecarrot16,JaidynReiman,ElizaWy,Matthew Krohn (makrohn),Johannes Sjölund (wulax),Stephen Challener (Redshrike)",
+    "licenses": "OGA-BY 3.0,GPL 3.0,CC-BY-SA 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles,https://opengameart.org/content/lpc-medieval-fantasy-character-sprites,https://opengameart.org/content/lpc-expanded-pants",
+    "notes": "original male pants by wulax, recolors and edits to v3 base by bluecarrot16, climb/jump/run/sit/emotes/revised combat by JaidynReiman based on ElizaWy's LPC Revised",
+    "part": "pantsB"
+   },
+   {
+    "file": "weapon/blunt/club/",
+    "authors": "bluecarrot16",
+    "licenses": "OGA-BY 3.0+,GPL 3.0,CC-BY 4.0",
+    "urls": "https://opengameart.org/content/lpc-more-weapons",
+    "notes": "",
+    "part": "무기 club"
+   }
+  ]
+ },
+ "vampb": {
+  "n": "흡혈 박쥐인간",
+  "kind": "ULPC 부위 조합",
+  "how": "창백한 피부색, 박쥐 날개, 레이피어",
+  "parts": [
+   {
+    "file": "body/wings/bat/adult/",
+    "authors": "ElizaWy,JaidynReiman",
+    "licenses": "OGA-BY 3.0",
+    "urls": "https://opengameart.org/content/lpc-wings-new-animations",
+    "notes": "Original by ElizaWy, added to most remaining frames by JaidynReiman",
+    "part": "batB"
+   },
+   {
+    "file": "body/bodies/male/",
+    "authors": "bluecarrot16,JaidynReiman,Benjamin K. Smith (BenCreating),Evert,Eliza Wyatt (ElizaWy),TheraHedwig,MuffinElZangano,Durrani,Johannes Sjölund (wulax),Stephen Challener (Redshrike)",
+    "licenses": "OGA-BY 3.0,CC-BY-SA 3.0,GPL 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles,https://opengameart.org/content/lpc-medieval-fantasy-character-sprites,https://opengameart.org/content/lpc-male-jumping-animation-by-durrani,https://opengameart.org/content/lpc-runcycle-and-diagonal-walkcycle,https://opengameart.org/content/lpc-revised-character-basics,https://opengameart.org/content/lpc-be-seated,https://opengameart.org/content/lpc-runcycle-for-male-muscular-and-pregnant-character-bases-with-modular-heads,https://opengameart.org/content/lpc-jump-expanded,https://opengameart.org/content/lpc-character-bases",
+    "notes": "see details at https://opengameart.org/content/lpc-character-bases; 'Thick' Male Revised Run/Climb by JaidynReiman (based on ElizaWy's LPC Revised)",
+    "part": "mb_vamp"
+   },
+   {
+    "file": "head/heads/vampire/adult/",
+    "authors": "Stephen Challener (Redshrike),bluecarrot16",
+    "licenses": "OGA-BY 3.0,CC-BY-SA 3.0,GPL 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles,https://opengameart.org/content/lpc-folk",
+    "notes": "original head by Redshrike, gaunt version by bluecarrot16, vampire fangs by bluecarrot16",
+    "part": "h_vampP"
+   },
+   {
+    "file": "legs/pants/male/",
+    "authors": "bluecarrot16,JaidynReiman,ElizaWy,Matthew Krohn (makrohn),Johannes Sjölund (wulax),Stephen Challener (Redshrike)",
+    "licenses": "OGA-BY 3.0,GPL 3.0,CC-BY-SA 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles,https://opengameart.org/content/lpc-medieval-fantasy-character-sprites,https://opengameart.org/content/lpc-expanded-pants",
+    "notes": "original male pants by wulax, recolors and edits to v3 base by bluecarrot16, climb/jump/run/sit/emotes/revised combat by JaidynReiman based on ElizaWy's LPC Revised",
+    "part": "pantsP"
+   },
+   {
+    "file": "body/wings/bat/adult/",
+    "authors": "ElizaWy,JaidynReiman",
+    "licenses": "OGA-BY 3.0",
+    "urls": "https://opengameart.org/content/lpc-wings-new-animations",
+    "notes": "Original by ElizaWy, added to most remaining frames by JaidynReiman",
+    "part": "batF"
+   },
+   {
+    "file": "weapon/sword/rapier/",
+    "authors": "Johannes Sjölund (wulax),bluecarrot16",
+    "licenses": "OGA-BY 3.0,CC-BY-SA 3.0",
+    "urls": "https://opengameart.org/content/lpc-medieval-fantasy-character-sprites,https://opengameart.org/content/lpc-extended-weapon-animations",
+    "notes": "",
+    "part": "무기 rapier"
+   }
+  ]
+ },
+ "bat": {
+  "n": "박쥐",
+  "kind": "LPC 기본 몬스터",
+  "how": "원본 그대로(색 변형 몬스터는 게임에서 색만 바꿈)",
+  "parts": [
+   {
+    "authors": "Charles Sanchez (CharlesGabriel)",
+    "licenses": "CC-BY-SA 3.0, GPL 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles",
+    "notes": "LPC 기본 자료(Liberated Pixel Cup base assets)의 AUTHORS 파일 Monsters 항목. 원본 그림 그대로 사용",
+    "file": "sprites/bat.png",
+    "part": "bat"
+   }
+  ]
+ },
+ "bee": {
+  "n": "들벌",
+  "kind": "LPC 기본 몬스터",
+  "how": "원본 그대로(색 변형 몬스터는 게임에서 색만 바꿈)",
+  "parts": [
+   {
+    "authors": "Charles Sanchez (CharlesGabriel)",
+    "licenses": "CC-BY-SA 3.0, GPL 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles",
+    "notes": "LPC 기본 자료(Liberated Pixel Cup base assets)의 AUTHORS 파일 Monsters 항목. 원본 그림 그대로 사용",
+    "file": "sprites/bee.png",
+    "part": "bee"
+   }
+  ]
+ },
+ "small_worm": {
+  "n": "꼬마 지렁이",
+  "kind": "LPC 기본 몬스터",
+  "how": "원본 그대로(색 변형 몬스터는 게임에서 색만 바꿈)",
+  "parts": [
+   {
+    "authors": "Charles Sanchez (CharlesGabriel)",
+    "licenses": "CC-BY-SA 3.0, GPL 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles",
+    "notes": "LPC 기본 자료(Liberated Pixel Cup base assets)의 AUTHORS 파일 Monsters 항목. 원본 그림 그대로 사용",
+    "file": "sprites/small_worm.png",
+    "part": "small_worm"
+   }
+  ]
+ },
+ "snake": {
+  "n": "풀뱀",
+  "kind": "LPC 기본 몬스터",
+  "how": "원본 그대로(색 변형 몬스터는 게임에서 색만 바꿈)",
+  "parts": [
+   {
+    "authors": "Charles Sanchez (CharlesGabriel)",
+    "licenses": "CC-BY-SA 3.0, GPL 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles",
+    "notes": "LPC 기본 자료(Liberated Pixel Cup base assets)의 AUTHORS 파일 Monsters 항목. 원본 그림 그대로 사용",
+    "file": "sprites/snake.png",
+    "part": "snake"
+   }
+  ]
+ },
+ "big_worm": {
+  "n": "큰 굴지렁이",
+  "kind": "LPC 기본 몬스터",
+  "how": "원본 그대로(색 변형 몬스터는 게임에서 색만 바꿈)",
+  "parts": [
+   {
+    "authors": "Charles Sanchez (CharlesGabriel)",
+    "licenses": "CC-BY-SA 3.0, GPL 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles",
+    "notes": "LPC 기본 자료(Liberated Pixel Cup base assets)의 AUTHORS 파일 Monsters 항목. 원본 그림 그대로 사용",
+    "file": "sprites/big_worm.png",
+    "part": "big_worm"
+   }
+  ]
+ },
+ "eyeball": {
+  "n": "떠도는 눈",
+  "kind": "LPC 기본 몬스터",
+  "how": "원본 그대로(색 변형 몬스터는 게임에서 색만 바꿈)",
+  "parts": [
+   {
+    "authors": "Charles Sanchez (CharlesGabriel)",
+    "licenses": "CC-BY-SA 3.0, GPL 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles",
+    "notes": "LPC 기본 자료(Liberated Pixel Cup base assets)의 AUTHORS 파일 Monsters 항목. 원본 그림 그대로 사용",
+    "file": "sprites/eyeball.png",
+    "part": "eyeball"
+   }
+  ]
+ },
+ "ghost": {
+  "n": "안개 유령",
+  "kind": "LPC 기본 몬스터",
+  "how": "원본 그대로(색 변형 몬스터는 게임에서 색만 바꿈)",
+  "parts": [
+   {
+    "authors": "Charles Sanchez (CharlesGabriel)",
+    "licenses": "CC-BY-SA 3.0, GPL 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles",
+    "notes": "LPC 기본 자료(Liberated Pixel Cup base assets)의 AUTHORS 파일 Monsters 항목. 원본 그림 그대로 사용",
+    "file": "sprites/ghost.png",
+    "part": "ghost"
+   }
+  ]
+ },
+ "man_eater_flower": {
+  "n": "식인꽃",
+  "kind": "LPC 기본 몬스터",
+  "how": "원본 그대로(색 변형 몬스터는 게임에서 색만 바꿈)",
+  "parts": [
+   {
+    "authors": "Charles Sanchez (CharlesGabriel)",
+    "licenses": "CC-BY-SA 3.0, GPL 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles",
+    "notes": "LPC 기본 자료(Liberated Pixel Cup base assets)의 AUTHORS 파일 Monsters 항목. 원본 그림 그대로 사용",
+    "file": "sprites/man_eater_flower.png",
+    "part": "man_eater_flower"
+   }
+  ]
+ },
+ "pumpking": {
+  "n": "호박 도깨비",
+  "kind": "LPC 기본 몬스터",
+  "how": "원본 그대로(색 변형 몬스터는 게임에서 색만 바꿈)",
+  "parts": [
+   {
+    "authors": "Charles Sanchez (CharlesGabriel)",
+    "licenses": "CC-BY-SA 3.0, GPL 3.0",
+    "urls": "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles",
+    "notes": "LPC 기본 자료(Liberated Pixel Cup base assets)의 AUTHORS 파일 Monsters 항목. 원본 그림 그대로 사용",
+    "file": "sprites/pumpking.png",
+    "part": "pumpking"
+   }
+  ]
+ }
+}
