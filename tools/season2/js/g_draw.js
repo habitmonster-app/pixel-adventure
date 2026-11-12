@@ -44,13 +44,7 @@ const _startGameS2=startGame;startGame=function(){S2.fin=null;S2.pend=null;S2.de
 const _tpInfoS2=tpInfo45;tpInfo45=function(){if(S2.end||S2.wave||(S2.bs&&S2.bs.on))return null;return _tpInfoS2();};
 
 // ----- 그리기 -----
-function tgDraw2(){const cx=cam.x,cy=cam.y;X.save();
- for(const e of S2.tg){const p=1-e.t/e.T,c=e.c||'255,150,110',sx=e.x-cx,sy=e.y-cy;if(sx<-500||sx>VW+500||sy<-500||sy>VH+500)continue;X.fillStyle=`rgba(${c},${.12+.22*p})`;X.strokeStyle=`rgba(${c},.9)`;X.lineWidth=1.5;
-  if(e.k==='c'){X.beginPath();X.ellipse(sx,sy,e.r,e.r*.7,0,0,7);X.fill();X.stroke();X.fillStyle=`rgba(${c},.35)`;X.beginPath();X.ellipse(sx,sy,e.r*p,e.r*.7*p,0,0,7);X.fill();}
-  else if(e.k==='f'){X.beginPath();X.moveTo(sx,sy);X.arc(sx,sy,e.r,e.a-e.arc/2,e.a+e.arc/2);X.closePath();X.fill();X.stroke();X.fillStyle=`rgba(${c},.35)`;X.beginPath();X.moveTo(sx,sy);X.arc(sx,sy,e.r*p,e.a-e.arc/2,e.a+e.arc/2);X.closePath();X.fill();}
-  else if(e.k==='l'){X.save();X.translate(sx,sy);X.rotate(e.a);X.fillRect(0,-e.w,e.len,e.w*2);X.strokeRect(0,-e.w,e.len,e.w*2);X.fillStyle=`rgba(${c},.35)`;X.fillRect(0,-e.w,e.len*p,e.w*2);X.restore();}
-  if(e.label){X.font='900 11px system-ui';X.textAlign='center';X.fillStyle='#000';X.fillText(e.label,sx+1,sy+5);X.fillStyle='#fff';X.fillText(e.label,sx,sy+4);}}
- X.restore();}
+// 예고 바닥 표시 tgDraw2 는 i_art.js (그림 판)
 function g2Ground(){const cx=cam.x,cy=cam.y,t=now(),r=R2(RGN.cur),f=f2();X.save();
  // 빙결 지대 (엷은 푸른빛) · 불 곁(따뜻한 고리)
  for(const c of coldRects2()){const sx=c[0]*TS-cx,sy=c[1]*TS-cy,w=(c[2]-c[0]+1)*TS,h=(c[3]-c[1]+1)*TS;if(sx>VW||sx+w<0||sy>VH||sy+h<0)continue;X.fillStyle=`rgba(120,190,255,${.07+.03*Math.sin(t*2)})`;X.fillRect(sx,sy,w,h);}
@@ -63,7 +57,7 @@ function g2Ground(){const cx=cam.x,cy=cam.y,t=now(),r=R2(RGN.cur),f=f2();X.save(
   const ax=tx5(r.altar[0])-cx,ay=ty5(r.altar[1])-cy;X.globalCompositeOperation='lighter';r.stones.forEach((p,i)=>{if(!f['st'+i])return;X.strokeStyle=`rgba(140,200,255,${.3+.15*Math.sin(t*3+i)})`;X.lineWidth=3;X.setLineDash([10,8]);X.lineDashOffset=-t*30;X.beginPath();X.moveTo(tx5(p[0])-cx,ty5(p[1])-cy);X.lineTo(ax,ay);X.stroke();X.setLineDash([]);});X.globalCompositeOperation='source-over';}
  // 세르카 2단계: 진짜 세르카 발밑 초승달 · 3단계 보호막
  const B=S2.bs;if(B&&B.id==='serka'&&B.e&&S2.sk){const e=B.e,sx=e.x-cx,sy=e.y-cy;if(S2.sk.ph===2){X.fillStyle=`rgba(255,240,170,${.75+.2*Math.sin(t*6)})`;X.beginPath();X.arc(sx,sy+4,15,0,7);X.arc(sx+7,sy,13,0,7,true);X.fill();}
-  if(S2.sk.sh){X.strokeStyle=`rgba(170,230,255,${.7+.2*Math.sin(t*5)})`;X.fillStyle='rgba(150,220,255,.18)';X.lineWidth=3;X.beginPath();X.ellipse(sx,sy-40,46,62,0,0,7);X.fill();X.stroke();}
+  if(S2.sk.sh&&!(window.shDraw2&&shDraw2(e,sx,sy))){X.strokeStyle=`rgba(170,230,255,${.7+.2*Math.sin(t*5)})`;X.fillStyle='rgba(150,220,255,.18)';X.lineWidth=3;X.beginPath();X.ellipse(sx,sy-40,46,62,0,0,7);X.fill();X.stroke();}
   if(S2.sk.open>0){X.fillStyle='#ffe08a';X.font='900 13px system-ui';X.textAlign='center';X.fillText('빈틈!',sx,sy-104);}}
  if(B&&B.id==='s2leorn'&&B.e&&B.e.guard>0){const e=B.e;X.strokeStyle='rgba(255,224,138,.9)';X.lineWidth=3;X.beginPath();X.arc(e.x-cx,e.y-cy-40,40,0,7);X.stroke();}
  X.restore();tgDraw2();}

@@ -67,7 +67,7 @@ Object.assign(MOB,{
  s2mk:MB2('s2mk','빙월 기사',55,3800,1150,38,540,'s2m_mk'),
  s2sham:MB2('s2sham','서리 주술사',55,3000,1160,34,540,'s2m_sham',{range:150,shot:'bolt',ssp:260}),
  s2shard:MB2('s2shard','얼음 파편체',55,3300,1120,40,520,'s2m_shard'),
- serka:MB2('serka','빙월사도 세르카',55,66000,2300,30,0,'s2m_serka',{boss:1,sc:1.55,oy:44,g:[0,0]}),
+ serka:MB2('serka','빙월사도 세르카',55,84000,2500,30,0,'s2m_serka',{boss:1,sc:1.55,oy:44,g:[0,0]}),
  s2shadow:MB2('s2shadow','빙월의 그림자',55,22000,1900,40,3600,'s2m_shadow',{elite:1,sc:1.35,oy:30,g:[600,800]})});
 const ID2=['s2rat','s2crow','s2wolf','s2gob','s2crab','s2jelly','s2spider','s2shroom','s2swolf','s2moth','s2sol','s2arch','s2golem','s2orb','s2leo','s2mk','s2sham','s2shard'];
 for(const k of ID2.concat(['s2horn','s2brak','s2arbos','s2leorn','serka','s2shadow']))MOB[k].atk0=MOB[k].atk;

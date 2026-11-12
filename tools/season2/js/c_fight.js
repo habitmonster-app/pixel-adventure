@@ -84,13 +84,13 @@ function serkaTick2(dt,B,e,r,A){const k=S2.sk||(S2.sk={ph:1,brz:[1,1,1],sh:0,ope
  if(k.ph===2&&hp<=.33){k.ph=3;clearDec2();k.dec=[];S2.tg.length=0;k.sh=1;k.brz=[0,0,0];gaSet2(e,'shield');burst(e.x,e.y-40,'#a0e0ff',36,190,2,60);
   sayAs('빙월사도 세르카',['…얼어붙어라. 불도, 맹세도.','(세르카가 얼음 보호막을 둘렀어요. 제단 둘레 화로 세 개가 꺼졌어요. 화로를 다시 켜면 보호막이 깨져요!)']);sync2();return;}
  if(k.ph===2){k.swapT-=dt;if(k.swapT<=0&&k.dec.length){k.swapT=7;const L=[e,...k.dec.filter(d=>mobs.includes(d))],P0=L.map(m=>[m.x,m.y]);for(let i=P0.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[P0[i],P0[j]]=[P0[j],P0[i]];}
-   L.forEach((m,i)=>{burst(m.x,m.y-40,'#c0b0ff',10,90,2,20);m.x=P0[i][0];m.y=P0[i][1];});pop(e.x,e.y-90,'자리를 바꿨어요!','#d0c8ff');}
-  k.mirT-=dt;if(k.mirT<=0){k.mirT=3.6;const m=r.mirrors[(Math.random()*2)|0],mx=tx5(m[0]),my=ty5(m[1])-30,a=Math.atan2(hero.y-my,hero.x-mx);tg2({k:'l',x:mx,y:my,a,len:700,w:22,T:1.15,dmg:Math.round(A*1.1),cold:1,c:'170,220,255',label:'거울 광선'});}}
+   L.forEach((m,i)=>{burst(m.x,m.y-40,'#c0b0ff',10,90,2,20);m.x=P0[i][0];m.y=P0[i][1];});k.dec.forEach(d=>d._rev=0);pop(e.x,e.y-90,'자리를 바꿨어요!','#d0c8ff');}
+  k.mirT-=dt;if(k.mirT<=0){k.mirT=3.0;const m=r.mirrors[(Math.random()*2)|0],mx=tx5(m[0]),my=ty5(m[1])-30,a=Math.atan2(hero.y-my,hero.x-mx);tg2({k:'l',x:mx,y:my,a,len:700,w:22,T:1.15,dmg:Math.round(A*1.1),cold:1,c:'170,220,255',label:'거울 광선'});}}
  if(k.ph===3&&k.sh&&k.brz.every(Boolean)){k.sh=0;k.open=4;e.hold=4;S2.tg.length=0;burst(e.x,e.y-40,'#ffd080',40,200,2,70);shake=Math.max(shake,4);pop(e.x,e.y-90,'보호막이 깨졌어요! 기절!','#ffe08a');return;}
- B.cd-=dt;if(B.cd>0)return;B.cd=rnd(2.6,3.4)*(k.ph===3?.9:1)+(k.sh?1.2:0);
+ B.cd-=dt;if(B.cd>0)return;B.cd=rnd(2.2,2.9)*(k.ph===3?.9:1)+(k.sh?1.0:0);
  const L=k.ph===1?['thrust','sweep','wave']:k.ph===2?['thrust','wave']:k.sh?['sweep','wave']:['big','sweep','wave','big'];sAtk2(L[Math.random()*L.length|0],e,A);}
 const _hurtS2=hurt;hurt=function(m,dmg){
- if(m&&m.dec2){pop(m.x,m.y-70,'분신이에요! 발밑 초승달을 찾아요','#d0c8ff');return;}
+ if(m&&m.dec2){pop(m.x,m.y-70,'분신이에요! 발밑 초승달을 찾아요','#d0c8ff');m._rev=1;if(hT===m)hT=null;return;}
  if(m&&m.b2==='serka'&&m.st!=='dead'){const k=S2.sk,f=f2();if(m.sup)return;
   if(k&&k.sh){pop(m.x,m.y-70,'보호막! 화로 3개를 다시 켜요','#a0e0ff');return;}
   if(k&&k.open>0)dmg=Math.round(dmg*1.5);
@@ -117,3 +117,6 @@ function cannonTick2(dt){if(RGN.cur!=='D141'||S2.end)return;const r=R2('D141'),f
   S2.cn[i]-=dt;if(S2.cn[i]>0)return;S2.cn[i]=rnd(3.0,3.8);pop(x,y-60,'얼음포 발사!','#bfefff');tg2({k:'c',x:hero.x,y:hero.y,r:64,T:1.25,dmg:1000,cold:1,c:'150,220,255',label:'포탄'});});}
 // 퀘스트에 필요한 몬스터가 다시 나올 때 조금 더 자주 나오게 (기존 questMob 방식 그대로)
 const _questMobS2=questMob;questMob=function(){const q=qCur();if(q&&q.ch>=11&&q.goal&&q.goal.f2&&P.q.st==='go'){for(const k of q.goal.f2){if(KQ2[k]&&cnt2(k)<need2(k))return KQ2[k][0];if(k==='key14'&&cnt2(k)<3)return 's2sol';if(k==='gear14'&&cnt2(k)<5)return 's2golem';}return null;}return _questMobS2();};
+
+// 자동 사냥: 한 번 때려서 분신으로 드러난 상대는 다음 자리바꾸기 전까지 다시 고르지 않음 (분신만 계속 때리며 멈추던 문제)
+const _pickT2=pickTarget;pickTarget=function(){const L=mobs.filter(m=>m.dec2&&m._rev),st=L.map(m=>m.st);L.forEach(m=>m.st='dead');try{return _pickT2();}finally{L.forEach((m,i)=>m.st=st[i]);}};
