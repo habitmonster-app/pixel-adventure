@@ -11762,3 +11762,39 @@ const s2=document.createElement('style');s2.textContent=`
 `;document.head.appendChild(s2);
 })();
 </script>
+<script>
+// ===== 맞는 느낌: 주인공이 몬스터에게 맞을 때 (숫자만 바꾸면 돼요) =====
+// 밀림: 뒤로 밀려나는 힘(0이면 안 밀림) · 빨강: 몸이 빨갛게 번쩍이는 시간(초) · 화면: 화면 가장자리 빨간빛 세기(0~1) · 흔들: 화면 흔들림(0이면 없음)
+// 큰 공격(최대 체력의 12% 이상)은 1.5배로 세게 느껴져요.
+const 맞는느낌={밀림:110,빨강:.18,화면:.45,흔들:1.2};
+(function(){
+ const HF={kx:0,ky:0,kv:0,red:0,redT:.18,vig:0,vigA:0};
+ const tc=document.createElement('canvas');tc.width=tc.height=128;const tx=tc.getContext('2d');tx.imageSmoothingEnabled=false;
+ const _hd=heroDamage;heroDamage=function(d){const h0=P?P.hp:0;const r=_hd.apply(this,arguments);
+  try{if(!P||!(P.hp<h0))return r;const S=맞는느낌,mx=stats().hp||1,big=(h0-P.hp)>=mx*.12?1.5:1;
+   if(S.밀림>0&&!DASH&&!(S6&&S6.ride)&&hero.st!=='dead'){let src=null,best=150;for(const m of mobs){if(m.st==='dead'||(m.m&&m.m.dummy))continue;const q=Math.hypot(m.x-hero.x,m.y-hero.y);if(q<best){best=q;src=m;}}
+    let dx,dy;if(src){dx=hero.x-src.x;dy=hero.y-src.y;}else{const v=DV[hero.d]||[0,1];dx=-v[0];dy=-v[1];}
+    const l=Math.hypot(dx,dy)||1;HF.kx=dx/l;HF.ky=dy/l;HF.kv=S.밀림*big*(src&&src.m&&src.m.boss?.8:1);}
+   if(S.빨강>0){HF.redT=S.빨강*big;HF.red=HF.redT;}
+   if(S.화면>0){HF.vigA=Math.min(1,S.화면*big);HF.vig=.35*big;}
+   if(S.흔들>0)shake=Math.max(shake,S.흔들*big);}catch(e){}
+  return r;};
+ const _u=update;update=function(dt){_u.apply(this,arguments);if(!(dt>0))return;
+  if(HF.red>0)HF.red-=dt;if(HF.vig>0)HF.vig-=dt;
+  if(HF.kv>5){if(hero.st==='dead'||DASH||talk){HF.kv=0;return;}
+   const nx=hero.x+HF.kx*HF.kv*dt,ny=hero.y+HF.ky*HF.kv*dt;if(!blocked(hero,nx,hero.y))hero.x=nx;if(!blocked(hero,hero.x,ny))hero.y=ny;HF.kv*=Math.pow(.0005,dt);}};
+ // 주인공 몸 빨갛게 번쩍
+ const _dh=drawHero;drawHero=function(e){_dh(e);if(e!==hero||HF.red<=0||!heroSheet||e.st==='dead'||ROLL)return;
+  const sx=rp87(e.x-cam.x),sy=rp87(e.y-cam.y);let a;
+  if(e.st==='atk')a=[e.f*128,576+e.d*128];else if(e.run&&e.st==='walk')a=[((e.f+7)%8)*128,1088+e.d*128];else a=[e.f*128,e.d*128];
+  tx.globalCompositeOperation='source-over';tx.clearRect(0,0,128,128);tx.drawImage(heroSheet,a[0],a[1],128,128,0,0,128,128);
+  tx.globalCompositeOperation='source-atop';tx.fillStyle='#ff2a1a';tx.fillRect(0,0,128,128);
+  X.save();X.globalAlpha=Math.min(1,HF.red/HF.redT)*.7;X.drawImage(tc,sx-64,sy-94);X.restore();};
+ // 화면 가장자리 빨간빛
+ const _dr=draw;draw=function(){_dr.apply(this,arguments);if(HF.vig<=0||!HF.vigA)return;
+  const k=Math.min(1,HF.vig/.35),W=VW,H=VH,g=X.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.hypot(W,H)*.58);
+  g.addColorStop(0,'rgba(200,20,10,0)');g.addColorStop(1,'rgba(200,20,10,'+(HF.vigA*k).toFixed(3)+')');
+  X.save();X.globalAlpha=1;X.globalCompositeOperation='source-over';X.fillStyle=g;X.fillRect(0,0,W,H);X.restore();};
+ window.HF124=HF;
+})();
+</script>
