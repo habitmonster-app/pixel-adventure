@@ -11711,6 +11711,14 @@ body.ttx #sel>*:not(#selbg){visibility:hidden}
 #ttx .tt-tip.in{opacity:1;transform:none}#ttx .tt-tip b{color:#e8c06a;font-size:10px;letter-spacing:.12em;margin-right:4px}
 #ttx .tt-lang{position:absolute!important;right:max(12px,env(safe-area-inset-right));top:max(10px,env(safe-area-inset-top))}
 @media (orientation:portrait){#ttx .tt-top{margin-top:46px}}
+#ttx.story .tt-top,#ttx.story .tt-bt,#ttx.story .tt-lang{opacity:0;pointer-events:none;transition:opacity .4s}
+#ttx .tt-top,#ttx .tt-bt,#ttx .tt-lang{transition:opacity .4s}
+#ttx .tt-story{position:absolute!important;inset:0;display:flex;align-items:flex-start;justify-content:center;padding-top:14vh;cursor:pointer;background:linear-gradient(rgba(4,4,10,.72),rgba(4,4,10,.25) 55%,transparent 75%)}
+#ttx .tt-st{max-width:min(620px,88vw);text-align:center;display:flex;flex-direction:column;gap:12px}
+#ttx .tt-st p{margin:0;font-size:clamp(16px,3.6vmin,22px);font-weight:700;line-height:1.6;color:#f3e6c4;text-shadow:0 2px 4px #000,0 0 14px rgba(255,80,50,.35);opacity:0;transform:translateY(6px);transition:opacity .45s,transform .45s}
+#ttx .tt-st p.in{opacity:1;transform:none}
+#ttx .tt-st small{font-size:11px;color:rgba(230,220,200,.5);letter-spacing:.1em}
+#ttx .tt-skip{position:absolute;right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom))}
 @media (prefers-reduced-motion:reduce){#ttx .tt-shine,#ttx .tt-plate,#ttx .tt-go{animation:none}}
 #ttx .tt-bt{display:flex;flex-direction:column;align-items:center;gap:8px}
 #ttx .tt-go{font-family:inherit;min-width:min(300px,70vw);padding:12px 26px;font-size:clamp(17px,3.6vmin,22px);font-weight:900;letter-spacing:.3em;padding-left:calc(26px + .3em);color:#2a1606;cursor:pointer;
@@ -11738,7 +11746,7 @@ function ttxDraw(){if(!T.on)return;T.raf=requestAnimationFrame(ttxDraw);const cv
  // 마계문 위치 (배경 #selbg 좌표 → 화면)
  const sc=SBG.W?W/SBG.W:1,G=SBG.gate?{x:SBG.gate.x*sc,y:(SBG.gate.y+SBG.gate.h*.5)*sc}:{x:W*.7,y:H*.6};
  const bt=document.querySelector('#ttx .tt-go'),bTop=bt?bt.getBoundingClientRect().top*dpr:H*.75;
- const gy=port?bTop-14*u:Math.min(H*.9,bTop+40*u);// 발이 닿는 땅
+ const bg2=document.querySelector('#ttx .tt-bt'),gTop=bg2?bg2.getBoundingClientRect().top*dpr:bTop;const gy=port?gTop-10*u:Math.min(H*.9,bTop+40*u);// 발이 닿는 땅
  // 1) 박쥐: 하늘을 가로질러 날아요
  if(T.bats.length<(port?3:5)&&Math.random()<.012)T.bats.push({x:Math.random()<.5?-20:W+20,y:H*(.12+Math.random()*.3),v:(30+Math.random()*30)*u,s:.8+Math.random()*.5,p:Math.random()*9});
  const bat=MIMG.cre_bat;
@@ -11769,6 +11777,19 @@ function ttxDraw(){if(!T.on)return;T.raf=requestAnimationFrame(ttxDraw);const cv
 const TIPS=[['장비를 +6 이상 강화하면 무기가 빛나요','Weapons glow at +6 and above'],['광고를 보면 다이아 5개, 하루 10번까지','Watch an ad for 5 Diamonds, up to 10 a day'],['쓰러지면 부활권으로 그 자리에서 일어나요','Use a Revive to get up right where you fell'],['다이아 상점의 묶음은 따로 사는 것보다 싸요','Diamond Shop bundles cost less than single items'],['마을 사람들에게 말을 걸면 퀘스트를 받아요','Talk to villagers to get quests'],['보스는 공격 전에 붉은 표시를 보여 줘요','Bosses show a red warning before they strike']];
 function ttxTip(){const el=document.querySelector('#ttx .tt-tip');if(!el||!T.on)return;const s=TIPS[T.tip%TIPS.length];T.tip++;el.classList.remove('in');
  setTimeout(()=>{setH(el,'<b>TIP</b> '+TX(s[0],s[1]));el.classList.add('in');},250);setTimeout(ttxTip,4500);}
+// 이야기(프롤로그): 시작 화면 그림 위에 한 줄씩. 누르면 다음, '건너뛰기'로 끝
+const STORY=[['(뎅… 뎅… 샘빛 마을의 종이 무겁게 울려요)','(Dong… dong… The bell of Sunspring Village tolls heavily)'],
+ ['새벽하늘이 붉게 물들더니, 닫혀 있던 마계문이 다시 열렸어요.','The dawn sky turned red, and the sealed Demon Gate opened again.'],
+ ['문 너머에서 마물들이 쏟아져 나와 마을로 다가와요.','Monsters pour out of the gate and close in on the village.'],
+ ['열린 문을 닫을 수 있는 건 봉인 기사단뿐이에요.','Only the Seal Knights can close an open gate.'],
+ ['새로운 기사여, 이제 당신의 차례예요.','New knight, now it is your turn.']];
+function ttxStory(done){const e=document.getElementById('ttx');if(!e)return done();e.classList.add('story');
+ let i=-1,tm=0;const box=document.createElement('div');box.className='tt-story';
+ setH(box,`<div class="tt-st"><p></p><small>${TX('화면을 누르면 다음','Tap to continue')}</small></div><button class="tt-sm tt-skip">${TX('건너뛰기 ▸▸','Skip ▸▸')}</button>`);e.appendChild(box);
+ const P=box.querySelector('p'),end=()=>{clearTimeout(tm);box.remove();e.classList.remove('story');done();};
+ const next=()=>{clearTimeout(tm);i++;if(i>=STORY.length){end();return;}P.classList.remove('in');
+  setTimeout(()=>{setH(P,TX(STORY[i][0],STORY[i][1]));P.classList.add('in');},180);tm=setTimeout(next,3600);};
+ box.onclick=next;box.querySelector('.tt-skip').onclick=ev=>{ev.stopPropagation();end();};next();}
 function ttxGo(){if(!T.on)return;T.on=0;const e=document.getElementById('ttx');if(e){e.classList.add('out');setTimeout(()=>e.remove(),480);}
  document.body.classList.remove('ttx');cancelAnimationFrame(T.raf);try{if(typeof drawSelect==='function')drawSelect();}catch(e){}}
 function ttxShow(){if(document.getElementById('ttx')||playing)return;T.on=1;T.t0=performance.now();T.bats=[];document.body.classList.add('ttx');
@@ -11779,10 +11800,14 @@ function ttxShow(){if(document.getElementById('ttx')||playing)return;T.on=1;T.t0
  <div class="tt-tag">${TX('열린 마계문을 닫아라','Close the open Demon Gates')}</div></div>
  <div class="tt-sp"></div>
  <div class="tt-bt">${card}<button class="tt-go">${cur?TX('이어하기','CONTINUE'):TX('시작하기','START')}</button>
+ ${cur?`<div class="tt-row"><button class="tt-sm" data-s="1">${TX('캐릭터 선택','Characters')}</button><button class="tt-sm" data-p="1">${TX('이야기 보기','Prologue')}</button></div>`:''}
  <div class="tt-tip"></div></div>
  <button class="tt-sm tt-lang" data-l="1">🌐 ${EN()?'한국어':'English'}</button>`);
  document.body.appendChild(e);
- e.querySelector('.tt-go').onclick=ttxGo;
+ // 캐릭터가 있으면 '이어하기' = 마지막 캐릭터로 바로 게임, 없으면 '시작하기' = 이야기(프롤로그) → 캐릭터 만들기
+ e.querySelector('.tt-go').onclick=()=>{if(cur){ttxGo();try{startGame();}catch(err){}}else ttxStory(ttxGo);};
+ const bs=e.querySelector('[data-s]');if(bs)bs.onclick=ttxGo;
+ const bp=e.querySelector('[data-p]');if(bp)bp.onclick=()=>ttxStory(()=>{});
  e.querySelector('[data-l]').onclick=ev=>{ev.stopPropagation();if(window.setLang)window.setLang(EN()?'ko':'en');};
  ttxSheets();ttxDraw();T.tip=Math.random()*TIPS.length|0;ttxTip();}
 // 게임 안 메뉴의 '캐릭터 선택'으로 돌아올 때는 시작 화면 없이 바로 선택창
