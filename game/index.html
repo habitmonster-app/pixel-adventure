@@ -11867,3 +11867,35 @@ const 무기빛={색:[[9,'255,70,50'],[6,'255,220,120']],세기:.55,빠르기:3}
  const _bh=buildHero;buildHero=async function(){WG.key='';WG.back=WG.front=WG.aback=WG.afront=null;return _bh.apply(this,arguments);};
 })();
 </script>
+<script>
+// ===== 방어구 빛: 방어구를 +9 이상 강화하면 그 부위 둘레가 은은하게 빛나요 (숫자만 바꾸면 돼요) =====
+// 시작: 이 단계부터 빛남 · 색 · 세기(0~1) · 빠르기(깜빡임)
+const 방어구빛={시작:9,색:'255,70,50',세기:.28,빠르기:2};
+(function(){
+ const NOT={weapon:1,ring:1,ear:1,neck:1,face:1};
+ let AG={sig:'',cv:null};
+ async function build(sig,keys){try{
+  const cv=document.createElement('canvas');cv.width=9*128;cv.height=576+512+512;const c=cv.getContext('2d');c.imageSmoothingEnabled=false;
+  const n=(heroSheet&&heroSheet.meta&&heroSheet.meta.n)||6,wk=P.eq.weapon,a=(wk&&GEAR[wk]&&GEAR[wk].a)||'slash';
+  for(const key of keys){const g=GEAR[key];if(!g)continue;const im=await tinted(g.src||key,g.tc);if(!im)continue;const zs=g.z||[0];
+   zs.forEach((z,j)=>{const y0=j*17*64;
+    for(let r=0;r<4;r++)for(let i=0;i<9;i++)c.drawImage(im,i*64,y0+r*64,64,64,i*128+32,r*128+32,64,64);
+    for(let r=0;r<4;r++)for(let i=0;i<n;i++)c.drawImage(im,i*64,y0+(ROWA[a]+r)*64,64,64,i*128+32,576+r*128+32,64,64);
+    {const ry=zs.length*17*64+j*256;if(im.height>=ry+256)for(let r=0;r<4;r++)for(let i=0;i<8;i++)c.drawImage(im,i*64,ry+r*64,64,64,i*128+32,1088+r*128+32,64,64);}});}
+  c.globalCompositeOperation='source-in';c.fillStyle='rgb('+방어구빛.색+')';c.fillRect(0,0,cv.width,cv.height);
+  const gl=document.createElement('canvas');gl.width=cv.width;gl.height=cv.height;const q=gl.getContext('2d');q.imageSmoothingEnabled=false;
+  for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){const r=Math.hypot(dx,dy);if(r>2.2)continue;q.globalAlpha=r<=1.1?.8:.35;q.drawImage(cv,dx,dy);}
+  if(AG.sig===sig)AG.cv=gl;}catch(e){}}
+ function frame(e){if(e.st==='atk')return [e.f*128,576+e.d*128];if(e.run&&e.st==='walk')return [((e.f+7)%8)*128,1088+e.d*128];return [e.f*128,e.d*128];}
+ const _dh=drawHero;drawHero=function(e){
+  if(e!==hero||!P||!P.eq||e.st==='dead'||ROLL||!heroSheet)return _dh(e);
+  const keys=[];for(const s in P.eq){const k=P.eq[s];if(k&&!NOT[s]&&enhLv(k)>=방어구빛.시작)keys.push(k);}
+  if(!keys.length)return _dh(e);
+  const sig=keys.join('|')+'#'+(P.eq.weapon||'');
+  if(AG.sig!==sig){AG.sig=sig;AG.cv=null;build(sig,keys);}
+  if(AG.cv){const sx=rp87(e.x-cam.x),sy=rp87(e.y-cam.y),t=performance.now()/1000,p=.6+.4*Math.sin(t*방어구빛.빠르기),[fx,fy]=frame(e);
+   X.save();X.globalCompositeOperation='lighter';X.globalAlpha=방어구빛.세기*p;X.drawImage(AG.cv,fx,fy,128,128,sx-64,sy-94,128,128);X.restore();}
+  _dh(e);};
+ const _bh=buildHero;buildHero=async function(){AG.sig='';AG.cv=null;return _bh.apply(this,arguments);};
+})();
+</script>
