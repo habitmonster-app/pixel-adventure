@@ -9936,7 +9936,7 @@ if(!t||t.off||!P||hero.st==='dead'||(typeof talk!=='undefined'&&talk&&TUT.id!=='
  if(S&&S.done()){tutDone101(S.id);S=null;}
  if(!S){for(const s of TSTEP101){if(t.d[s.id])continue;if(!s.later){if(s.when()){S=s;break;}else{if(s.id==='talk'&&P.q&&P.q.i>0){t.d[s.id]=1;continue;}break;}}
    else if(s.when()){S=s;break;}}
-  if(S&&S.id!==TUT.id){TUT.id=S.id;TUT.x0=hero.x;TUT.y0=hero.y;TUT.mapT=0;if(S.done()){tutDone101(S.id);el.style.display='none';return;}}}
+  if(S&&S.id!==TUT.id){TUT.id=S.id;TUT.x0=hero.x;TUT.y0=hero.y;TUT.mapT=0;TUT.atk=0;TUT.drank=0;TUT.equip=0;TUT.crafted=0;/* 안내가 뜨기 전에 눌러 본 것은 세지 않아요 */if(S.done()){tutDone101(S.id);el.style.display='none';return;}}}
  if(!S){el.style.display='none';return;}
  if(S.id==='map'&&tutOpen('pMap'))TUT.mapT=(TUT.mapT||0)+.3;
  const sel=S.tg(),tg=sel&&document.querySelector(sel);const pan=anyPan101();
@@ -9952,6 +9952,8 @@ if(!t||t.off||!P||hero.st==='dead'||(typeof talk!=='undefined'&&talk&&TUT.id!=='
   bx=Math.max(8,Math.min(V.width-bw-8,bx));bub.style.left=bx+'px';bub.style.top=by+'px';}
  else{ring.style.display='none';const bw=Math.min(260,V.width-24);bub.style.left=(V.width-bw)/2+'px';bub.style.top='12px';}}
 setInterval(()=>{try{tutTick101();}catch(e){}},300);
+// 캐릭터를 새로 시작하거나 바꾸면 안내 기록(이번에 켠 동안 센 것)을 처음으로
+{const _sgT=startGame;startGame=function(){Object.assign(TUT,{id:null,kills:0,atk:0,drank:0,equip:0,crafted:0,qgo:0,mapT:0});return _sgT.apply(this,arguments);};}
 // 할 일 기록
 {const q=$('qtrack');if(q)q.addEventListener('pointerdown',()=>{TUT.qgo=1;});}
 {const _a=doAttack;doAttack=function(){TUT.atk++;return _a.apply(this,arguments);};}
