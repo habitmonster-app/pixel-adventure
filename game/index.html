@@ -9893,7 +9893,7 @@ function faceFor100(name,line){line=String(line||'');name=String(name||'');
 // 메뉴 '튜토리얼' 버튼으로 다시 켜기
 const TUT={st:null,id:null,x0:0,y0:0,kills:0,atk:0,drank:0,equip:0,learned:0,shown:0};
 const tutOpen=id=>{const e=$(id);return !!(e&&e.offsetParent&&getComputedStyle(e).display!=='none');};
-const anyPan101=()=>['pChar','pInv','pStat','facM','pFac','pBag','pShop','pMap','pSkill','pCraft','pMenu','pQuest'].some(tutOpen);
+const anyPan101=()=>['pChar','pInv','pStat','facM','pFac','pBag','pShop','pMap','pSkill','pCraft','pMenu','pQuest','pAtt'].some(tutOpen);
 const hpPots101=()=>{const p=P&&P.pot||{};let n=0;for(const k in p)if(POT[k]&&!POT[k].mp&&!POT[k].spec&&!POT[k].cure&&!POT[k].sp)n+=p[k]|0;return n;};
 const bagGear101=()=>{if(!P||!P.bag)return 0;const eq=Object.values(P.eq||{});return Object.keys(P.bag).filter(k=>P.bag[k]>0&&GEAR[k]&&!eq.includes(k)&&INST81[k]&&INST81[k].src==='drop').length;};
 const mobNear101=()=>mobs.some(m=>m.st!=='dead'&&m.m&&!m.m.dummy&&Math.hypot(m.x-hero.x,m.y-hero.y)<150);
@@ -11783,7 +11783,7 @@ const TIPS=[['장비를 +6 이상 강화하면 무기가 빛나요','Weapons glo
 function ttxTip(){const el=document.querySelector('#ttx .tt-tip');if(!el||!T.on)return;const s=TIPS[T.tip%TIPS.length];T.tip++;el.classList.remove('in');
  setTimeout(()=>{setH(el,'<b>TIP</b> '+TX(s[0],s[1]));el.classList.add('in');},250);setTimeout(ttxTip,4500);}
 // 이야기(프롤로그): 시작 화면 그림 위에 한 줄씩. 누르면 다음, '건너뛰기'로 끝
-const STORY=[['(뎅… 뎅… 샘빛 마을의 종이 무겁게 울려요)','(Dong… dong… The bell of Sunspring Village tolls heavily)'],
+const STORY=[['(뎅… 뎅… 샘빛 마을의 종이 무겁게 울려요)','(Dong… dong… The bell of Springlight Village tolls heavily)'],
  ['새벽하늘이 붉게 물들더니, 닫혀 있던 마계문이 다시 열렸어요.','The dawn sky turned red, and the sealed Demon Gate opened again.'],
  ['문 너머에서 마물들이 쏟아져 나와 마을로 다가와요.','Monsters pour out of the gate and close in on the village.'],
  ['열린 문을 닫을 수 있는 건 봉인 기사단뿐이에요.','Only the Seal Knights can close an open gate.'],
