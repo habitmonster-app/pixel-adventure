@@ -11734,10 +11734,16 @@ body.ttx #sel>*:not(#selbg){visibility:hidden}
 const T={on:0,hero:[],raf:0,t0:performance.now(),mon:[],bats:[],tip:0};
 // v2 (2026-11-13 사용자 '인트로가 허전해'): 세 기사가 왼쪽에서 마계문을 보고 서 있고, 문에서 몬스터가 걸어 나와 맞서요.
 //  하늘에 박쥐, 땅에 안개, 로고에 빛이 지나가고, 저장된 캐릭터 카드와 바뀌는 팁 한 줄.
+// 세 기사는 장비를 다 입은 모습 (사용자 2026-11-13). 게임에 있는 장비 그림만 써요.
+const TEQ={warrior:{head:'hat_helmet_bascinet',armor:'torso_armour_plate',shoulder:'shoulders_pauldrons',arm:'arms_armour',legs:'legs_armour',feet:'feet_armour',cape:'capeR',shield:'shield_crusader',weapon:'w_glowsword'},
+ rogue:{head:'hat_hood_cloth',armor:'torso_armour_leather',shoulder:'bauldron',arm:'arms_bracers',legs:'pantsB',feet:'bootsB',belt:'belt_leather',cape:'capeG',back:'quiver',weapon:'w_bowD'},
+ mage:{head:'hat_magic_celestial',armor:'tabW',legs:'pantsU',feet:'feet_boots_fold',belt:'belt_robe',cape:'capeBl',neck:'nAmulet',weapon:'w_crystal'}};
 const TROOP=[['rogue',{hs:2,hc:1,sk:1,bd:0}],['warrior',{hs:0,hc:0,sk:0,bd:0}],['mage',{hs:4,hc:4,sk:2,bd:0}]];
-const MONS=['mon_vampb','mon_wraith','mon_gobclub','mon_hound9'],MIMG={};
-MONS.concat(['cre_bat']).forEach(k=>{const im=(typeof IMG!=='undefined'&&IMG[k]&&IMG[k].src)?IMG[k]:new Image();if(!im.src)im.src='m/'+k+'.png';MIMG[k]=im;});
-async function ttxSheets(){for(let i=0;i<TROOP.length;i++){const [c,lk]=TROOP[i];try{const r=await buildSheet({...lk},CLASS[c].eq);T.hero[i]=r.sheet;}catch(e){try{const r=await buildSheet({hs:0,hc:0,sk:0,bd:0},CLASS[c].eq);T.hero[i]=r.sheet;}catch(e2){}}}}
+// 마계문에서 걸어 나오는 보스 (칸 크기 · 발 위치 · 걷기 칸 0~3 / 서기 칸 7, 줄 1=왼쪽 2=아래)
+const BOSS=[{k:'boss_tking',cw:240,ch:190,fy:187,sc:0},{k:'boss_gatek9',cw:180,ch:210,fy:207},{k:'boss_versh',cw:270,ch:210,fy:207}],MONS=[],MIMG={};
+BOSS.forEach(b=>{const im=new Image();im.src='m/'+b.k+'.png';MIMG[b.k]=im;});
+['cre_bat'].forEach(k=>{const im=(typeof IMG!=='undefined'&&IMG[k]&&IMG[k].src)?IMG[k]:new Image();if(!im.src)im.src='m/'+k+'.png';MIMG[k]=im;});
+async function ttxSheets(){for(let i=0;i<TROOP.length;i++){const [c,lk]=TROOP[i];try{const eq={};for(const s in TEQ[c])if(GEAR[TEQ[c][s]])eq[s]=TEQ[c][s];const r=await buildSheet({...lk},Object.keys(eq).length?eq:CLASS[c].eq);T.hero[i]=r.sheet;}catch(e){try{const r=await buildSheet({hs:0,hc:0,sk:0,bd:0},CLASS[c].eq);T.hero[i]=r.sheet;}catch(e2){}}}}
 const ok=im=>im&&im.complete&&im.naturalWidth;
 function ttxDraw(){if(!T.on)return;T.raf=requestAnimationFrame(ttxDraw);const cv=document.querySelector('#ttx canvas');if(!cv)return;
  const dpr=Math.min(2,window.devicePixelRatio||1),W=Math.round(innerWidth*dpr),H=Math.round(innerHeight*dpr);if(!W||!H)return;
@@ -11752,18 +11758,15 @@ function ttxDraw(){if(!T.on)return;T.raf=requestAnimationFrame(ttxDraw);const cv
  const bat=MIMG.cre_bat;
  for(let i=T.bats.length-1;i>=0;i--){const b=T.bats[i];if(b.dir==null)b.dir=b.x<0?1:-1;b.x+=b.dir*b.v/60;b.y+=Math.sin(t*3+b.p)*.4*u;if(b.x<-40||b.x>W+40){T.bats.splice(i,1);continue;}
   if(ok(bat)){const f=Math.floor(t*10+b.p)%4,row=b.dir>0?3:1,s=32*b.s*u*1.1;g.globalAlpha=.85;g.drawImage(bat,f*32,row*32,32,25,b.x-s/2,b.y-s/2,s,s*25/32);g.globalAlpha=1;}}
- // 2) 몬스터: 마계문에서 하나씩 나와 자리까지 걸어와요
- const MK=1.25*u;// 64칸 몬스터 배율
- const slots=port?[[.66,-10],[.88,-14],[.77,-2],[.95,0]]:[[.74,-10],[.83,2],[.91,-12],[.97,4]];
- MONS.forEach((k,i)=>{const im=MIMG[k];const st=.5+i*.9,el=t-st;if(el<0)return;
-  const tx=W*slots[i][0],ty=gy+slots[i][1]*u-(port?0:6*u),dur=2.6,p=Math.min(1,el/dur);
-  const x=G.x+(tx-G.x)*p,y=G.y+(ty-G.y)*p,walk=p<1;
-  const a=Math.min(1,el/.6);g.globalAlpha=a;
-  g.fillStyle='rgba(0,0,0,.45)';g.beginPath();g.ellipse(x,y,13*MK,3.5*MK,0,0,7);g.fill();
-  if(ok(im)){const row=walk?(tx<G.x?1:2):1,f=walk?1+Math.floor(el*9)%8:0,bob=walk?0:((t+i*.4)%1.4<.7?0:1);
-   // 문에서 막 나올 땐 붉게 빛나요
-   g.drawImage(im,f*64,row*64,64,64,Math.round(x-32*MK),Math.round(y-(58-bob)*MK),Math.round(64*MK),Math.round(64*MK));
-   if(el<1.2){g.globalCompositeOperation='lighter';g.globalAlpha=(1-el/1.2)*.6;g.drawImage(im,f*64,row*64,64,64,Math.round(x-32*MK),Math.round(y-(58-bob)*MK),Math.round(64*MK),Math.round(64*MK));g.globalCompositeOperation='source-over';}}
+ // 2) 보스: 마계문에서 하나씩 붉게 빛나며 걸어 나와 자리에 서요 (마지막이 베르샤르)
+ const BS=Math.max(.6,(port?.7:.78)*u);
+ const slots=port?[[.88,-4],[.66,-10],[.8,6]]:[[.93,2],[.74,-10],[.85,8]];
+ BOSS.forEach((B,i)=>{const im=MIMG[B.k];const st=.5+i*1.3,el=t-st;if(el<0)return;
+  const tx=W*slots[i][0],ty=gy+slots[i][1]*u,dur=2.8,p=Math.min(1,el/dur),x=G.x+(tx-G.x)*p,y=G.y+(ty-G.y)*p,walk=p<1;
+  g.globalAlpha=Math.min(1,el/.6);g.fillStyle='rgba(0,0,0,.45)';g.beginPath();g.ellipse(x,y,B.cw*.24*BS,B.cw*.06*BS,0,0,7);g.fill();
+  if(ok(im)){const row=walk&&p<.35?2:1,col=walk?Math.floor(el*6)%4:(B.sc!=null?B.sc:7),w=Math.round(B.cw*BS),h=Math.round(B.ch*BS),dx=Math.round(x-w/2),dy=Math.round(y-B.fy*BS);
+   g.drawImage(im,col*B.cw,row*B.ch,B.cw,B.ch,dx,dy,w,h);
+   if(el<1.4){g.globalCompositeOperation='lighter';g.globalAlpha=(1-el/1.4)*.65;g.drawImage(im,col*B.cw,row*B.ch,B.cw,B.ch,dx,dy,w,h);g.globalCompositeOperation='source-over';}}
   g.globalAlpha=1;});
  // 3) 세 기사: 왼쪽에서 문을 보고 서 있어요 (가운데 전사가 앞)
  const k=Math.max(1,(port?1.8:1.6)*u),hx=port?[.1,.32,.21]:[.08,.25,.165],hy=port?[-8,2,-16]:[-8,4,-16],hd=[2,0,1];// 그리는 순서: 마법사·도적 뒤, 전사 앞
