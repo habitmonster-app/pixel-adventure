@@ -7,7 +7,10 @@
  const CFG={
   // 진짜 AdMob 보상형 광고 (2026-11-08 등록: 봉인 기사단 Android / iOS)
   testing:false,
-  rewardedId:IOS?'ca-app-pub-6540694097552852/1559237981':'ca-app-pub-6540694097552852/7448044827'
+  rewardedId:IOS?'ca-app-pub-6540694097552852/1559237981':'ca-app-pub-6540694097552852/7448044827',
+  // 챕터 광고(전면 광고, v136). ⚠ 아직 구글 '시험용' 광고 ID예요 → AdMob에서 전면 광고 단위를 만들면 진짜 ID로 바꾸고 interTesting:false
+  interstitialId:IOS?'ca-app-pub-3940256099942544/4411468910':'ca-app-pub-3940256099942544/1033173712',
+  interTesting:true
   // 스토어 상품: 없음 (광고로만)
  };
  const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
@@ -48,11 +51,30 @@
   }catch(e){}
   hs.forEach(h=>{try{h.remove();}catch(e){}});adBusy=false;// 다음 광고는 미리 받지 않아요(게임 중 뒤에서 일하지 않게) → 필요할 때 받기
   return {ok:got,place};}
+ // ----- 챕터 광고 (전면 광고): 끝까지 안 봐도 돼요. 닫으면 끝 -----
+ let iReady=false,iLoading=null;
+ function iLoad(){const A=P().AdMob;if(!A)return Promise.resolve(false);if(iReady)return Promise.resolve(true);if(iLoading)return iLoading;
+  iLoading=(async()=>{try{await adInit();await A.prepareInterstitial({adId:CFG.interstitialId,isTesting:CFG.interTesting});iReady=true;}catch(e){iReady=false;}iLoading=null;return iReady;})();return iLoading;}
+ async function showInterstitial(place){
+  if(APP.ads.removed())return {ok:false,err:'noads'};const A=P().AdMob;if(!A||!A.showInterstitial)return {ok:false,err:'noplugin'};if(adBusy)return {ok:false,err:'busy'};
+  adBusy=true;
+  // 미리 받아 둔 광고가 없으면 3초만 기다려요 (그보다 늦으면 이번엔 그냥 넘어가요)
+  const ok=iReady||await Promise.race([iLoad(),new Promise(r=>setTimeout(()=>r(false),3000))]);
+  if(!ok||!iReady){adBusy=false;return {ok:false,err:'noad'};}
+  const hs=[];let shown=false;
+  try{const done=new Promise(res=>{A.addListener('interstitialAdDismissed',()=>res()).then(h=>hs.push(h));A.addListener('interstitialAdFailedToShow',()=>res()).then(h=>hs.push(h));
+    A.addListener('interstitialAdShowed',()=>{shown=true;}).then(h=>hs.push(h));});
+   iReady=false;await A.showInterstitial();shown=true;await Promise.race([done,new Promise(r=>setTimeout(r,90000))]);}catch(e){}
+  hs.forEach(h=>{try{h.remove();}catch(e){}});adBusy=false;return {ok:shown,place};}
+ // ----- 광고 동의 설정 (유럽 등 동의가 필요한 사람에게만 설정에 버튼이 생겨요) -----
+ async function privacyNeeded(){const A=P().AdMob;if(!A||!A.requestConsentInfo||!A.showPrivacyOptionsForm)return false;
+  try{await adInit();const ci=await Promise.race([A.requestConsentInfo(),new Promise(r=>setTimeout(()=>r(null),8000))]);return !!(ci&&ci.privacyOptionsRequirementStatus==='REQUIRED');}catch(e){return false;}}
+ async function showPrivacy(){const A=P().AdMob;await adInit();await A.showPrivacyOptionsForm();}
  // ----- 결제: 없음 (2026-11-09 사용자 결정: 광고로만) -----
  window.APP={
   version:1,
   isBackground:()=>bg,
-  ads:{removed:()=>false,showRewarded},
+  ads:{removed:()=>false,showRewarded,showInterstitial,preloadInterstitial:iLoad,privacyNeeded,showPrivacy},
   shop:{products:async()=>[],buy:async()=>({ok:false,err:'noshop'})},// 게임이 상점을 그리려면 이 칸이 있어야 해요(빈 상점)
   // cloud: 클라우드 저장은 다음 단계에서 넣어요 (없으면 게임이 버튼을 숨겨요)
  };

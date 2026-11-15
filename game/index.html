@@ -11977,3 +11977,75 @@ const 방어구빛={시작:9,색:'255,70,50',세기:.28,빠르기:2};
  const _bh=buildHero;buildHero=async function(){AG.sig='';AG.cv=null;return _bh.apply(this,arguments);};
 })();
 </script>
+<script>
+// ===================== v136: 챕터 광고 · 오늘 하루 끄기 · 광고 동의 설정 (사용자 2026-11-15) =====================
+// 챕터(장) 지역을 옮길 때 전면 광고가 1번 나와요. 5분에 한 번까지.
+// 안 나올 때: 1장을 끝내기 전(레벨 6 미만) · 튜토리얼 안내 중 · 보스 싸움 중 · 맞은 지 8초 안 · 쓰러진 뒤 · 다른 광고 중.
+// 보상형 광고를 1번 끝까지 보면 그날(밤 12시까지)은 챕터 광고가 안 나와요.
+// 저장: DB.chAd136 = {d:'날짜', off:0/1, t:마지막 챕터 광고 시각}  (캐릭터 저장과 따로, 이 기기 전체)
+const CHAD136={gap:5*60*1000,minLv:6,hitGap:8000,deadGap:12000};
+const CH136={cur:null,p:null,busy:0,hit:-1e9,dead:-1e9,pre:0};
+function chAdDay136(){const o=DB.chAd136;if(o&&o.d===today86())return o;DB.chAd136={d:today86(),off:0,t:o&&o.t||0};return DB.chAd136;}
+const chAdOff136=()=>!!chAdDay136().off;
+const chAdApp136=()=>{const A=APP86();return A&&A.ads&&A.ads.showInterstitial?A:null;};
+const chAdWait136=()=>Math.max(0,(+chAdDay136().t||0)+CHAD136.gap-Date.now());
+function chAdOffNow136(){const o=chAdDay136();if(o.off)return;o.off=1;saveDB();
+ setTimeout(()=>toast(T133('오늘 하루 챕터 광고가 꺼졌어요 (밤 12시까지)','Chapter ads are off for today (until midnight)'),'g'),1400);
+ try{if($('opt78')){$('menuB').innerHTML='';drawMenu();}}catch(e){}}
+// 보상형 광고(다이아·부활·주문서·스킬 되돌리기 등 어떤 것이든)를 끝까지 보면 → 오늘 챕터 광고 끄기
+{const _s=showAd86;showAd86=function(place,onOk){return _s.call(this,place,function(){const r=onOk&&onOk.apply(this,arguments);chAdOffNow136();return r;});};}
+// 싸움 판단: 맞은 시각
+{const _hd=heroDamage;heroDamage=function(){CH136.hit=performance.now();return _hd.apply(this,arguments);};}
+function chAdWhyNot136(){
+ if(!P||!chAdApp136())return 'app';if(adRemoved86())return 'removed';if(chAdOff136())return 'off';
+ if(!(P.lv>=CHAD136.minLv||P.ch1))return 'ch1';
+ if(typeof TUT!=='undefined'&&TUT.id)return 'tut';
+ if(hero.st==='dead'||D86.on||performance.now()-CH136.dead<CHAD136.deadGap)return 'dead';
+ if(boss||performance.now()-CH136.hit<CHAD136.hitGap)return 'fight';
+ try{if(typeof town79Why==='function'&&town79Why())return 'fight';}catch(e){}
+ if(ADBUSY86||CH136.busy)return 'busy';
+ if(chAdWait136()>0)return 'wait';return '';}
+function chAdShow136(from,to){const A=chAdApp136();if(!A||CH136.busy||ADBUSY86)return;CH136.busy=1;ADBUSY86=1;
+ try{SND.pause(true);}catch(e){}
+ let p;try{p=Promise.resolve(A.ads.showInterstitial('chapter_'+(to+1)));}catch(e){p=Promise.resolve({ok:false});}
+ const end=r=>{CH136.busy=0;ADBUSY86=0;try{SND.pause(false);}catch(e){}
+  if(r&&r.ok){chAdDay136().t=Date.now();saveDB();setTimeout(chAdTip136,500);}};
+ p.then(end,()=>end(null));}
+// 챕터 광고가 끝나면 잠깐 뜨는 안내: '광고 1번 보고 오늘 끄기'
+function chAdTip136(){if(!P||chAdOff136()||$('chTip136'))return;const d=document.createElement('div');d.id='chTip136';d.setAttribute('data-noi18n','1');
+ d.style.cssText='position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:9500;max-width:92vw;background:rgba(14,16,28,.97);border:1px solid #c9a45c;border-radius:12px;padding:9px 12px;color:#f2ead0;font-size:12px;line-height:1.45;box-shadow:0 4px 16px #000a;display:flex;align-items:center;gap:8px';
+ d.innerHTML='<div>'+T133('챕터 광고가 귀찮다면? 보상형 광고 1번 보면 <b style="color:#ffd34a">오늘 하루</b> 챕터 광고가 안 나와요','Tired of chapter ads? Watch 1 reward ad to turn them off <b style="color:#ffd34a">for today</b>')+'</div>'+
+  '<button data-a="go" style="flex:none;min-height:34px;padding:0 10px;background:linear-gradient(#e8c470,#a87a2a);color:#1a1206;font-weight:800;border-radius:8px">📺 '+T133('오늘 끄기','Off today')+'</button>'+
+  '<button data-a="x" style="flex:none;min-height:34px;padding:0 9px;border-radius:8px">✕</button>';
+ document.body.appendChild(d);const close=()=>{d.remove();clearTimeout(tm);};const tm=setTimeout(close,9000);
+ d.querySelector('[data-a=x]').onclick=close;d.querySelector('[data-a=go]').onclick=()=>{close();chAdOffPress136();};}
+function chAdOffPress136(){if(chAdOff136()){toast(T133('오늘은 이미 꺼져 있어요','Already off for today'),'g');return;}showAd86('chapter_off',()=>{});}
+// 챕터가 바뀌었는지 매 프레임 확인 (지역 불러오기가 끝난 뒤)
+{const _u=update;update=function(dt){if(CH136.busy)return;_u.apply(this,arguments);if(!P)return;
+ if(hero.st==='dead')CH136.dead=performance.now();
+ if(CH136.p!==P){CH136.p=P;CH136.cur=null;}
+ if(RGN.busy||(typeof S5!=='undefined'&&S5.busy))return;
+ const c=regionIx(hero.x,hero.y);
+ if(CH136.cur==null){CH136.cur=c;return;}
+ if(c!==CH136.cur){const f=CH136.cur;CH136.cur=c;if(!CH136.pend&&!chAdWhyNot136()){CH136.pend=1;setTimeout(()=>{CH136.pend=0;if(!chAdWhyNot136())chAdShow136(f,c);},350);}}
+ // 쉬는 시간이 끝나면 다음 광고를 미리 받아 둬요 (한 번만, 뒤에서 조용히)
+ if(!CH136.pre&&chAdApp136()&&chAdApp136().ads.preloadInterstitial&&!chAdOff136()&&chAdWait136()<=0&&(P.lv>=CHAD136.minLv||P.ch1)){CH136.pre=1;
+  try{Promise.resolve(chAdApp136().ads.preloadInterstitial()).finally(()=>{setTimeout(()=>{CH136.pre=0;},60000);});}catch(e){CH136.pre=0;}}};}
+{const _k=skillTick;skillTick=function(dt){if(CH136.busy)return;return _k.apply(this,arguments);};}
+// 설정: '광고' 칸 (챕터 광고 오늘 끄기) + 정보 칸의 '광고 동의 설정'(동의가 필요한 사람에게만)
+{const _o=drawOpt78;drawOpt78=function(){const had=!!$('opt78');_o.apply(this,arguments);const o=$('opt78');if(had||!o||!APP86())return;
+ const info=[...o.querySelectorAll('h4')].find(h=>/정보|Info/.test(h.textContent));
+ const box=document.createElement('div');box.setAttribute('data-noi18n','1');box.style.cssText='display:flex;flex-direction:column;gap:9px';
+ const off=chAdOff136();
+ box.innerHTML='<h4>📺 '+T133('광고','Ads')+'</h4><label><span>'+T133('챕터 광고','Chapter ads')+'</span><div class="seg">'+
+  (off?'<button type="button" class="on" disabled>✓ '+T133('오늘은 꺼짐','Off today')+'</button>':'<button type="button" id="optChOff136">📺 '+T133('광고 1번 보고 오늘 끄기','Watch 1 ad · off today')+'</button>')+'</div></label>'+
+  '<small>'+T133('챕터(장) 지역을 옮길 때 광고가 나와요 (5분에 한 번까지, 1장에서는 안 나와요). 보상형 광고를 1번 끝까지 보면 그날 밤 12시까지 안 나와요.','An ad may show when you move to another chapter area (at most once every 5 minutes, never in Chapter 1). Watch any reward ad once and they stop until midnight.')+'</small>';
+ if(info)o.insertBefore(box,info);else o.appendChild(box);
+ const b=$('optChOff136');if(b)b.onclick=chAdOffPress136;
+ // 광고 동의 설정 (유럽 등): 필요한 사람에게만 버튼이 생겨요
+ const A=APP86();if(!A.ads.privacyNeeded||!A.ads.showPrivacy)return;
+ Promise.resolve(A.ads.privacyNeeded()).then(need=>{if(!need||!$('opt78')||$('optAdc136'))return;const pr=$('optPriv135'),row=pr&&pr.closest('label');
+  const l=document.createElement('label');l.setAttribute('data-noi18n','1');l.innerHTML='<span>'+T133('광고 동의 설정','Ad consent')+'</span><div class="seg"><button type="button" id="optAdc136">'+T133('바꾸기','Change')+'</button></div>';
+  if(row&&row.parentNode)row.parentNode.insertBefore(l,row.nextSibling);else $('opt78').appendChild(l);
+  $('optAdc136').onclick=()=>{try{Promise.resolve(A.ads.showPrivacy()).catch(()=>toast(T133('지금은 열 수 없어요. 잠시 뒤 다시 해 주세요','Can\'t open it right now. Please try again later'),'w'));}catch(e){}};}).catch(()=>{});};}
+</script>
