@@ -67,14 +67,15 @@
    iReady=false;await A.showInterstitial();shown=true;await Promise.race([done,new Promise(r=>setTimeout(r,90000))]);}catch(e){}
   hs.forEach(h=>{try{h.remove();}catch(e){}});adBusy=false;return {ok:shown,place};}
  // ----- 광고 동의 설정 (유럽 등 동의가 필요한 사람에게만 설정에 버튼이 생겨요) -----
+ // 설정 창을 열 때는 동의 창을 띄우지 않고 '필요한지'만 물어봐요
  async function privacyNeeded(){const A=P().AdMob;if(!A||!A.requestConsentInfo||!A.showPrivacyOptionsForm)return false;
-  try{await adInit();const ci=await Promise.race([A.requestConsentInfo(),new Promise(r=>setTimeout(()=>r(null),8000))]);return !!(ci&&ci.privacyOptionsRequirementStatus==='REQUIRED');}catch(e){return false;}}
- async function showPrivacy(){const A=P().AdMob;await adInit();await A.showPrivacyOptionsForm();}
+  try{const ci=await Promise.race([A.requestConsentInfo(),new Promise(r=>setTimeout(()=>r(null),8000))]);return !!(ci&&ci.privacyOptionsRequirementStatus==='REQUIRED');}catch(e){return false;}}
+ async function showPrivacy(){const A=P().AdMob;await A.showPrivacyOptionsForm();}
  // ----- 결제: 없음 (2026-11-09 사용자 결정: 광고로만) -----
  window.APP={
   version:1,
   isBackground:()=>bg,
-  ads:{removed:()=>false,showRewarded,showInterstitial,preloadInterstitial:iLoad,privacyNeeded,showPrivacy},
+  ads:{removed:()=>false,showRewarded,showInterstitial,preloadInterstitial:()=>inited?iLoad():Promise.resolve(false),privacyNeeded,showPrivacy},
   shop:{products:async()=>[],buy:async()=>({ok:false,err:'noshop'})},// 게임이 상점을 그리려면 이 칸이 있어야 해요(빈 상점)
   // cloud: 클라우드 저장은 다음 단계에서 넣어요 (없으면 게임이 버튼을 숨겨요)
  };
