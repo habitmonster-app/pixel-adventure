@@ -14,6 +14,8 @@ Most characters, gear, monsters and tiles are combined or recolored from Liberat
 
 - 원 작가, 원본 주소, 라이선스는 `CREDITS/` 폴더와 게임 안 메뉴 → '그림 출처'에 있습니다.
   Authors, source links and licenses are listed in `CREDITS/` and in the game (Menu → Art Credits).
+- 시즌 2(11~15장) 그림 출처: `CREDITS/CREDITS_season2.md`
+  Season 2 (Ch.11–15) art credits: `CREDITS/CREDITS_season2.md`
 - 부품별 전체 작가 목록: `CREDITS/ULPC_CREDITS.csv` (Universal LPC Spritesheet Character Generator 커밋 86160e75의 CREDITS.csv 원본)
   Full per-part author list: `CREDITS/ULPC_CREDITS.csv` (original CREDITS.csv from Universal LPC Spritesheet Character Generator, commit 86160e75)
 - 여러 라이선스 중 고를 수 있는 그림은 OGA-BY 3.0, CC-BY 3.0, CC-BY-SA 3.0 중에서 썼고 GPL은 고르지 않았습니다.
@@ -33,6 +35,8 @@ These 15 files were drawn from scratch for this game and are **not** CC-BY-SA (o
 Tiles and other LPC-based art keep the licenses described in the LPC section above (including CC-BY-SA 3.0).
 
 ## 그 밖의 그림과 글꼴
+
+- 시즌 2의 보스 그림(`s2b_*`), 마을 주민 그림(`s2n2_*`), 보스 효과 그림(`s2fx2_*`)은 LPC를 쓰지 않고 이 게임을 위해 새로 만든 그림입니다. All rights reserved.
 
 - LPC가 아닌 그림(일부 보스 그림, 아이콘 등)은 habitmonster-app의 저작물입니다. All rights reserved.
 - 글꼴 Galmuri: `LICENSE-galmuri.txt` (SIL Open Font License 1.1).
