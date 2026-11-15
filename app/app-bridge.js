@@ -8,9 +8,10 @@
   // 진짜 AdMob 보상형 광고 (2026-11-08 등록: 봉인 기사단 Android / iOS)
   testing:false,
   rewardedId:IOS?'ca-app-pub-6540694097552852/1559237981':'ca-app-pub-6540694097552852/7448044827',
-  // 챕터 광고(전면 광고, v136). ⚠ 아직 구글 '시험용' 광고 ID예요 → AdMob에서 전면 광고 단위를 만들면 진짜 ID로 바꾸고 interTesting:false
-  interstitialId:IOS?'ca-app-pub-3940256099942544/4411468910':'ca-app-pub-3940256099942544/1033173712',
-  interTesting:true
+  // 챕터 광고(전면 광고, v136). iOS = 진짜 ID (2026-11-15 등록: 봉인 기사단 iOS 전면)
+  // ⚠ 안드로이드는 아직 구글 '시험용' ID예요 → AdMob에서 안드로이드 전면 광고 단위를 만들면 진짜 ID로 바꾸고 아래 interTesting을 false로
+  interstitialId:IOS?'ca-app-pub-6540694097552852/3391397667':'ca-app-pub-3940256099942544/1033173712',
+  interTesting:!IOS
   // 스토어 상품: 없음 (광고로만)
  };
  const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
