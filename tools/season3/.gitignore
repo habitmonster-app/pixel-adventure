@@ -1,0 +1,5 @@
+__pycache__/
+test/shots/
+test/h2.js
+test/tstage*.js
+test/tbtn.js

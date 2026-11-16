@@ -1,0 +1,126 @@
+[
+[
+"(.+)\\(으\\)로 걸어가요\\. 움직이면 멈춰요\\.",
+"Walking to $1. Move to stop."
+],
+[
+"자동 이동 중 · (.+)",
+"Auto-moving · $1"
+],
+[
+"(.+)에 도착했어요",
+"Arrived at $1"
+],
+[
+"새 퀘스트: (.+)",
+"New quest: $1"
+],
+[
+"기둥은 순서대로 켜야 해요\\. (.+) 기둥부터!",
+"The pillars must be lit in order. $1 pillar first!"
+],
+[
+"(.+) 둘레 마물 (\\d+)마리를 먼저 쓰러뜨려요",
+"Defeat the $2 monsters around the $1 first"
+],
+[
+"왕성 남동쪽 수로문 \\((.+) 쪽\\)",
+"Castle southeast water gate (toward $1)"
+],
+[
+"수문을 닫았어요 \\((\\d+)/3\\)",
+"Sluice gate closed ($1/3)"
+],
+[
+"배양관 전원을 내렸어요 \\((\\d+)/3\\)",
+"Culture tank power cut ($1/3)"
+],
+[
+"계약 석판을 살펴봤어요 \\((\\d+)/3\\)",
+"Covenant tablet examined ($1/3)"
+],
+[
+"봉인석을 다시 켰어요 \\((\\d+)/3\\)",
+"Seal stone relit ($1/3)"
+],
+[
+"연구 기록을 읽었어요 \\((\\d+)/4\\)",
+"Research record read ($1/4)"
+],
+[
+"정화 기둥이 깨어났어요 \\((\\d+)/3\\) · 수호자의 제단 문이 열렸어요",
+"Purification pillar awakened ($1/3) · The Guardian's Altar door is open"
+],
+[
+"정화 기둥이 깨어났어요 \\((\\d+)/3\\) · 둘레는 독안개가 닿지 않아요",
+"Purification pillar awakened ($1/3) · The poison fog can't reach the area around it"
+],
+[
+"정화 봉인석을 되살렸어요 \\((\\d+)/3\\) · 둘레는 안전지대",
+"Purifying seal stone restored ($1/3) · The area around it is safe"
+],
+[
+"파손 핵에서 흑수정 잔재 1개를 회수했어요 \\((\\d+)/2\\) · 융합실 문이 열렸어요",
+"Recovered 1 Black Crystal Residue from a broken core ($1/2) · The Fusion Chamber door is open"
+],
+[
+"파손 핵에서 흑수정 잔재 1개를 회수했어요 \\((\\d+)/2\\)",
+"Recovered 1 Black Crystal Residue from a broken core ($1/2)"
+],
+[
+"포자주머니를 터뜨렸어요 \\((\\d+)/6\\)",
+"Spore sac burst ($1/6)"
+],
+[
+"해독제를 샀어요 \\(가진 것 (\\d+)개\\)",
+"Bought an antidote (you have $1)"
+],
+[
+"흑수정 배양기를 부쉈어요 \\((\\d+)/4\\)",
+"Black crystal incubator smashed ($1/4)"
+],
+[
+"(.+)을\\(를\\) 구했어요 \\((\\d+)/3\\)",
+"Rescued $1 ($2/3)"
+],
+[
+"(.+)에 정화의 불이 붙었어요 \\((\\d+)/(\\d+)\\) · 둘레는 독안개가 닿지 않는 안전지대예요",
+"$1 is lit ($2/$3) · The area around it is a safe zone the poison fog can't reach"
+],
+[
+"(\\d+)장 · (.+)",
+"Ch.$1 · $2"
+],
+[
+"(\\d+)장 '(.+)'을 끝냈어요!",
+"Finished Ch.$1 '$2'!"
+],
+[
+"지금은 '(.+)'이다\\. 퀘스트 창의 '목적지로 가기'를 누르면 길을 알려 주지\\.",
+"Right now it's '$1'. Press 'Go to destination' in the quest window and I'll show you the way."
+],
+[
+"봉인 재료 (.+)",
+"Seal materials $1"
+],
+[
+"잠김 · (\\d+)장 보스를 쓰러뜨리면 열려요",
+"Locked · defeat the Ch.$1 boss to open"
+],
+[
+"(\\d+)장 '(.+)'의 보스를 쓰러뜨리면 길이 열려요\\.",
+"Defeat the boss of Ch.$1 '$2' to open the way."
+],
+[
+"(.+) (\\d+)개를 채집했어요 \\(가진 것 (\\d+)\\)",
+"Gathered $2 $1 (have $3)"
+],
+[
+"(.+) \\(지금 할 일: (.+)\\)",
+"$1 (Now: $2)"
+],
+[
+"([^:]{2,24}): (.+)",
+"$1: $2"
+]
+]
