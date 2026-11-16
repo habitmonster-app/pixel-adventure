@@ -43,9 +43,22 @@ rep("lb.style.top=(box.height-h)/2+'px';","lb.style.top=Math.max(0,(box.height-h
 rep("lb.style.left=(box.width-w)/2+'px';","lb.style.left=Math.max(0,(box.width-w)/2)+'px';")
 rep("style=\"left:${r.wm[0]/2}%;top:${r.wm[1]/1.2}%\">","style=\"left:${r.wm[0]/2}%;top:${r.wm[1]/1.8}%\">")
 rep(" lb.querySelectorAll('.wm-r').forEach(b=>b.onclick=()=>{WM.sel=+b.dataset.i;drawWorld();});\n drawWorldDet(here,next,qt);}"," lb.querySelectorAll('.wm-r').forEach(b=>b.onclick=()=>{WM.sel=+b.dataset.i;drawWorld();});\n {const bx=$('wmBox'),x=WORLD[WM.sel].wm[0]/200*w,y=WORLD[WM.sel].wm[1]/180*h;if(ov&&(y<bx.scrollTop+30||y>bx.scrollTop+box.height-30))bx.scrollTop=y-box.height/2;if(oh&&(x<bx.scrollLeft+50||x>bx.scrollLeft+box.width-50))bx.scrollLeft=x-box.width/2;}\n drawWorldDet(here,next,qt);}")
+# 도감 11~20장 (장 수 10 -> 20)
+rep("ch:Math.min(10,Math.max(1,Math.ceil(m.lv/5)))","ch:Math.min(20,Math.max(1,Math.ceil(m.lv/5)))")
+rep("for(let ch=1;ch<=10;ch++)if(dexChDone104(c,ch))","for(let ch=1;ch<=20;ch++)if(dexChDone104(c,ch))")
+rep("const qc=q?(m?+m[1]:1):10;","const qc=q?(m?+m[1]:1):20;")
+rep("c0=[...Array(10)].map((_,i)=>dexChDone104(P,i+1));","c0=[...Array(20)].map((_,i)=>dexChDone104(P,i+1));")
+rep("for(let i=0;i<10;i++)if(!c0[i]&&dexChDone104(P,i+1))","for(let i=0;i<20;i++)if(!c0[i]&&dexChDone104(P,i+1))")
+rep("if(!DEXINIT104){DEXINIT104=1;for(let c=10;c>=1;c--)","if(!DEXINIT104){DEXINIT104=1;for(let c=20;c>=1;c--)")
+# 머리 위 '메인' 글자, 세계 지도 수로
+rep("X.fillStyle='#9fd0ff';X.fillText('서브',sx,sy-74);}}}}","X.fillStyle='#9fd0ff';X.fillText('서브',sx,sy-74);}else if(window.qMainTag3)qMainTag3(e,mk,sx,sy);}}}")
+rep(" // 여명 개울\n"," if(window.WMX3)WMX3(g);\n // 여명 개울\n")
 js='\n/* ===== 시즌 3: 독뿌리의 세 번째 문 (16~20장) ===== */\n(function(){\n'+''.join(open(f,encoding='utf8').read()+'\n' for f in sorted(glob.glob(os.path.join(H,'js','*.js'))))+'})();\n/* ===== 시즌 3 끝 ===== */\n'
 i1=s.index('</script>\n<style id="portrait114">')
 s=s[:i1]+js+s[i1:]
+for a,b in [("'새 퀘스트: '","'새 메인 퀘스트: '"),("'퀘스트 완료!'","'메인 퀘스트 완료!'"),("'퀘스트 완료! '","'메인 퀘스트 완료! '")]:
+    assert s.count(a)>0,a
+    s=s.replace(a,b)
 open(OUT,'w',encoding='utf8').write(s)
 print('ok',len(s))
 import subprocess;subprocess.run([sys.executable,os.path.join(H,'i18n','apply_en.py'),OUT],check=True)

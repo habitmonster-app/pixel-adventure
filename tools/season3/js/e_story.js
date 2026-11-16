@@ -42,7 +42,7 @@ function spawnN3(){for(let i=npcs.length-1;i>=0;i--)if(npcs[i].c3)npcs.splice(i,
  if(!in3()||!P)return;const reg=R3x(RGN.cur);for(const d of N3L){if(d.r!==RGN.cur)continue;if(!IMG[d.img])continue;IMG[d.k]=IMG[d.img];SMETA[d.k]=SMETA[d.img];const p=reg[d.kx];if(!p)continue;const x=tx5(p[0]),y=ty5(p[1]);
   const nd={k:d.k,n:d.n,x,y,d:2,say:['…'],c3:1};NPC.push(nd);const e=ent({...nd,hx:x,hy:y,wt:rnd(1,4)});e.c3=1;npcs.push(e);}}
 const rest3=['쉬기 (체력·마나 회복 · 독 풀기 · 저장)',()=>{closeFac();restCamp();}];
-const nextTip3=()=>{const q=qCur();if(!q||!(q.ch>=16))return '';return ' (지금 할 일: '+q.n+')';};
+const nextTip3=()=>{const q=qCur();if(!q||!(q.ch>=16))return '';return ' (메인 퀘스트: '+q.n+')';};
 const talkBtn3=(n,flag,L,msg)=>[['이야기하기',()=>{closeFac();sayAs(n.n,L,()=>{g3()[flag]=1;if(msg)toast(msg,'g');sync3();qCheck();save();});}]];
 const shopCure3=n=>['해독제 사기 (200골드)',()=>{if(P.gold<200){toast('골드가 모자라요','w');return;}P.gold-=200;P.pot=P.pot||{};P.pot.pot_cure=(P.pot.pot_cure|0)+1;toast('해독제를 샀어요 (가진 것 '+P.pot.pot_cure+'개)','g');save();refreshSide();}];
 Object.assign(FAC31,{
@@ -51,7 +51,7 @@ Object.assign(FAC31,{
   ['남문 수로길로 가기',()=>{closeFac();const A=R3x('D161');go5({rid:'D161',x:A.entry[0],y:A.entry[1],n:'흑수늪 입구'});}],shopCure3(n),['닫기',()=>closeFac()]]);},
  k3maren:n=>{const f=g3();facMenu(n,'남부 정찰대장 마렌: '+(f.seal20?'늪 냄새가 사라졌다. 정찰대도 다 돌아왔어. 고맙다.':RGN.cur==='D161'?'늪에서는 눈보다 냄새를 믿어. 독 냄새가 강해지면 바로 돌아와.':'정화 장치가 켜진 곳은 안전하다. 무리해서 밖에 오래 있지 마.')+nextTip3(),[
   ...(RGN.cur==='D161'&&!f.maren16?talkBtn3(n,'maren16',['왔군. 흑수늪 초소가 어제부터 연락이 끊겼다.','안쪽에 들어가기 전에 해독제부터 챙겨.']):[]),
-  ['다음 할 일 묻기',()=>{closeFac();const q=qCur();sayAs(n.n,[q&&q.ch>=16?'지금은 \''+q.n+'\'이다. 퀘스트 창의 \'목적지로 가기\'를 누르면 길을 알려 주지.':'지금은 급한 일이 없다. 쉬어.']);}],shopCure3(n),rest3]);},
+  ['메인 퀘스트 · 다음 할 일 묻기',()=>{closeFac();const q=qCur();sayAs(n.n,[q&&q.ch>=16?'지금은 \''+q.n+'\'이다. 퀘스트 창의 \'목적지로 가기\'를 누르면 길을 알려 주지.':'지금은 급한 일이 없다. 쉬어.']);}],shopCure3(n),rest3]);},
  k3elia:n=>facMenu(n,'왕성 정화사제 엘리아: '+(g3().seal20?'독기가 걷혔어요. 피험자들도 왕성에서 치료받고 있어요.':'독은 몸만 상하게 하지 않아요. 오래 노출되면 마력도 흐려져요.')+nextTip3(),[['치료받기 (체력·마나 회복 · 독 풀기 · 저장)',()=>{closeFac();restCamp();}],shopCure3(n),['정화 작업대 열기',()=>{closeFac();openCraft('plague');}]]),
  k3harin:n=>{const f=g3();facMenu(n,'늪지 약초꾼 하린: '+(f.boss17?'숲이 숨을 쉬어요! 독버섯은 무섭지만 잘 쓰면 약이 되기도 해요.':'보라색 잎은 만지면 안 돼요. 초록빛 정화잎만 따세요.')+nextTip3(),[
   ...(!f.harin17?talkBtn3(n,'harin17',['앞이 안 보이죠? 포자구름 때문이에요.','정화 횃불을 켜면 잠깐 길이 보여요. 횃불 세 개만 켜 주세요!']):[]),

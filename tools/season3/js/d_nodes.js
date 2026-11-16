@@ -4,7 +4,7 @@
  if(A&&A.camp){
   for(const [r,id] of [[A,'D161'],[B,'D171'],[C,'D181'],[D,'D191'],[E,'D201']]){
    add({k:'cam3',si:'cam'+id,r3:id,...at(r.camp[0],r.camp[1]+1),lb:'쉬기',T:.5,on:()=>{restCamp();}});
-   add({k:'ret3',si:'ret'+id,r3:id,...at(r.camp[0]+2,r.camp[1]+1),lb:'🏰 왕성으로 귀환',T:.4,on:()=>home3()});
+   add({k:'ret3',si:'ret'+id,r3:id,...at(r.camp[0]+3,r.camp[1]+1),lb:'🏰 왕성으로 귀환',T:.4,on:()=>home3()});
    add({k:'bn3',si:'bn'+id,r3:id,...at(r.bench[0],r.bench[1]+1),lb:id==='D201'?'봉인구 조립대 (정화 작업대)':'정화 작업대',T:.4,on:()=>openCraft('plague')});}
   // 16장
   A.braz.forEach((p,i)=>add({k:'bz',si:'bz'+i,r3:'D161',q:'Q16_06',...at(p[0],p[1]),lb:'정화 화로 켜기',T:1.2,on:()=>light3('bz'+i,'정화 화로',3)}));
