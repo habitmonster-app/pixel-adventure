@@ -85,8 +85,8 @@ WORLD.push(
  {id:'R18',ch:18,n:'침수 정화성소',t:'가라앉은 정화성소',lv:[58,58],kind:'sanct',built:1,wm:[92,128],s2:'D181',mood:'남부의 물을 정화하던 옛 성소가 독수에 잠겼어요. 정화 기둥이 꺼져 있어요.',res:['s3cry','s3iron'],mobs:['s3lily','s3crab','s3ghost','s3snake'],boss:{n:'부패 수호상 벨드락',where:'수호자 제단 · 18장 마지막 퀘스트'}},
  {id:'R19',ch:19,n:'폐쇄 왕실 연구소',t:'왕실의 검은 실험소',lv:[59,59],kind:'lab',built:1,wm:[58,152],s2:'D191',mood:'왕실 인장이 찍힌 문 너머, 검은 수정과 배양관이 늘어선 비밀 연구소예요.',res:['s3blk','s3cry'],mobs:['s3exp','s3sol','s3tent','s3eye'],boss:{n:'흑수정 융합체 바르곤',where:'융합실 · 19장 마지막 퀘스트'}},
  {id:'R20',ch:20,n:'독뿌리 심장부',t:'세 번째 마계문',lv:[60,60],kind:'abyss',built:1,wm:[24,164],s2:'D201',mood:'검은 뿌리가 얽힌 협곡 끝, 역병 제단 너머로 세 번째 마계문이 숨 쉬어요.',res:['s3cry','s3blk'],mobs:['s3hound','s3knight','s3sham','s3spore'],boss:{n:'역병사도 모르가',where:'역병 제단 · 시즌 3 최종 보스'}});
-WROAD2=function(){const L=[];for(let i=0;i<9;i++)L.push([WORLD[i].wm,WORLD[i+1].wm]);const c=WORLD[6].wm;L.push([c,WORLD[10].wm]);for(let i=10;i<14;i++)L.push([WORLD[i].wm,WORLD[i+1].wm]);
- if(WORLD[15]){L.push([c,WORLD[15].wm]);for(let i=15;i<WORLD.length-1;i++)L.push([WORLD[i].wm,WORLD[i+1].wm]);}return L;};
+// 길: 1장부터 20장까지 순서대로 한 줄 (사용자 요청 2026-11-16: 점선이 다 이어지게)
+WROAD2=function(){const L=[];for(let i=0;i<WORLD.length-1;i++)L.push([WORLD[i].wm,WORLD[i+1].wm]);return L;};
 function s3RegOpen(ch){if(!s3Open())return false;const f=P.g3||{};return ch===16?true:ch===17?!!(f.boss16||P.ch16):ch===18?!!(f.boss17||P.ch17):ch===19?!!(f.boss18||P.ch18):!!(f.boss19||P.ch19);}
 window.s3RegOpen=s3RegOpen;
 const _drawWorldDetS3=drawWorldDet;drawWorldDet=function(here,next,qt){_drawWorldDetS3(here,next,qt);const r=WORLD[WM.sel];if(!r||r.ch<16)return;const D=$('wmDet'),s=rState(r);
