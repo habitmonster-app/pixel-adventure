@@ -12051,3 +12051,67 @@ function chAdOffPress136(){if(chAdOff136()){toast(T133('오늘은 이미 꺼져 
   if(row&&row.parentNode)row.parentNode.insertBefore(l,row.nextSibling);else $('opt78').appendChild(l);
   $('optAdc136').onclick=()=>{try{Promise.resolve(A.ads.showPrivacy()).catch(()=>toast(T133('지금은 열 수 없어요. 잠시 뒤 다시 해 주세요','Can\'t open it right now. Please try again later'),'w'));}catch(e){}};}).catch(()=>{});};}
 </script>
+<script>
+/* ===== 1.1.3 화면 잘림 정리: 지도 이름표가 서로 겹치지 않게 비켜 놓기 · 오른쪽 위 지역 이름이 길면 두 줄로 ===== */
+// 이름표 겹침 풀기: 먼저 놓인 이름표는 그대로, 겹치는 것만 위아래(그다음 옆)로 조금씩 옮겨요. 상자 밖으로는 안 나가게.
+function unoverlap113(box,items,soft,inner){if(!box||!items.length)return;const B=box.getBoundingClientRect();const placed=[];const I=inner||B;
+ const hit=(r)=>placed.some(p=>r.left<p.right+1&&r.right>p.left-1&&r.top<p.bottom+1&&r.bottom>p.top-1);
+ for(const el of items){el.style.visibility='';let r0=el.getBoundingClientRect();if(!r0.width)continue;
+  // 상자 밖으로 삐져나간 이름표는 안쪽으로 밀어 넣기
+  {let dx=0,dy=0;if(r0.left<B.left+2)dx=B.left+2-r0.left;else if(r0.right>B.right-2)dx=B.right-2-r0.right;if(r0.top<B.top+2)dy=B.top+2-r0.top;else if(r0.bottom>B.bottom-2)dy=B.bottom-2-r0.bottom;
+   if(dx||dy){el.style.left=(parseFloat(el.style.left)||0)+dx+'px';el.style.top=(parseFloat(el.style.top)||0)+dy+'px';r0=el.getBoundingClientRect();}}
+  if(!hit(r0)){placed.push(r0);continue;}
+  const h=r0.height+2,w=r0.width;let best=null;
+  const tries=[];if(soft){for(const f of [.25,.5,.75,1,1.25,1.5,2])tries.push([0,-h*f],[0,h*f],[w*f*.3,0],[-w*f*.3,0],[w*f*.3,-h*f],[-w*f*.3,-h*f],[w*f*.3,h*f],[-w*f*.3,h*f]);}
+  else{for(let k=1;k<=4;k++){tries.push([0,h*k],[0,-h*k]);}for(let k=1;k<=2;k++){tries.push([w*.6*k,0],[-w*.6*k,0],[w*.6*k,h],[-w*.6*k,h],[w*.6*k,-h],[-w*.6*k,-h]);}}
+  for(const [dx,dy] of tries){const r={left:r0.left+dx,right:r0.right+dx,top:r0.top+dy,bottom:r0.bottom+dy};
+   if(r.left<B.left||r.right>B.right||r.top<B.top||r.bottom>B.bottom)continue;if(r.top<I.top-h||r.bottom>I.bottom+h||r.left<I.left-w*.5||r.right>I.right+w*.5)continue;if(!hit(r)){best=[dx,dy,r];break;}}
+  if(best){el.style.left=(parseFloat(el.style.left)||0)+best[0]+'px';el.style.top=(parseFloat(el.style.top)||0)+best[1]+'px';el.style.zIndex=el.style.zIndex||'1';placed.push(best[2]);}
+  else if(el.classList.contains('npc85')){const ov=placed.reduce((m,p)=>Math.max(m,Math.max(0,Math.min(r0.right,p.right)-Math.max(r0.left,p.left))*Math.max(0,Math.min(r0.bottom,p.bottom)-Math.max(r0.top,p.top))),0);
+   if(ov>r0.width*r0.height*.2)el.style.visibility='hidden';else placed.push(r0);}/* 자리가 없는 작은 사람 이름표는 숨김(건물 이름이 같은 자리에 있음) */
+  else placed.push(r0);}}
+// 이 지역 지도: 중요한 이름(퀘스트·출구·마을·사냥터·큰 이름) 먼저, 작은 사람 이름은 나중에 비켜요
+{const _dl=drawLocal;const run=()=>{try{const lb=$('maplb'),bx=$('mapbox');if(!lb||!bx||!bx.getBoundingClientRect().width)return;
+  const all=[...lb.querySelectorAll('.poi')].filter(e=>!e.classList.contains('me'));const pr=e=>e.classList.contains('qt')?0:e.classList.contains('rgx')?1:e.classList.contains('twn')?2:e.classList.contains('npc85')?5:e.classList.contains('dev')?4:3;
+  const cv=$('mapc');lb.classList.toggle('poi-sm',!!cv&&cv.getBoundingClientRect().width<460);
+  all.sort((a,b)=>pr(a)-pr(b));unoverlap113(bx,all,0,cv&&cv.getBoundingClientRect());}catch(e){console.warn('[113 지도]',e);}};
+ drawLocal=function(){const r=_dl.apply(this,arguments);run();requestAnimationFrame(run);return r;};}
+// 세계 지도: 장 이름표 (% 자리라 화면 크기마다 겹침이 달라서, 그릴 때마다 비켜요)
+{const _dw=drawWorld;const run=()=>{try{const lb=$('wmlb');if(!lb)return;const all=[...lb.querySelectorAll('.wm-r')];
+  // 지도가 작게 그려지면(폰 세로·작은 폰) 이름표를 작게: 레벨·자원 줄은 오른쪽(아래) 설명 칸에만
+  {const lw=lb.getBoundingClientRect().width;lb.classList.toggle('wm-sm',lw<600);lb.classList.toggle('wm-xs',lw<420);}
+  // 지금 있는 곳·고른 곳·다음 목적지를 먼저 두고 나머지를 비켜요
+  const pr=e=>e.classList.contains('here')?0:e.classList.contains('next')?1:e.classList.contains('sel')?2:3;all.sort((a,b)=>pr(a)-pr(b));
+  for(const e of all){if(e.dataset.l0==null){e.dataset.l0=e.style.left;e.dataset.t0=e.style.top;}}
+  // % 를 px 로 바꿔 두고 비키기
+  const W=lb.getBoundingClientRect();for(const e of all){const r=e.getBoundingClientRect();if(e.style.left.endsWith('%')){e.style.left=(parseFloat(e.style.left)/100*W.width)+'px';e.style.top=(parseFloat(e.style.top)/100*W.height)+'px';}}
+  all.sort((a,b)=>(+a.dataset.i)-(+b.dataset.i));unoverlap113($('wmBox'),all,1);}catch(e){console.warn('[113 세계지도]',e);}};
+ drawWorld=function(){const r=_dw.apply(this,arguments);run();return r;};}
+</script>
+<style>
+/* 오른쪽 위 작은 지도 위 지역 이름: 길면 … 로 잘리던 것을 두 줄까지 보여 줘요 */
+#wmlb.wm-sm .wm-r small,#wmlb.wm-sm .wm-rs{display:none}
+#wmlb.wm-sm .wm-nx{font-size:8px}
+#wmlb.wm-xs .wm-r{min-width:0;padding:0 3px 1px 9px}
+#wmlb.wm-xs .wm-r b{font-size:9px}
+#wmlb.wm-xs .wm-r>i{width:13px;height:13px;font-size:8px;left:-6px;top:-6px}
+#maplb.poi-sm .poi{font-size:9px;padding:1px 4px}
+#maplb.poi-sm .poi.npc85{font-size:8px;padding:0 3px}
+/* 좁은 세로 폰(영어): 캐릭터 창 윗줄 탭이 길어 닫기 ✕ 가 화면 밖으로 밀리던 것 → 탭 글씨를 줄이고 ✕ 는 항상 보이게 */
+@media (orientation:portrait) and (max-width:430px){#pInv .ph{gap:3px;padding-right:2px;min-width:0}#pInv .ph>*{min-width:0}#pInv .ph>button[data-x]{flex:none;width:32px}
+ #pInv .ph .iv-vt button,#pInv .ph .iv-tabs button{padding:0 3px;font-size:11px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:clip}}
+/* 알림(토스트): 긴 문장이 한 줄로 화면 양옆을 넘어 잘리던 것 → 화면 폭 안에서 줄바꿈 */
+#toast{white-space:normal!important;max-width:calc(100vw - 24px);width:max-content;text-align:center;box-sizing:border-box}
+/* 세로 태블릿: 대화 기록 칸이 조이스틱 위쪽 테두리를 덮던 것 → 조이스틱 바로 위로 */
+@media (orientation:portrait){#chatW{bottom:max(calc(158px * var(--hz,1)),calc(132px / var(--hz,1)))!important}}
+#area b#areaN{white-space:normal;overflow:hidden;text-overflow:clip;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.15;word-break:keep-all}
+</style>
+<script>
+/* ===== 1.1.3 밸런스 (2026-11-18 사용자 결정) =====
+   전사가 다른 직업보다 사냥이 느려서(1분 처치 전사 8.6 / 도적 14 / 마법사 11.6) 전사 공격력 +20%.
+   10장 베르샤르(최종 보스)가 8장 수호병기보다 빨리 끝나서 체력 52000→72000 (공격력 그대로). */
+{const _so=statsOf;statsOf=function(c){const s=_so.apply(this,arguments);try{if(s&&c&&c.cls==='warrior')s.atk=Math.round(s.atk*1.2);}catch(e){}return s;};}
+{if(MOB.versh)MOB.versh.hp=72000;}
+/* 8장 수호병기가 도적·마법사에게 최종 보스보다 길어서 체력 23000→18000 (사용자 결정) */
+{if(MOB.guard8)MOB.guard8.hp=18000;}
+</script>
