@@ -12056,7 +12056,7 @@ function chAdOffPress136(){if(chAdOff136()){toast(T133('오늘은 이미 꺼져 
 // 이름표 겹침 풀기: 먼저 놓인 이름표는 그대로, 겹치는 것만 위아래(그다음 옆)로 조금씩 옮겨요. 상자 밖으로는 안 나가게.
 function unoverlap113(box,items,soft,inner){if(!box||!items.length)return;const B=box.getBoundingClientRect();const placed=[];const I=inner||B;
  const hit=(r)=>placed.some(p=>r.left<p.right+1&&r.right>p.left-1&&r.top<p.bottom+1&&r.bottom>p.top-1);
- for(const el of items){let r0=el.getBoundingClientRect();if(!r0.width)continue;
+ for(const el of items){el.style.visibility='';let r0=el.getBoundingClientRect();if(!r0.width)continue;
   // 상자 밖으로 삐져나간 이름표는 안쪽으로 밀어 넣기
   {let dx=0,dy=0;if(r0.left<B.left+2)dx=B.left+2-r0.left;else if(r0.right>B.right-2)dx=B.right-2-r0.right;if(r0.top<B.top+2)dy=B.top+2-r0.top;else if(r0.bottom>B.bottom-2)dy=B.bottom-2-r0.bottom;
    if(dx||dy){el.style.left=(parseFloat(el.style.left)||0)+dx+'px';el.style.top=(parseFloat(el.style.top)||0)+dy+'px';r0=el.getBoundingClientRect();}}
@@ -12067,6 +12067,8 @@ function unoverlap113(box,items,soft,inner){if(!box||!items.length)return;const 
   for(const [dx,dy] of tries){const r={left:r0.left+dx,right:r0.right+dx,top:r0.top+dy,bottom:r0.bottom+dy};
    if(r.left<B.left||r.right>B.right||r.top<B.top||r.bottom>B.bottom)continue;if(r.top<I.top-h||r.bottom>I.bottom+h||r.left<I.left-w*.5||r.right>I.right+w*.5)continue;if(!hit(r)){best=[dx,dy,r];break;}}
   if(best){el.style.left=(parseFloat(el.style.left)||0)+best[0]+'px';el.style.top=(parseFloat(el.style.top)||0)+best[1]+'px';el.style.zIndex=el.style.zIndex||'1';placed.push(best[2]);}
+  else if(el.classList.contains('npc85')){const ov=placed.reduce((m,p)=>Math.max(m,Math.max(0,Math.min(r0.right,p.right)-Math.max(r0.left,p.left))*Math.max(0,Math.min(r0.bottom,p.bottom)-Math.max(r0.top,p.top))),0);
+   if(ov>r0.width*r0.height*.2)el.style.visibility='hidden';else placed.push(r0);}/* 자리가 없는 작은 사람 이름표는 숨김(건물 이름이 같은 자리에 있음) */
   else placed.push(r0);}}
 // 이 지역 지도: 중요한 이름(퀘스트·출구·마을·사냥터·큰 이름) 먼저, 작은 사람 이름은 나중에 비켜요
 {const _dl=drawLocal;const run=()=>{try{const lb=$('maplb'),bx=$('mapbox');if(!lb||!bx||!bx.getBoundingClientRect().width)return;
@@ -12101,6 +12103,6 @@ function unoverlap113(box,items,soft,inner){if(!box||!items.length)return;const 
 /* 알림(토스트): 긴 문장이 한 줄로 화면 양옆을 넘어 잘리던 것 → 화면 폭 안에서 줄바꿈 */
 #toast{white-space:normal!important;max-width:calc(100vw - 24px);width:max-content;text-align:center;box-sizing:border-box}
 /* 세로 태블릿: 대화 기록 칸이 조이스틱 위쪽 테두리를 덮던 것 → 조이스틱 바로 위로 */
-@media (orientation:portrait){#chatW{bottom:max(calc(148px * var(--hz,1)),calc(132px / var(--hz,1)))!important}}
+@media (orientation:portrait){#chatW{bottom:max(calc(158px * var(--hz,1)),calc(132px / var(--hz,1)))!important}}
 #area b#areaN{white-space:normal;overflow:hidden;text-overflow:clip;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.15;word-break:keep-all}
 </style>
