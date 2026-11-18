@@ -12106,3 +12106,10 @@ function unoverlap113(box,items,soft,inner){if(!box||!items.length)return;const 
 @media (orientation:portrait){#chatW{bottom:max(calc(158px * var(--hz,1)),calc(132px / var(--hz,1)))!important}}
 #area b#areaN{white-space:normal;overflow:hidden;text-overflow:clip;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.15;word-break:keep-all}
 </style>
+<script>
+/* ===== 1.1.3 밸런스 (2026-11-18 사용자 결정) =====
+   전사가 다른 직업보다 사냥이 느려서(1분 처치 전사 8.6 / 도적 14 / 마법사 11.6) 전사 공격력 +20%.
+   10장 베르샤르(최종 보스)가 8장 수호병기보다 빨리 끝나서 체력 52000→72000 (공격력 그대로). */
+{const _so=statsOf;statsOf=function(c){const s=_so.apply(this,arguments);try{if(s&&c&&c.cls==='warrior')s.atk=Math.round(s.atk*1.2);}catch(e){}return s;};}
+{if(MOB.versh)MOB.versh.hp=72000;}
+</script>
