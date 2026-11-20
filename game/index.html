@@ -12115,3 +12115,114 @@ function unoverlap113(box,items,soft,inner){if(!box||!items.length)return;const 
 /* 8장 수호병기가 도적·마법사에게 최종 보스보다 길어서 체력 23000→18000 (사용자 결정) */
 {if(MOB.guard8)MOB.guard8.hp=18000;}
 </script>
+<script>
+/* ===================== 우편함 (사용자 2026-11-20) =====================
+   메뉴에 '우편함': 공지사항·소식을 보여 주고, 보상이 붙은 편지는 '받기'로 한 번만 받아요.
+   편지 두 곳에서 와요:
+    1) 아래 MAIL_IN (앱 안에 들어 있는 편지, 앱 업데이트 때 바꿔요)
+    2) 인터넷 파일 MAIL_URL (GitHub Pages의 mail.json) → 앱 업데이트 없이 새 공지를 넣을 수 있어요.
+       인터넷이 안 되면 마지막으로 받아 둔 목록(pxclassic2_mail)을 보여 줘요.
+   편지 모양: {id:'겹치지 않는 이름', date:'2026-11-20', until:'2026-12-31'(없어도 됨),
+             title:{ko,en}, body:{ko,en}, reward:{dia,scroll,rv,gold,box}(없어도 됨)}
+   읽음·받음 기록은 저장(pxclassic2) 안 DB.mail5에 둬요(옛 저장엔 없어도 괜찮아요). */
+const MAIL_URL='https://habitmonster-app.github.io/pixel-adventure/mail.json';
+const MAIL_IN=[
+ {id:'in-2026-11-20-mailbox',date:'2026-11-20',
+  title:{ko:'우편함이 생겼어요',en:'The Mailbox is here'},
+  body:{ko:'기사님, 반가워요!\n앞으로 공지사항과 업데이트 소식, 선물은 이 우편함으로 보내 드릴게요.\n새 편지가 오면 메뉴에 빨간 점이 떠요.',
+        en:'Welcome, Knight!\nNotices, update news and gifts will arrive here in the Mailbox.\nA red dot appears on the Menu when new mail arrives.'}}];
+(function(){
+ const T5=(k,e)=>window.LANG==='en'?e:k;
+ const E5=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const H5=(el,h)=>{if(window.rawHTML)rawHTML(el,h);else el.innerHTML=h;};
+ const LT=o=>o==null?'':typeof o==='string'?o:(window.LANG==='en'?(o.en||o.ko):(o.ko||o.en))||'';
+ const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+ const CK='pxclassic2_mail';
+ let NET=[],netT=0,sel=null;
+ try{const c=JSON.parse(localStorage.getItem(CK)||'null');if(c&&Array.isArray(c.mail))NET=c.mail;}catch(e){}
+ const st5=()=>{DB.mail5=DB.mail5&&typeof DB.mail5==='object'?DB.mail5:{};DB.mail5.r=DB.mail5.r||{};DB.mail5.c=DB.mail5.c||{};return DB.mail5;};
+ const ok=m=>m&&typeof m==='object'&&m.id&&m.title&&(!m.date||m.date<=today())&&(!m.until||today()<=m.until);
+ function list(){const seen={},L=[];for(const m of NET.concat(MAIL_IN))if(ok(m)&&!seen[m.id]){seen[m.id]=1;L.push(m);}
+  return L.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));}
+ const RW=[['dia','💎',['다이아','Diamonds']],['scroll','📜',['강화주문서','Scrolls']],['rv','✨',['부활권','Revives']],['gold','💰',['골드','Gold']],['box','⚔️',['장비 상자','Gear Box']]];
+ const rwOf=m=>{const r=m.reward||{};return RW.filter(([k])=>(r[k]|0)>0).map(([k,i,n])=>[k,i,n,r[k]|0]);};
+ const isNew=m=>{const s=st5();return !s.r[m.id]||(rwOf(m).length&&!s.c[m.id]);};
+ function badge(){const n=P?list().filter(isNew).length:0;
+  const d=document.querySelector('#mMail .dot88');if(d){d.style.display=n?'block':'none';d.textContent=n;}
+  const b=$('mailDot');if(b)b.style.display=n?'block':'none';}
+ window.mailBadge5=badge;
+ // 인터넷에서 새 목록 받기 (10초 안에 안 오면 그만)
+ function fetchNet(force){if(!force&&Date.now()-netT<5*60*1000)return;netT=Date.now();
+  if(typeof fetch!=='function')return;const ac=typeof AbortController!=='undefined'?new AbortController():null;
+  const to=setTimeout(()=>{try{ac&&ac.abort();}catch(e){}},10000);
+  fetch(MAIL_URL+'?t='+Date.now(),{cache:'no-store',signal:ac?ac.signal:undefined}).then(r=>r.ok?r.json():null).then(j=>{clearTimeout(to);
+   if(!j)return;const L=Array.isArray(j)?j:Array.isArray(j.mail)?j.mail:null;if(!L)return;
+   NET=L.filter(m=>m&&typeof m==='object'&&m.id).map(m=>Object.assign({},m,{id:'net-'+m.id}));
+   try{localStorage.setItem(CK,JSON.stringify({mail:NET,t:Date.now()}));}catch(e){}
+   badge();if(isOpen('pMail'))draw();}).catch(()=>{clearTimeout(to);});}
+ // 보상 받기
+ function claim(m){const s=st5();if(s.c[m.id]||!P)return;const r=rwOf(m);if(!r.length)return;
+  const box=(m.reward.box|0);
+  if(box&&typeof bagCap107==='function'&&bagCap107()-gearCnt107()<box){toast(T5('장비 가방 빈칸이 '+box+'칸 필요해요','Need '+box+' free gear bag slots'),'w');return;}
+  const got=[];
+  for(const [k,i,n,v] of r){
+   if(k==='dia')DB.dia107=(DB.dia107|0)+v;else if(k==='scroll')P.scroll=(P.scroll|0)+v;else if(k==='rv')P.rv86=(P.rv86|0)+v;else if(k==='gold')P.gold=(P.gold|0)+v;
+   else if(k==='box'){for(let j=0;j<v;j++){try{got.push(DITEM107.box_gear.go());}catch(e){}}continue;}
+   got.push(i+' '+T5(n[0],n[1])+' '+v);}
+  s.c[m.id]=Date.now();s.r[m.id]=s.r[m.id]||Date.now();save();try{saveDB();}catch(e){}try{refreshSide();}catch(e){}
+  toast(T5('우편함 선물을 받았어요','Mail gift received'),'g');log(T5('우편함: ','Mailbox: ')+got.join(', '),'g');badge();draw();}
+ // 창
+ const pan=document.createElement('div');pan.id='pMail';pan.className='pan';pan.setAttribute('data-noi18n','1');
+ H5(pan,`<div class="ph"><span id="mailH"></span><button id="mailX">✕</button></div><div class="pb" id="mailB"></div>`);
+ $('pMenu').parentNode.appendChild(pan);PANS.push('pMail');$('mailX').onclick=()=>pan.style.display='none';
+ function draw(){if(!isOpen('pMail'))return;const L=list(),s=st5();
+  H5($('mailH'),'📮 '+T5('우편함','Mailbox')+` <small style="font-weight:400;color:#9aa0b8">${L.length}</small>`);
+  const B=$('mailB');const m=sel&&L.find(x=>x.id===sel);
+  if(!m){sel=null;
+   H5(B,L.length?`<div class="ml5">${L.map(x=>{const r=rwOf(x),n=isNew(x);return `<button class="mi5${n?' nw':''}" data-id="${E5(x.id)}">
+     <span class="ic">${r.length?(s.c[x.id]?'📭':'🎁'):'✉️'}</span><span class="tx"><b>${E5(LT(x.title))}</b><small>${E5(x.date||'')}${r.length?' · '+(s.c[x.id]?T5('받음','Received'):T5('선물 있음','Gift')):''}</small></span>${n?'<i>N</i>':''}</button>`;}).join('')}</div>`
+    :`<div class="em5">${T5('아직 편지가 없어요','No mail yet')}</div>`);
+   B.querySelectorAll('.mi5').forEach(b=>b.onclick=()=>{sel=b.dataset.id;const s2=st5();if(!s2.r[sel]){s2.r[sel]=Date.now();try{saveDB();}catch(e){}}badge();draw();});
+   return;}
+  const r=rwOf(m),got=!!s.c[m.id];
+  H5(B,`<button class="bk5" id="mailBk">‹ ${T5('목록','Back')}</button>
+   <div class="rd5"><h3>${E5(LT(m.title))}</h3><small>${E5(m.date||'')}</small>
+   <div class="bd5">${E5(LT(m.body)).replace(/\n/g,'<br>')}</div>
+   ${r.length?`<div class="rw5"><div class="rl">${T5('선물','Gift')}</div><div class="ri">${r.map(([k,i,n,v])=>`<span><i>${i}</i>${T5(n[0],n[1])} ×${v}</span>`).join('')}</div>
+    <button id="mailGet" class="go2" ${got?'disabled':''}>${got?T5('받았어요','Received'):T5('받기','Claim')}</button></div>`:''}</div>`);
+  $('mailBk').onclick=()=>{sel=null;draw();};const g=$('mailGet');if(g)g.onclick=()=>claim(m);}
+ window.openMail5=function(){if(!P)return;closeAll();['pMenu','pBag','pShop','pChar'].forEach(x=>{const e=$(x);if(e)e.style.display='none';});
+  sel=null;pan.style.display='flex';draw();fetchNet(false);};
+ // 메뉴 버튼 + 메뉴 버튼의 빨간 점
+ const g=document.querySelector('#pMenu .mgrid');
+ if(g&&!$('mMail')){const b=document.createElement('button');b.className='ib';b.id='mMail';b.style.position='relative';
+  H5(b,'<svg viewBox="0 0 24 24" fill="none" stroke="#e0b866" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2" fill="#4a2a2a"/><path d="M3.5 6l8.5 7 8.5-7"/></svg>'+T5('우편함','Mailbox')+'<b class="dot88"></b>');
+  b.onclick=()=>window.openMail5();g.appendChild(b);}
+ {const m=$('bMenu');if(m&&!$('mailDot')){const d=document.createElement('i');d.id='mailDot';m.style.position='relative';m.appendChild(d);}}
+ const css=document.createElement('style');css.textContent=`
+#pMail{left:50%;transform:translateX(-50%);width:min(520px,calc(100% - 16px))}
+#pMail .pb{overflow:auto;padding:8px}
+#mailDot{position:absolute;left:-3px;top:-3px;width:11px;height:11px;border-radius:50%;background:#d9342a;border:1px solid #fff3;display:none}
+.ml5{display:flex;flex-direction:column;gap:6px}
+.mi5{display:flex;align-items:center;gap:10px;text-align:left;width:100%;padding:8px 10px;border-radius:8px;background:rgba(40,46,66,.7);border:1px solid #3a4458;color:inherit;font-family:inherit;position:relative}
+.mi5.nw{border-color:var(--brass);background:linear-gradient(90deg,rgba(201,164,92,.18),rgba(40,46,66,.7))}
+.mi5 .ic{font-size:22px;line-height:26px;flex:none}
+.mi5 .tx{display:flex;flex-direction:column;min-width:0;flex:1}
+.mi5 .tx b{font-size:13px;color:#f1ead8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mi5 .tx small{font-size:10.5px;color:#9aa0b8}
+.mi5>i{font-style:normal;flex:none;min-width:18px;height:18px;border-radius:9px;background:#d9342a;color:#fff;font-size:10px;font-weight:700;line-height:18px;text-align:center}
+.em5{padding:30px 0;text-align:center;color:#9aa0b8;font-size:12px}
+.bk5{padding:3px 10px;font-size:12px;margin-bottom:6px}
+.rd5 h3{margin:2px 0 2px;font-size:15px;color:var(--brass2)}
+.rd5>small{color:#9aa0b8;font-size:10.5px}
+.bd5{margin-top:8px;font-size:12.5px;line-height:1.6;color:#f1ead8;word-break:keep-all;overflow-wrap:anywhere}
+.rw5{margin-top:12px;padding:8px 10px;border:1px solid rgba(201,164,92,.45);border-radius:8px;background:rgba(0,0,0,.25);display:flex;flex-direction:column;gap:6px}
+.rw5 .rl{font-size:11px;color:var(--brass2);font-weight:700}
+.rw5 .ri{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px}
+.rw5 .ri i{font-style:normal;margin-right:3px}
+.rw5 button{align-self:flex-start;padding:5px 16px}
+`;document.head.appendChild(css);
+ // 게임을 시작하면 한 번 받아 오고, 빨간 점은 1초마다 맞춰요(가벼움)
+ setInterval(()=>{try{if(typeof playing!=='undefined'&&playing&&P){if(!netT)fetchNet(true);badge();}}catch(e){}},1000);
+})();
+</script>
